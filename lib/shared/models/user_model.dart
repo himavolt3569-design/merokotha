@@ -1,0 +1,93 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+enum UserRole { owner, customer }
+
+class UserModel {
+  final String id;
+  final String name;
+  final String phone;
+  final UserRole role;
+  final String? photoUrl;
+  final String? location;
+  final String? fcmToken;
+  final bool isVerified;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  const UserModel({
+    required this.id,
+    required this.name,
+    required this.phone,
+    required this.role,
+    this.photoUrl,
+    this.location,
+    this.fcmToken,
+    this.isVerified = false,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  // From Firestore document
+  factory UserModel.fromMap(Map<String, dynamic> map, String id) {
+    return UserModel(
+      id: id,
+      name: map['name'] as String? ?? '',
+      phone: map['phone'] as String? ?? '',
+      role: map['role'] == 'owner' ? UserRole.owner : UserRole.customer,
+      photoUrl: map['photoUrl'] as String?,
+      location: map['location'] as String?,
+      fcmToken: map['fcmToken'] as String?,
+      isVerified: map['isVerified'] as bool? ?? false,
+      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+    );
+  }
+
+  factory UserModel.fromSnapshot(DocumentSnapshot doc) {
+    return UserModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+  }
+
+  // To Firestore document
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'phone': phone,
+      'role': role.name,
+      'photoUrl': photoUrl,
+      'location': location,
+      'fcmToken': fcmToken,
+      'isVerified': isVerified,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
+    };
+  }
+
+  UserModel copyWith({
+    String? name,
+    String? phone,
+    UserRole? role,
+    String? photoUrl,
+    String? location,
+    String? fcmToken,
+    bool? isVerified,
+  }) {
+    return UserModel(
+      id: id,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      role: role ?? this.role,
+      photoUrl: photoUrl ?? this.photoUrl,
+      location: location ?? this.location,
+      fcmToken: fcmToken ?? this.fcmToken,
+      isVerified: isVerified ?? this.isVerified,
+      createdAt: createdAt,
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  bool get isOwner => role == UserRole.owner;
+  bool get isCustomer => role == UserRole.customer;
+
+  @override
+  String toString() => 'UserModel(id: $id, name: $name, role: ${role.name})';
+}

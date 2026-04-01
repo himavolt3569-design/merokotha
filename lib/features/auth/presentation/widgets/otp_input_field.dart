@@ -1,0 +1,126 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_sizes.dart';
+
+class OtpInputField extends StatefulWidget {
+  final void Function(String otp) onCompleted;
+  final void Function(String otp)? onChanged;
+
+  const OtpInputField({super.key, required this.onCompleted, this.onChanged});
+
+  @override
+  State<OtpInputField> createState() => _OtpInputFieldState();
+}
+
+class _OtpInputFieldState extends State<OtpInputField> {
+  static const _length = 6;
+  final _controllers = List.generate(_length, (_) => TextEditingController());
+  final _focusNodes = List.generate(_length, (_) => FocusNode());
+
+  @override
+  void dispose() {
+    for (final c in _controllers) {
+      c.dispose();
+    }
+    for (final f in _focusNodes) {
+      f.dispose();
+    }
+    super.dispose();
+  }
+
+  String get _currentOtp => _controllers.map((c) => c.text).join();
+
+  void _onChanged(int index, String value) {
+    if (value.length > 1) {
+      // Handle paste — distribute across boxes
+      final digits = value.replaceAll(RegExp(r'\D'), '');
+      for (int i = 0; i < _length && i < digits.length; i++) {
+        _controllers[i].text = digits[i];
+      }
+      final nextFocus = digits.length < _length ? digits.length : _length - 1;
+      _focusNodes[nextFocus].requestFocus();
+      widget.onChanged?.call(_currentOtp);
+      if (_currentOtp.length == _length) widget.onCompleted(_currentOtp);
+      return;
+    }
+
+    if (value.isNotEmpty && index < _length - 1) {
+      _focusNodes[index + 1].requestFocus();
+    }
+
+    widget.onChanged?.call(_currentOtp);
+    if (_currentOtp.length == _length) widget.onCompleted(_currentOtp);
+  }
+
+  void _onKeyEvent(int index, KeyEvent event) {
+    if (event is KeyDownEvent &&
+        event.logicalKey == LogicalKeyboardKey.backspace &&
+        _controllers[index].text.isEmpty &&
+        index > 0) {
+      _focusNodes[index - 1].requestFocus();
+      _controllers[index - 1].clear();
+    }
+  }
+
+  void clear() {
+    for (final c in _controllers) {
+      c.clear();
+    }
+    _focusNodes[0].requestFocus();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: List.generate(_length, (index) {
+        return SizedBox(
+          width: 48,
+          height: 56,
+          child: KeyboardListener(
+            focusNode: FocusNode(),
+            onKeyEvent: (e) => _onKeyEvent(index, e),
+            child: TextFormField(
+              controller: _controllers[index],
+              focusNode: _focusNodes[index],
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              maxLength: 1,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: AppColors.grey900,
+              ),
+              decoration: InputDecoration(
+                counterText: '',
+                contentPadding: EdgeInsets.zero,
+                filled: true,
+                fillColor: _focusNodes[index].hasFocus
+                    ? AppColors.primaryLight
+                    : AppColors.grey50,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                  borderSide: const BorderSide(color: AppColors.grey100),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                  borderSide: const BorderSide(
+                    color: AppColors.primary,
+                    width: 1.5,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                  borderSide: const BorderSide(color: AppColors.grey100),
+                ),
+              ),
+              onChanged: (v) => _onChanged(index, v),
+            ),
+          ),
+        );
+      }),
+    );
+  }
+}
