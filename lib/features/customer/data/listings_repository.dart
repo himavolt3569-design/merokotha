@@ -1,0 +1,136 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../../shared/models/listing_model.dart';
+import '../../../shared/providers/firebase_providers.dart';
+
+part 'listings_repository.g.dart';
+
+class ListingsRepository {
+  final FirebaseFirestore _db;
+  ListingsRepository(this._db);
+
+  CollectionReference<Map<String, dynamic>> get _col =>
+      _db.collection('listings');
+
+  Stream<List<ListingModel>> watchActiveListings() {
+    return _col
+        .where('status', isEqualTo: ListingStatus.active.name)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((s) => s.docs.map((d) => ListingModel.fromSnapshot(d)).toList());
+  }
+
+  Future<ListingModel?> getListingById(String id) async {
+    final doc = await _col.doc(id).get();
+    if (!doc.exists) return null;
+    return ListingModel.fromSnapshot(doc);
+  }
+
+  Future<List<ListingModel>> searchListings(SearchFilter filter) async {
+    Query<Map<String, dynamic>> q = _col.where(
+      'status',
+      isEqualTo: ListingStatus.active.name,
+    );
+
+    if (filter.roomType != null) {
+      q = q.where('roomType', isEqualTo: filter.roomType!.name);
+    }
+    if (filter.furnishing != null) {
+      q = q.where('furnishing', isEqualTo: filter.furnishing!.name);
+    }
+    if (filter.minRent != null) {
+      q = q.where('rentPerMonth', isGreaterThanOrEqualTo: filter.minRent);
+    }
+    if (filter.maxRent != null) {
+      q = q.where('rentPerMonth', isLessThanOrEqualTo: filter.maxRent);
+    }
+
+    q = q.orderBy('rentPerMonth');
+
+    final snap = await q.get();
+    var results = snap.docs.map((d) => ListingModel.fromSnapshot(d)).toList();
+
+    if (filter.query != null && filter.query!.isNotEmpty) {
+      final kw = filter.query!.toLowerCase();
+      results = results
+          .where(
+            (l) =>
+                l.title.toLowerCase().contains(kw) ||
+                (l.address?.toLowerCase().contains(kw) ?? false) ||
+                (l.nearbyLandmarks?.toLowerCase().contains(kw) ?? false),
+          )
+          .toList();
+    }
+
+    if (filter.facilities.isNotEmpty) {
+      results = results
+          .where(
+            (l) => filter.facilities.every((f) => l.facilities.contains(f)),
+          )
+          .toList();
+    }
+
+    return results;
+  }
+
+  Future<List<ListingModel>> getAllActiveForMap() async {
+    final snap = await _col
+        .where('status', isEqualTo: ListingStatus.active.name)
+        .get();
+    return snap.docs.map((d) => ListingModel.fromSnapshot(d)).toList();
+  }
+
+  Future<void> incrementView(String id) async {
+    await _col.doc(id).update({'viewCount': FieldValue.increment(1)});
+  }
+}
+
+class SearchFilter {
+  final String? query;
+  final RoomType? roomType;
+  final FurnishingType? furnishing;
+  final double? minRent;
+  final double? maxRent;
+  final List<String> facilities;
+
+  const SearchFilter({
+    this.query,
+    this.roomType,
+    this.furnishing,
+    this.minRent,
+    this.maxRent,
+    this.facilities = const [],
+  });
+
+  SearchFilter copyWith({
+    String? query,
+    RoomType? roomType,
+    FurnishingType? furnishing,
+    double? minRent,
+    double? maxRent,
+    List<String>? facilities,
+    bool clearRoomType = false,
+    bool clearFurnishing = false,
+  }) => SearchFilter(
+    query: query ?? this.query,
+    roomType: clearRoomType ? null : (roomType ?? this.roomType),
+    furnishing: clearFurnishing ? null : (furnishing ?? this.furnishing),
+    minRent: minRent ?? this.minRent,
+    maxRent: maxRent ?? this.maxRent,
+    facilities: facilities ?? this.facilities,
+  );
+
+  bool get hasActiveFilters =>
+      roomType != null ||
+      furnishing != null ||
+      minRent != null ||
+      maxRent != null ||
+      facilities.isNotEmpty;
+
+  SearchFilter get cleared => const SearchFilter();
+}
+
+@riverpod
+ListingsRepository listingsRepository(Ref ref) =>
+    ListingsRepository(ref.watch(firebaseFirestoreProvider));

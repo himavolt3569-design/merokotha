@@ -54,4 +54,4 @@ final class InquiryRepositoryProvider
   }
 }
 
-String _$inquiryRepositoryHash() => r'0f104868dc4126e85a4f28bc18a65890446a47f9';
+String _$inquiryRepositoryHash() => r'd8213b0d0f05b75c8d33e1dd61af4520e32fd1d2';

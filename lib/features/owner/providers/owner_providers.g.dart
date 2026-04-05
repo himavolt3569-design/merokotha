@@ -6,7 +6,7 @@ part of 'owner_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-// GENERATED CODE - DO NOT AMODIFY BY HAND
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(ownerListings)
@@ -48,7 +48,7 @@ final class OwnerListingsProvider
   }
 }
 
-String _$ownerListingsHash() => r'0b63ec2e543db44893dd58fbf4fbda9a0b9bf07d';
+String _$ownerListingsHash() => r'bc9864c6da8d2f4ae5ee4f2667b5669dd57b3d21';
 
 @ProviderFor(pendingInquiryCount)
 final pendingInquiryCountProvider = PendingInquiryCountProvider._();
@@ -82,7 +82,7 @@ final class PendingInquiryCountProvider
 }
 
 String _$pendingInquiryCountHash() =>
-    r'14628253b4876b06480434ded97ff454d6b91db0';
+    r'b6b17800ada49dca8f5e41211196cf9ca7075321';
 
 @ProviderFor(UploadListingNotifier)
 final uploadListingProvider = UploadListingNotifierProvider._();
