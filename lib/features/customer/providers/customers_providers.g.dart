@@ -48,7 +48,7 @@ final class ActiveListingsProvider
   }
 }
 
-String _$activeListingsHash() => r'4a207dbafe5b46e058f3dcda7c406152f12e1e33';
+String _$activeListingsHash() => r'c093bb49bf23ff9b2abd95bbb9b1c6750222f595';
 
 @ProviderFor(listingDetail)
 final listingDetailProvider = ListingDetailFamily._();
@@ -105,7 +105,7 @@ final class ListingDetailProvider
   }
 }
 
-String _$listingDetailHash() => r'74984060f6b618c4dbd20bad34b488ab9d26ad21';
+String _$listingDetailHash() => r'd04ea97f9f22fa55ca14fe1e8d04038caa5ffa65';
 
 final class ListingDetailFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<ListingModel?>, String> {
@@ -217,7 +217,7 @@ final class SearchResultsProvider
   }
 }
 
-String _$searchResultsHash() => r'f105488db8ee1283818a8471ee94bb895f3ddca3';
+String _$searchResultsHash() => r'483b534d68446b51b68d5ef18b95d07a4d1fc67e';
 
 @ProviderFor(favouriteIds)
 final favouriteIdsProvider = FavouriteIdsProvider._();
@@ -256,7 +256,7 @@ final class FavouriteIdsProvider
   }
 }
 
-String _$favouriteIdsHash() => r'f3cd026d79395bea6c9b671f87c8903e7ad7d32a';
+String _$favouriteIdsHash() => r'dde833ddcdf18a8d20d83fc5c33c53d4c690cc6d';
 
 @ProviderFor(isListingFavourited)
 final isListingFavouritedProvider = IsListingFavouritedFamily._();
@@ -316,7 +316,7 @@ final class IsListingFavouritedProvider
 }
 
 String _$isListingFavouritedHash() =>
-    r'713b4053888a1f136c39cb2009412e2047621f40';
+    r'312a02ac36a7506071121745b7049997f1945625';
 
 final class IsListingFavouritedFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
@@ -375,7 +375,7 @@ final class FavouriteListingsProvider
   }
 }
 
-String _$favouriteListingsHash() => r'8298659a620edcea57bc415746d0e39c0ed23a68';
+String _$favouriteListingsHash() => r'e085c57ecbece29365526fdc66f335869078a17c';
 
 @ProviderFor(FavouriteNotifier)
 final favouriteProvider = FavouriteNotifierProvider._();
@@ -409,7 +409,7 @@ final class FavouriteNotifierProvider
   }
 }
 
-String _$favouriteNotifierHash() => r'bc33460bfed4c7e3ef0b174f388dc1646a2e5391';
+String _$favouriteNotifierHash() => r'68e74e09d9c053de9728f0fbf4bbceccc4110126';
 
 abstract class _$FavouriteNotifier extends $Notifier<AsyncValue<void>> {
   AsyncValue<void> build();
@@ -462,7 +462,7 @@ final class SendInquiryNotifierProvider
 }
 
 String _$sendInquiryNotifierHash() =>
-    r'54b39082654f17a4fbc2d3f71201e93fdc41465e';
+    r'd557f14d410e7e400bffab728faf6d670136bd13';
 
 abstract class _$SendInquiryNotifier extends $Notifier<SendInquiryState> {
   SendInquiryState build();
@@ -521,4 +521,4 @@ final class MapListingsProvider
   }
 }
 
-String _$mapListingsHash() => r'f266ba5c8e9def3ea62bffb81534ca96d64e6851';
+String _$mapListingsHash() => r'0c5b0348fb70ac0f32a565f718beed8dad6e8e07';

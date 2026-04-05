@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:merokotha/features/customer/presentation/screens/customer_home_screen.dart';
-// import 'package:merokotha/features/owner/presentation/screens/my_listing_screen.dart';
+import 'package:merokotha/features/owner/presentation/screens/my_listing_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/auth/presentation/screens/splash_screen.dart';
@@ -9,18 +9,24 @@ import '../../features/auth/presentation/screens/otp_login_screen.dart';
 import '../../features/auth/presentation/screens/role_select_screen.dart';
 import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
+import '../../shared/models/listing_model.dart';
 import 'app_routes.dart';
 
-// import '../../features/owner/presentation/screens/owner_home_screen.dart';
-// import '../../features/owner/presentation/screens/upload_listing_screen.dart';
-// import '../../features/owner/presentation/screens/owner_inquiries_screen.dart';
-// import '../../features/customer/presentation/screens/customer_home_screen.dart';
+// Owner screens
+import '../../features/owner/presentation/screens/owner_home_screen.dart';
+import '../../features/owner/presentation/screens/upload_listing_screen.dart';
+import '../../features/owner/presentation/screens/owner_inquiries_screen.dart';
+import '../../features/owner/presentation/screens/owner_map_screen.dart';
+import '../../features/owner/presentation/screens/owner_profile_screen.dart';
+
+// Customer screens
+import '../../features/customer/presentation/screens/customer_home_screen.dart';
 import '../../features/customer/presentation/screens/search_screen.dart';
 import '../../features/customer/presentation/screens/customer_map_screen.dart';
 import '../../features/customer/presentation/screens/room_detail_screen.dart';
 import '../../features/customer/presentation/screens/favourites_screen.dart';
 import '../../features/customer/presentation/screens/inquire_screen.dart';
-import '../../shared/models/listing_model.dart';
+import '../../features/customer/presentation/screens/customer_profile_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -36,64 +42,68 @@ GoRouter appRouter(Ref ref) {
       final isOnAuthRoute =
           state.matchedLocation == AppRoutes.login ||
           state.matchedLocation == AppRoutes.splash;
-
       if (!isLoggedIn && !isOnAuthRoute) return AppRoutes.login;
-      if (isLoggedIn && isOnAuthRoute) {
-        // Will be handled by splash screen based on user role
-        return null;
-      }
       return null;
     },
     routes: [
-      // Auth
-      GoRoute(
-        path: AppRoutes.splash,
-        builder: (context, state) => const SplashScreen(),
-      ),
+      // ── Auth ──
+      GoRoute(path: AppRoutes.splash, builder: (_, __) => const SplashScreen()),
       GoRoute(
         path: AppRoutes.login,
-        builder: (context, state) => const OtpLoginScreen(),
+        builder: (_, __) => const OtpLoginScreen(),
       ),
       GoRoute(
         path: AppRoutes.roleSelect,
-        builder: (context, state) => const RoleSelectScreen(),
+        builder: (_, __) => const RoleSelectScreen(),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
-        builder: (context, state) => const OnboardingScreen(),
+        builder: (_, __) => const OnboardingScreen(),
       ),
 
-      // Owner routes
-      // GoRoute(
-      //   path: AppRoutes.ownerHome,
-      //   builder: (context, state) => const OwnerHomeScreen(),
-      // ),
-      // GoRoute(
-      //   path: AppRoutes.uploadListing,
-      //   builder: (context, state) => const UploadListingScreen(),
-      // ),
-      // GoRoute(
-      //   path: AppRoutes.myListings,
-      //   builder: (context, state) => const MyListingsScreen(),
-      // ),
-      // GoRoute(
-      //   path: AppRoutes.ownerInquiries,
-      //   builder: (context, state) => const OwnerInquiriesScreen(),
-      // ),
+      // ── Owner ──
+      GoRoute(
+        path: AppRoutes.ownerHome,
+        builder: (_, __) => const OwnerHomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.uploadListing,
+        builder: (_, __) => const UploadListingScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.myListings,
+        builder: (_, __) => const MyListingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.ownerInquiries,
+        builder: (_, __) => const OwnerInquiriesScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.ownerMap,
+        builder: (_, __) => const OwnerMapScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.ownerProfile,
+        builder: (_, __) => const OwnerProfileScreen(),
+      ),
 
-      // Customer routes
+      // ── Customer ──
       GoRoute(
         path: AppRoutes.customerHome,
-        builder: (context, state) => const CustomerHomeScreen(),
+        builder: (_, __) => const CustomerHomeScreen(),
       ),
-      GoRoute(path: AppRoutes.search, builder: (_, _) => const SearchScreen()),
+      GoRoute(path: AppRoutes.search, builder: (_, __) => const SearchScreen()),
       GoRoute(
         path: AppRoutes.customerMap,
-        builder: (_, _) => const CustomerMapScreen(),
+        builder: (_, __) => const CustomerMapScreen(),
       ),
       GoRoute(
         path: AppRoutes.favourites,
-        builder: (_, _) => const FavouritesScreen(),
+        builder: (_, __) => const FavouritesScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.customerProfile,
+        builder: (_, __) => const CustomerProfileScreen(),
       ),
       GoRoute(
         path: AppRoutes.roomDetail,
@@ -106,7 +116,29 @@ GoRouter appRouter(Ref ref) {
             InquireScreen(listing: state.extra as ListingModel),
       ),
     ],
-    errorBuilder: (context, state) =>
-        Scaffold(body: Center(child: Text('Page not found: ${state.error}'))),
+    errorBuilder: (context, state) => Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 48,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Page not found',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => context.go(AppRoutes.splash),
+              child: const Text('Go home'),
+            ),
+          ],
+        ),
+      ),
+    ),
   );
 }
