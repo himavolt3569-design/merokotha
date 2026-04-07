@@ -27,7 +27,7 @@ class OwnerHomeScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       appBar: MkAppBar(
-        title: 'मेरो कोठा',
+        title: 'MeroKotha',
         showBack: false,
         actions: [
           Stack(
@@ -157,9 +157,7 @@ class OwnerHomeScreen extends ConsumerWidget {
                                 child: OwnerListingCard(
                                   listing: l,
                                   onToggle: () => ref
-                                      .read(
-                                        listingStatusProvider.notifier,
-                                      )
+                                      .read(listingStatusProvider.notifier)
                                       .toggle(
                                         l.id,
                                         l.isActive

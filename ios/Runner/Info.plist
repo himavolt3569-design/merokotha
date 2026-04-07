@@ -88,10 +88,10 @@
 	<!-- ✅ Location Permissions -->
 
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>मेरो कोठा uses your location to show rooms near you and to help you pin your listing on the map.</string>
+	<string>MeroKotha uses your location to show rooms near you and to help you pin your listing on the map.</string>
 
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>मेरो कोठा uses your location to show rooms near you.</string>
+	<string>MeroKotha uses your location to show rooms near you.</string>
 
 	<!-- ✅ Network Security (for map tiles) -->
 

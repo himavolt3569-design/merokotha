@@ -2,7 +2,7 @@ class AppStrings {
   AppStrings._();
 
   // App
-  static const appName = 'मेरो कोठा';
+  static const appName = 'MeroKotha';
   static const appNameEn = 'Mero Kotha';
   static const tagline = 'Find your perfect room';
 

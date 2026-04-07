@@ -12,7 +12,7 @@ class MeroKothaApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'मेरो कोठा',
+      title: 'MeroKotha',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       routerConfig: router,

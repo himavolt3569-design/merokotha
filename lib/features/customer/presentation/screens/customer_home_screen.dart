@@ -46,7 +46,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'मेरो कोठा',
+                              'MeroKotha',
                               style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w700,
@@ -216,9 +216,8 @@ class CustomerHomeScreen extends ConsumerWidget {
                         return ListingCard(
                           listing: l,
                           isFavourited: favIds.contains(l.id),
-                          onFavourite: () => ref
-                              .read(favouriteProvider.notifier)
-                              .toggle(l),
+                          onFavourite: () =>
+                              ref.read(favouriteProvider.notifier).toggle(l),
                           onTap: () => context.push(
                             AppRoutes.roomDetail.replaceAll(':id', l.id),
                           ),
