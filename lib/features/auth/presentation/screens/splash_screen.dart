@@ -85,20 +85,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo placeholder — replace with your actual logo asset
-              Container(
+                // Logo from assets
+                Image.asset(
+                'assets/merokotha.png',
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Icon(
-                  Icons.home_rounded,
-                  size: 48,
-                  color: AppColors.primary,
-                ),
-              ),
               const SizedBox(height: 20),
               const Text(
                 AppStrings.appName,

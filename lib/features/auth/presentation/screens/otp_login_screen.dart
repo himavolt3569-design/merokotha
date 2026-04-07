@@ -53,7 +53,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
     FocusScope.of(context).unfocus();
 
     await ref.read(otpProvider.notifier).sendOtp(_phoneController.text.trim());
-
   }
 
   Future<void> _verifyOtp() async {
@@ -106,7 +105,7 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
           ),
         );
       }
-        if (next.codeSent && !(prev?.codeSent ?? false) && mounted) {
+      if (next.codeSent && !(prev?.codeSent ?? false) && mounted) {
         setState(() => _showOtpField = true);
         _startResendTimer();
       }
@@ -132,10 +131,9 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
                       color: AppColors.primaryLight,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(
-                      Icons.home_rounded,
-                      color: AppColors.primary,
-                      size: 24,
+                    child: Image.asset(
+                      'assets/merokotha.png',
+                      fit: BoxFit.contain,
                     ),
                   ),
                   const SizedBox(width: 10),
