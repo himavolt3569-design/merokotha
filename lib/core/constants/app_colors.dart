@@ -20,6 +20,7 @@ class AppColors {
   static const grey900 = Color(0xFF2C2C2A);
     static const grey500 = Color(0xFF888780);
   static const grey700 = Color(0xFF5F5E5A);
+  static const grey200 = Color(0xFFB4B2A9);
 
   // Semantic
   static const success = Color(0xFF639922);

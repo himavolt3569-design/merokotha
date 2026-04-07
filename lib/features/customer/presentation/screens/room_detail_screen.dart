@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:merokotha/features/customer/providers/customers_providers.dart';
+import 'package:latlong2/latlong.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../core/utils/formatters.dart';
-import '../../../../shared/models/listing_model.dart';
-import '../../../../shared/widgets/mk_widgets.dart';
-import '../../../auth/providers/auth_provider.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/core/utils/formatters.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/features/customer/providers/customers_providers.dart';
+import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/shared/widgets/mk_widgets.dart';
 
 class RoomDetailScreen extends ConsumerStatefulWidget {
   final String listingId;
@@ -21,7 +22,7 @@ class RoomDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
-  int _currentPhotoIndex = 0;
+  int _photoIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -42,16 +43,16 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
             children: [
               CustomScrollView(
                 slivers: [
-                  // ── Photo section ──
+                  // Photo carousel
                   SliverToBoxAdapter(
                     child: _PhotoSection(
                       listing: listing,
-                      currentIndex: _currentPhotoIndex,
-                      onPageChanged: (i) =>
-                          setState(() => _currentPhotoIndex = i),
+                      currentIndex: _photoIndex,
+                      onPageChanged: (i) => setState(() => _photoIndex = i),
                       isFavourited: isFav,
-                      onFavourite: () =>
-                          ref.read(favouriteProvider.notifier).toggle(listing),
+                      onFavourite: () => ref
+                          .read(favouriteProvider.notifier)
+                          .toggle(listing),
                       onBack: () => context.pop(),
                     ),
                   ),
@@ -62,7 +63,7 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // ── Title + badge ──
+                          // Title + type badge
                           Row(
                             children: [
                               Expanded(
@@ -97,10 +98,9 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                               ),
                             ],
                           ),
-
                           const SizedBox(height: 8),
 
-                          // ── Location ──
+                          // Location
                           if (listing.address != null)
                             Row(
                               children: [
@@ -110,11 +110,13 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                                   color: AppColors.grey400,
                                 ),
                                 const SizedBox(width: 4),
-                                Text(
-                                  listing.address!,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: AppColors.grey400,
+                                Expanded(
+                                  child: Text(
+                                    listing.address!,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.grey400,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -122,7 +124,7 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
 
                           const SizedBox(height: 16),
 
-                          // ── Price + deposit ──
+                          // Price + floor/furnishing
                           Row(
                             children: [
                               Column(
@@ -165,10 +167,9 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                             ],
                           ),
 
-                          const SizedBox(height: 20),
                           _Divider(),
 
-                          // ── Available from ──
+                          // Available from
                           _InfoRow(
                             icon: Icons.calendar_today_outlined,
                             label: 'Available from',
@@ -177,7 +178,7 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
 
                           _Divider(),
 
-                          // ── Facilities ──
+                          // Facilities
                           if (listing.facilities.isNotEmpty) ...[
                             const _SectionTitle('Facilities'),
                             const SizedBox(height: 10),
@@ -186,7 +187,7 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                             _Divider(),
                           ],
 
-                          // ── Description ──
+                          // Description
                           const _SectionTitle('About this room'),
                           const SizedBox(height: 8),
                           Text(
@@ -201,7 +202,7 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                           const SizedBox(height: 20),
                           _Divider(),
 
-                          // ── Owner card ──
+                          // Owner card
                           const _SectionTitle('Listed by'),
                           const SizedBox(height: 10),
                           _OwnerCard(listing: listing),
@@ -209,7 +210,7 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                           const SizedBox(height: 20),
                           _Divider(),
 
-                          // ── Map preview ──
+                          // Map preview (flutter_map static)
                           if (listing.geoPoint != null) ...[
                             const _SectionTitle('Location'),
                             const SizedBox(height: 10),
@@ -236,42 +237,15 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                                   ],
                                 ),
                               ),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                AppSizes.radiusLg,
-                              ),
-                              child: SizedBox(
-                                height: 180,
-                                child: GoogleMap(
-                                  initialCameraPosition: CameraPosition(
-                                    target: LatLng(
-                                      listing.geoPoint!.latitude,
-                                      listing.geoPoint!.longitude,
-                                    ),
-                                    zoom: 15,
-                                  ),
-                                  markers: {
-                                    Marker(
-                                      markerId: MarkerId(listing.id),
-                                      position: LatLng(
-                                        listing.geoPoint!.latitude,
-                                        listing.geoPoint!.longitude,
-                                      ),
-                                    ),
-                                  },
-                                  zoomControlsEnabled: false,
-                                  scrollGesturesEnabled: false,
-                                  rotateGesturesEnabled: false,
-                                  tiltGesturesEnabled: false,
-                                  myLocationButtonEnabled: false,
-                                ),
-                              ),
+                            _StaticMapPreview(
+                              lat: listing.geoPoint!.latitude,
+                              lng: listing.geoPoint!.longitude,
                             ),
                             const SizedBox(height: 20),
                             _Divider(),
                           ],
 
-                          // ── Stats ──
+                          // Stats
                           Row(
                             children: [
                               const Icon(
@@ -312,7 +286,7 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                 ],
               ),
 
-              // ── Bottom CTA bar ──
+              // Bottom CTA
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -322,6 +296,56 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+// ── Static map preview with flutter_map ───────────────────────────
+
+class _StaticMapPreview extends StatelessWidget {
+  final double lat;
+  final double lng;
+  const _StaticMapPreview({required this.lat, required this.lng});
+
+  @override
+  Widget build(BuildContext context) {
+    final point = LatLng(lat, lng);
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+      child: SizedBox(
+        height: 180,
+        child: FlutterMap(
+          options: MapOptions(
+            initialCenter: point,
+            initialZoom: 15,
+            // Disable all interactions — this is a preview only
+            interactionOptions: const InteractionOptions(
+              flags: InteractiveFlag.none,
+            ),
+          ),
+          children: [
+            TileLayer(
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              userAgentPackageName: 'com.merokotha.app',
+              maxZoom: 19,
+            ),
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: point,
+                  width: 40,
+                  height: 40,
+                  child: const Icon(
+                    Icons.location_on_rounded,
+                    size: 40,
+                    color: AppColors.error,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -351,7 +375,6 @@ class _PhotoSection extends StatelessWidget {
     final photos = listing.photoUrls;
     return Stack(
       children: [
-        // Photo carousel
         SizedBox(
           height: 280,
           child: photos.isNotEmpty
@@ -362,30 +385,11 @@ class _PhotoSection extends StatelessWidget {
                     photos[i],
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: AppColors.grey50,
-                      child: const Center(
-                        child: Icon(
-                          Icons.image_outlined,
-                          size: 48,
-                          color: AppColors.grey100,
-                        ),
-                      ),
-                    ),
+                    errorBuilder: (_, __, ___) => _placeholder,
                   ),
                 )
-              : Container(
-                  color: AppColors.grey50,
-                  child: const Center(
-                    child: Icon(
-                      Icons.image_outlined,
-                      size: 64,
-                      color: AppColors.grey100,
-                    ),
-                  ),
-                ),
+              : _placeholder,
         ),
-
         // Dot indicators
         if (photos.length > 1)
           Positioned(
@@ -396,7 +400,8 @@ class _PhotoSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 photos.length,
-                (i) => Container(
+                (i) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
                   width: i == currentIndex ? 16 : 6,
                   height: 6,
                   margin: const EdgeInsets.symmetric(horizontal: 2),
@@ -410,22 +415,20 @@ class _PhotoSection extends StatelessWidget {
               ),
             ),
           ),
-
-        // Back button
+        // Back
         Positioned(
           top: MediaQuery.of(context).padding.top + 8,
           left: 12,
-          child: _CircleButton(
+          child: _CircleBtn(
             icon: Icons.arrow_back_ios_new_rounded,
             onTap: onBack,
           ),
         ),
-
-        // Favourite button
+        // Fav
         Positioned(
           top: MediaQuery.of(context).padding.top + 8,
           right: 12,
-          child: _CircleButton(
+          child: _CircleBtn(
             icon: isFavourited
                 ? Icons.favorite_rounded
                 : Icons.favorite_border_rounded,
@@ -436,36 +439,38 @@ class _PhotoSection extends StatelessWidget {
       ],
     );
   }
+
+  Widget get _placeholder => Container(
+    height: 280,
+    color: AppColors.grey50,
+    child: const Center(
+      child: Icon(Icons.image_outlined, size: 64, color: AppColors.grey100),
+    ),
+  );
 }
 
-class _CircleButton extends StatelessWidget {
+class _CircleBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
   final Color? iconColor;
-  const _CircleButton({
-    required this.icon,
-    required this.onTap,
-    this.iconColor,
-  });
+  const _CircleBtn({required this.icon, required this.onTap, this.iconColor});
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 6),
-          ],
-        ),
-        child: Icon(icon, size: 18, color: iconColor ?? AppColors.grey700),
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: 38,
+      height: 38,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 6),
+        ],
       ),
-    );
-  }
+      child: Icon(icon, size: 18, color: iconColor ?? AppColors.grey700),
+    ),
+  );
 }
 
 class _Divider extends StatelessWidget {
@@ -501,30 +506,28 @@ class _InfoRow extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: AppColors.grey400),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 13, color: AppColors.grey400),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: Row(
+      children: [
+        Icon(icon, size: 16, color: AppColors.grey400),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 13, color: AppColors.grey400),
+        ),
+        const Spacer(),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: AppColors.grey800,
           ),
-          const Spacer(),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.grey800,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }
 
 const _facilityIcons = <String, IconData>{
@@ -543,34 +546,31 @@ class _FacilitiesGrid extends StatelessWidget {
   const _FacilitiesGrid(this.facilities);
 
   @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: facilities.map((f) {
-        final icon = _facilityIcons[f] ?? Icons.check_circle_outlined;
-        final label = f[0].toUpperCase() + f.substring(1);
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-          decoration: BoxDecoration(
-            color: AppColors.grey50,
-            borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 14, color: AppColors.grey600),
-              const SizedBox(width: 5),
-              Text(
-                label,
-                style: const TextStyle(fontSize: 12, color: AppColors.grey700),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-    );
-  }
+  Widget build(BuildContext context) => Wrap(
+    spacing: 8,
+    runSpacing: 8,
+    children: facilities.map((f) {
+      final icon = _facilityIcons[f] ?? Icons.check_circle_outlined;
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(
+          color: AppColors.grey50,
+          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: AppColors.grey600),
+            const SizedBox(width: 5),
+            Text(
+              f[0].toUpperCase() + f.substring(1),
+              style: const TextStyle(fontSize: 12, color: AppColors.grey700),
+            ),
+          ],
+        ),
+      );
+    }).toList(),
+  );
 }
 
 class _OwnerCard extends StatelessWidget {
@@ -578,114 +578,106 @@ class _OwnerCard extends StatelessWidget {
   const _OwnerCard({required this.listing});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.md),
-      decoration: BoxDecoration(
-        color: AppColors.grey50,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-      ),
-      child: Row(
-        children: [
-          UserAvatar(
-            name: listing.ownerName,
-            photoUrl: listing.ownerPhotoUrl,
-            size: 44,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  listing.ownerName,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.grey900,
-                  ),
-                ),
-                const Text(
-                  'House Owner',
-                  style: TextStyle(fontSize: 12, color: AppColors.grey400),
-                ),
-              ],
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(AppSizes.md),
+    decoration: BoxDecoration(
+      color: AppColors.grey50,
+      borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+    ),
+    child: Row(
+      children: [
+        UserAvatar(
+          name: listing.ownerName,
+          photoUrl: listing.ownerPhotoUrl,
+          size: 44,
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              listing.ownerName,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.grey900,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+            const Text(
+              'House Owner',
+              style: TextStyle(fontSize: 12, color: AppColors.grey400),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }
 
 class _BottomCTA extends ConsumerWidget {
   final ListingModel listing;
   final AsyncValue userAsync;
-
   const _BottomCTA({required this.listing, required this.userAsync});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        AppSizes.pagePadding,
-        AppSizes.md,
-        AppSizes.pagePadding,
-        MediaQuery.of(context).padding.bottom + AppSizes.md,
-      ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.grey50)),
-      ),
-      child: Row(
-        children: [
-          // Share button
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.grey100),
-              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-            ),
-            child: const Icon(
-              Icons.share_outlined,
-              size: 20,
-              color: AppColors.grey600,
-            ),
+  Widget build(BuildContext context, WidgetRef ref) => Container(
+    padding: EdgeInsets.fromLTRB(
+      AppSizes.pagePadding,
+      AppSizes.md,
+      AppSizes.pagePadding,
+      MediaQuery.of(context).padding.bottom + AppSizes.md,
+    ),
+    decoration: const BoxDecoration(
+      color: Colors.white,
+      border: Border(top: BorderSide(color: AppColors.grey50)),
+    ),
+    child: Row(
+      children: [
+        // Share
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.grey100),
+            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           ),
-          const SizedBox(width: 12),
-
-          // Inquire button
-          Expanded(
-            child: SizedBox(
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  final user = userAsync.value;
-                  if (user == null) return;
-                  context.push(
-                    AppRoutes.inquire.replaceAll(':id', listing.id),
-                    extra: listing,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.customerPrimary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                  ),
+          child: const Icon(
+            Icons.share_outlined,
+            size: 20,
+            color: AppColors.grey600,
+          ),
+        ),
+        const SizedBox(width: 12),
+        // Inquire
+        Expanded(
+          child: SizedBox(
+            height: 48,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                final user = userAsync.asData?.value;
+                if (user == null) return;
+                context.push(
+                  AppRoutes.inquire.replaceAll(':id', listing.id),
+                  extra: listing,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.customerPrimary,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                 ),
-                icon: const Icon(Icons.message_outlined, size: 18),
-                label: const Text(
-                  'Message owner',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                ),
+              ),
+              icon: const Icon(Icons.message_outlined, size: 18),
+              label: const Text(
+                'Message owner',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }

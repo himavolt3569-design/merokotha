@@ -1,7 +1,10 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:merokotha/shared/widgets/owner_botton_nav.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -19,27 +22,91 @@ class OwnerMapScreen extends ConsumerStatefulWidget {
 }
 
 class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
-  GoogleMapController? _mapController;
+  final _mapController = MapController();
   ListingModel? _selectedListing;
+
   static const _kathmandu = LatLng(27.7172, 85.3240);
 
-  Set<Marker> _buildMarkers(List<ListingModel> listings) {
-    return listings
-        .where((l) => l.geoPoint != null)
-        .map(
-          (l) => Marker(
-            markerId: MarkerId(l.id),
-            position: LatLng(l.geoPoint!.latitude, l.geoPoint!.longitude),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-              l.id == _selectedListing?.id
-                  ? BitmapDescriptor.hueAzure
-                  : BitmapDescriptor.hueGreen,
-            ),
-            infoWindow: InfoWindow(title: l.title),
-            onTap: () => setState(() => _selectedListing = l),
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+  }
+
+  List<Marker> _buildMarkers(List<ListingModel> listings) {
+    return listings.where((l) => l.geoPoint != null).map((l) {
+      final isSelected = _selectedListing?.id == l.id;
+      return Marker(
+        point: LatLng(l.geoPoint!.latitude, l.geoPoint!.longitude),
+        width: 44,
+        height: 52,
+        child: GestureDetector(
+          onTap: () => setState(() {
+            _selectedListing = _selectedListing?.id == l.id ? null : l;
+          }),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.ownerPrimary : Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.ownerPrimary, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.house_rounded,
+                  size: 18,
+                  color: isSelected ? Colors.white : AppColors.ownerPrimary,
+                ),
+              ),
+              CustomPaint(
+                size: const Size(10, 5),
+                painter: _TrianglePainter(
+                  color: isSelected ? AppColors.ownerPrimary : Colors.white,
+                  borderColor: AppColors.ownerPrimary,
+                ),
+              ),
+            ],
           ),
-        )
-        .toSet();
+        ),
+      );
+    }).toList();
+  }
+
+  void _fitAllMarkers(List<ListingModel> listings) {
+    final points = listings
+        .where((l) => l.geoPoint != null)
+        .map((l) => LatLng(l.geoPoint!.latitude, l.geoPoint!.longitude))
+        .toList();
+
+    if (points.isEmpty) return;
+    if (points.length == 1) {
+      _mapController.move(points.first, 15);
+      return;
+    }
+
+    double minLat = points.first.latitude;
+    double maxLat = points.first.latitude;
+    double minLng = points.first.longitude;
+    double maxLng = points.first.longitude;
+
+    for (final p in points) {
+      if (p.latitude < minLat) minLat = p.latitude;
+      if (p.latitude > maxLat) maxLat = p.latitude;
+      if (p.longitude < minLng) minLng = p.longitude;
+      if (p.longitude > maxLng) maxLng = p.longitude;
+    }
+
+    final center = LatLng((minLat + maxLat) / 2, (minLng + maxLng) / 2);
+    _mapController.move(center, 13);
   }
 
   @override
@@ -54,40 +121,28 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
             loading: () => const MkLoading(),
             error: (e, _) => MkErrorWidget(message: e.toString()),
             data: (listings) {
-              final withLocation = listings
-                  .where((l) => l.geoPoint != null)
-                  .toList();
+              WidgetsBinding.instance.addPostFrameCallback(
+                (_) => _fitAllMarkers(listings),
+              );
 
-              // Auto-fit camera to markers on first load
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (_mapController != null && withLocation.isNotEmpty) {
-                  final bounds = _boundsFromLatLngList(
-                    withLocation
-                        .map(
-                          (l) => LatLng(
-                            l.geoPoint!.latitude,
-                            l.geoPoint!.longitude,
-                          ),
-                        )
-                        .toList(),
-                  );
-                  _mapController!.animateCamera(
-                    CameraUpdate.newLatLngBounds(bounds, 80),
-                  );
-                }
-              });
-
-              return GoogleMap(
-                initialCameraPosition: const CameraPosition(
-                  target: _kathmandu,
-                  zoom: 13,
+              return FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  initialCenter: _kathmandu,
+                  initialZoom: 13,
+                  maxZoom: 19,
+                  minZoom: 8,
+                  onTap: (_, __) => setState(() => _selectedListing = null),
                 ),
-                markers: _buildMarkers(listings),
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-                zoomControlsEnabled: false,
-                onMapCreated: (c) => _mapController = c,
-                onTap: (_) => setState(() => _selectedListing = null),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.merokotha.app',
+                    maxZoom: 19,
+                  ),
+                  MarkerLayer(markers: _buildMarkers(listings)),
+                ],
               );
             },
           ),
@@ -194,8 +249,9 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
           // ── No listings hint ──
           listingsAsync.when(
             data: (listings) {
-              final noPins = listings.every((l) => l.geoPoint == null);
-              if (!noPins) return const SizedBox.shrink();
+              if (listings.any((l) => l.geoPoint != null)) {
+                return const SizedBox.shrink();
+              }
               return Positioned(
                 bottom: 100,
                 left: 20,
@@ -230,7 +286,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'When you add a listing with a map pin, it will appear here.',
+                        'Add a listing with a map pin and it will appear here.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,
@@ -265,7 +321,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
             error: (_, __) => const SizedBox.shrink(),
           ),
 
-          // ── Selected listing card ──
+          // ── Selected listing bottom card ──
           if (_selectedListing != null)
             Positioned(
               bottom: 90,
@@ -286,7 +342,6 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                 ),
                 child: Row(
                   children: [
-                    // Photo
                     ClipRRect(
                       borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       child: _selectedListing!.photoUrls.isNotEmpty
@@ -328,30 +383,6 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Column(
-                      children: [
-                        // Edit pin location
-                        GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            width: 34,
-                            height: 34,
-                            decoration: BoxDecoration(
-                              color: AppColors.grey50,
-                              borderRadius: BorderRadius.circular(
-                                AppSizes.radiusMd,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.edit_location_alt_outlined,
-                              size: 16,
-                              color: AppColors.grey600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -372,20 +403,26 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
         return StatusBadge.rented();
     }
   }
+}
 
-  LatLngBounds _boundsFromLatLngList(List<LatLng> list) {
-    double? minLat, maxLat, minLng, maxLng;
-    for (final p in list) {
-      if (minLat == null || p.latitude < minLat) minLat = p.latitude;
-      if (maxLat == null || p.latitude > maxLat) maxLat = p.latitude;
-      if (minLng == null || p.longitude < minLng) minLng = p.longitude;
-      if (maxLng == null || p.longitude > maxLng) maxLng = p.longitude;
-    }
-    return LatLngBounds(
-      southwest: LatLng(minLat!, minLng!),
-      northeast: LatLng(maxLat!, maxLng!),
-    );
+class _TrianglePainter extends CustomPainter {
+  final Color color;
+  final Color borderColor;
+  const _TrianglePainter({required this.color, required this.borderColor});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+    final path = ui.Path()
+      ..moveTo(0, 0)
+      ..lineTo(size.width / 2, size.height)
+      ..lineTo(size.width, 0)
+      ..close();
+    canvas.drawPath(path, paint);
   }
+
+  @override
+  bool shouldRepaint(_TrianglePainter old) => old.color != color;
 }
 
 class _MapBtn extends StatelessWidget {

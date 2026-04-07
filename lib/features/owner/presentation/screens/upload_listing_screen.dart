@@ -2,9 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
@@ -30,7 +31,6 @@ class UploadListingScreen extends ConsumerStatefulWidget {
 class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers
   final _titleCtrl = TextEditingController();
   final _rentCtrl = TextEditingController();
   final _depositCtrl = TextEditingController();
@@ -40,7 +40,6 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
   final _addressCtrl = TextEditingController();
   final _landmarksCtrl = TextEditingController();
 
-  // Form state
   RoomType _roomType = RoomType.single;
   FurnishingType _furnishing = FurnishingType.unfurnished;
   List<String> _facilities = [];
@@ -66,8 +65,8 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
       initialDate: _availableFrom,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
+      builder: (ctx, child) => Theme(
+        data: Theme.of(ctx).copyWith(
           colorScheme: const ColorScheme.light(primary: AppColors.primary),
         ),
         child: child!,
@@ -77,17 +76,19 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
   }
 
   Future<void> _openMapPicker() async {
-    // Get current location as starting point
-    LatLng initial = const LatLng(27.7172, 85.3240); // Kathmandu default
+    LatLng initial = const LatLng(27.7172, 85.3240); // Kathmandu
     try {
-      final permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        await Geolocator.requestPermission();
+      LocationPermission perm = await Geolocator.checkPermission();
+      if (perm == LocationPermission.denied) {
+        perm = await Geolocator.requestPermission();
       }
-      final pos = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium,
-      );
-      initial = LatLng(pos.latitude, pos.longitude);
+      if (perm == LocationPermission.whileInUse ||
+          perm == LocationPermission.always) {
+        final pos = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.medium,
+        );
+        initial = LatLng(pos.latitude, pos.longitude);
+      }
     } catch (_) {}
 
     if (!mounted) return;
@@ -98,10 +99,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
         builder: (_) => _MapPickerScreen(initialLocation: initial),
       ),
     );
-
-    if (result != null) {
-      setState(() => _pickedLocation = result);
-    }
+    if (result != null) setState(() => _pickedLocation = result);
   }
 
   Future<void> _submit() async {
@@ -117,7 +115,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     }
     FocusScope.of(context).unfocus();
 
-    final user = ref.read(currentUserProvider).value;
+    final user = ref.read(currentUserProvider).asData?.value;
     if (user == null) return;
 
     final id = await ref
@@ -128,9 +126,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
           title: _titleCtrl.text.trim(),
           roomType: _roomType,
           rentPerMonth: double.parse(_rentCtrl.text.trim()),
-          depositAmount: double.parse(
-            _depositCtrl.text.trim().isEmpty ? '0' : _depositCtrl.text.trim(),
-          ),
+          depositAmount: double.tryParse(_depositCtrl.text.trim()) ?? 0,
           floor: int.tryParse(_floorCtrl.text.trim()) ?? 0,
           totalFloors: int.tryParse(_totalFloorsCtrl.text.trim()) ?? 1,
           furnishing: _furnishing,
@@ -149,7 +145,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     if (id != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Listing published successfully!'),
+          content: Text('Listing published!'),
           backgroundColor: AppColors.success,
         ),
       );
@@ -182,11 +178,11 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Photo upload placeholder ──
+              // Photo placeholder
               _PhotoPlaceholder(),
               const SizedBox(height: 20),
 
-              // ── Basic info card ──
+              // Basic info
               _Card(
                 title: 'Basic information',
                 children: [
@@ -198,28 +194,37 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                     textCapitalization: TextCapitalization.sentences,
                   ),
                   const SizedBox(height: AppSizes.md),
-
-                  // Room type
                   const _Label('Room type'),
                   const SizedBox(height: 8),
-                  _RoomTypeSelector(
+                  _SegmentSelector<RoomType>(
+                    values: RoomType.values,
                     selected: _roomType,
+                    label: (t) => t.name[0].toUpperCase() + t.name.substring(1),
                     onChanged: (v) => setState(() => _roomType = v),
                   ),
                   const SizedBox(height: AppSizes.md),
-
-                  // Furnishing
                   const _Label('Furnishing'),
                   const SizedBox(height: 8),
-                  _FurnishingSelector(
+                  _SegmentSelector<FurnishingType>(
+                    values: FurnishingType.values,
                     selected: _furnishing,
+                    label: (t) {
+                      switch (t) {
+                        case FurnishingType.furnished:
+                          return 'Furnished';
+                        case FurnishingType.semiFurnished:
+                          return 'Semi';
+                        case FurnishingType.unfurnished:
+                          return 'Unfurnished';
+                      }
+                    },
                     onChanged: (v) => setState(() => _furnishing = v),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
 
-              // ── Pricing card ──
+              // Pricing
               _Card(
                 title: 'Pricing',
                 children: [
@@ -247,7 +252,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 16),
 
-              // ── Building details card ──
+              // Building details
               _Card(
                 title: 'Building details',
                 children: [
@@ -279,8 +284,6 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                     ],
                   ),
                   const SizedBox(height: AppSizes.md),
-
-                  // Available from
                   const _Label('Available from'),
                   const SizedBox(height: 8),
                   GestureDetector(
@@ -324,7 +327,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 16),
 
-              // ── Facilities card ──
+              // Facilities
               _Card(
                 title: 'Facilities',
                 children: [
@@ -336,14 +339,14 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 16),
 
-              // ── Description card ──
+              // Description
               _Card(
                 title: 'Description',
                 children: [
                   MkTextField(
                     label: 'About this room',
                     hint:
-                        'Describe the room, neighbourhood, access to transport, etc.',
+                        'Describe the room, neighbourhood, transport access...',
                     controller: _descCtrl,
                     validator: Validators.description,
                     maxLines: 4,
@@ -352,7 +355,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 16),
 
-              // ── Location card ──
+              // Location
               _Card(
                 title: 'Location',
                 children: [
@@ -402,7 +405,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                           Expanded(
                             child: Text(
                               _pickedLocation != null
-                                  ? 'Location pinned: ${_pickedLocation!.latitude.toStringAsFixed(4)}, ${_pickedLocation!.longitude.toStringAsFixed(4)}'
+                                  ? 'Pinned: ${_pickedLocation!.latitude.toStringAsFixed(4)}, ${_pickedLocation!.longitude.toStringAsFixed(4)}'
                                   : AppStrings.pinLocation,
                               style: TextStyle(
                                 fontSize: 14,
@@ -430,7 +433,6 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 24),
 
-              // ── Submit button ──
               MkButton(
                 label: AppStrings.publishListing,
                 onPressed: _submit,
@@ -446,7 +448,179 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
   }
 }
 
-// ─────────────────────────── Photo Placeholder ───────────────────────────
+// ── Map Picker Screen (flutter_map) ───────────────────────────────
+
+class _MapPickerScreen extends StatefulWidget {
+  final LatLng initialLocation;
+  const _MapPickerScreen({required this.initialLocation});
+
+  @override
+  State<_MapPickerScreen> createState() => _MapPickerScreenState();
+}
+
+class _MapPickerScreenState extends State<_MapPickerScreen> {
+  late LatLng _currentPin;
+  late final MapController _mapController;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPin = widget.initialLocation;
+    _mapController = MapController();
+  }
+
+  @override
+  void dispose() {
+    _mapController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: AppColors.grey900,
+        elevation: 0,
+        title: const Text(
+          'Pin your room location',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: AppColors.grey900,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, _currentPin),
+            child: const Text(
+              'Confirm',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: AppColors.grey50),
+        ),
+      ),
+      body: Stack(
+        children: [
+          // flutter_map
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: widget.initialLocation,
+              initialZoom: 15,
+              onPositionChanged: (pos, _) {
+                setState(() => _currentPin = pos.center);
+                            },
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.merokotha.app',
+                maxZoom: 19,
+              ),
+            ],
+          ),
+
+          // Fixed center pin
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 40),
+              child: Icon(
+                Icons.location_on_rounded,
+                size: 48,
+                color: AppColors.error,
+              ),
+            ),
+          ),
+
+          // Coordinates display
+          Positioned(
+            top: 12,
+            left: 12,
+            right: 12,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.location_on_rounded,
+                    size: 16,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${_currentPin.latitude.toStringAsFixed(5)},  ${_currentPin.longitude.toStringAsFixed(5)}',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontFamily: 'monospace',
+                      color: AppColors.grey700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Bottom hint
+          Positioned(
+            bottom: 24,
+            left: 16,
+            right: 16,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 8,
+                  ),
+                ],
+              ),
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 16,
+                    color: AppColors.grey400,
+                  ),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Drag the map so the pin sits on your room\'s exact location, then tap Confirm.',
+                      style: TextStyle(fontSize: 12, color: AppColors.grey600),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Helper widgets ─────────────────────────────────────────────────
 
 class _PhotoPlaceholder extends StatelessWidget {
   @override
@@ -457,7 +631,7 @@ class _PhotoPlaceholder extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.grey50,
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey100, style: BorderStyle.solid),
+        border: Border.all(color: AppColors.grey100),
       ),
       child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -485,208 +659,6 @@ class _PhotoPlaceholder extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────── Room Type Selector ───────────────────────────
-
-class _RoomTypeSelector extends StatelessWidget {
-  final RoomType selected;
-  final void Function(RoomType) onChanged;
-
-  const _RoomTypeSelector({required this.selected, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: RoomType.values.map((t) {
-        final isSelected = selected == t;
-        return Expanded(
-          child: GestureDetector(
-            onTap: () => onChanged(t),
-            child: Container(
-              margin: EdgeInsets.only(right: t != RoomType.values.last ? 8 : 0),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primaryLight : Colors.white,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.grey100,
-                ),
-              ),
-              child: Text(
-                t.name[0].toUpperCase() + t.name.substring(1),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: isSelected ? AppColors.primary : AppColors.grey600,
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-}
-
-// ─────────────────────────── Furnishing Selector ───────────────────────────
-
-class _FurnishingSelector extends StatelessWidget {
-  final FurnishingType selected;
-  final void Function(FurnishingType) onChanged;
-
-  const _FurnishingSelector({required this.selected, required this.onChanged});
-
-  static const _labels = {
-    FurnishingType.furnished: 'Furnished',
-    FurnishingType.semiFurnished: 'Semi',
-    FurnishingType.unfurnished: 'Unfurnished',
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: FurnishingType.values.map((t) {
-        final isSelected = selected == t;
-        return Expanded(
-          child: GestureDetector(
-            onTap: () => onChanged(t),
-            child: Container(
-              margin: EdgeInsets.only(
-                right: t != FurnishingType.values.last ? 8 : 0,
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primaryLight : Colors.white,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.grey100,
-                ),
-              ),
-              child: Text(
-                _labels[t]!,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: isSelected ? AppColors.primary : AppColors.grey600,
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-}
-
-// ─────────────────────────── Map Picker Screen ───────────────────────────
-
-class _MapPickerScreen extends StatefulWidget {
-  final LatLng initialLocation;
-  const _MapPickerScreen({required this.initialLocation});
-
-  @override
-  State<_MapPickerScreen> createState() => _MapPickerScreenState();
-}
-
-class _MapPickerScreenState extends State<_MapPickerScreen> {
-  late LatLng _currentPin;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentPin = widget.initialLocation;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pin your room location'),
-        backgroundColor: Colors.white,
-        foregroundColor: AppColors.grey900,
-        elevation: 0,
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, _currentPin),
-            child: const Text(
-              'Confirm',
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w700,
-                fontSize: 15,
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: widget.initialLocation,
-              zoom: 15,
-            ),
-            onCameraMove: (pos) => setState(() => _currentPin = pos.target),
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-            zoomControlsEnabled: false,
-          ),
-          // Fixed pin in center
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 36),
-              child: Icon(
-                Icons.location_on_rounded,
-                size: 48,
-                color: AppColors.error,
-              ),
-            ),
-          ),
-          // Hint text at bottom
-          Positioned(
-            bottom: 24,
-            left: 20,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Row(
-                children: [
-                  Icon(
-                    Icons.info_outline_rounded,
-                    size: 16,
-                    color: AppColors.grey400,
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Drag the map to move the pin to your room\'s exact location',
-                      style: TextStyle(fontSize: 12, color: AppColors.grey600),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────── Helper widgets ───────────────────────────
 
 class _Card extends StatelessWidget {
   final String title;
@@ -727,16 +699,63 @@ class _Card extends StatelessWidget {
 class _Label extends StatelessWidget {
   final String text;
   const _Label(this.text);
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w500,
+      color: AppColors.grey800,
+    ),
+  );
+}
+
+class _SegmentSelector<T> extends StatelessWidget {
+  final List<T> values;
+  final T selected;
+  final String Function(T) label;
+  final void Function(T) onChanged;
+
+  const _SegmentSelector({
+    required this.values,
+    required this.selected,
+    required this.label,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 13,
-        fontWeight: FontWeight.w500,
-        color: AppColors.grey800,
-      ),
+    return Row(
+      children: values.map((v) {
+        final isSelected = selected == v;
+        final isLast = v == values.last;
+        return Expanded(
+          child: GestureDetector(
+            onTap: () => onChanged(v),
+            child: Container(
+              margin: EdgeInsets.only(right: isLast ? 0 : 8),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primaryLight : Colors.white,
+                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                border: Border.all(
+                  color: isSelected ? AppColors.primary : AppColors.grey100,
+                ),
+              ),
+              child: Text(
+                label(v),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  color: isSelected ? AppColors.primary : AppColors.grey600,
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }
+
