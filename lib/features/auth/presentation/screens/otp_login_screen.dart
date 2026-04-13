@@ -131,9 +131,12 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
                       color: AppColors.primaryLight,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Image.asset(
-                      'assets/merokotha.png',
-                      fit: BoxFit.contain,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        'assets/merokotha.png',
+                        fit: BoxFit.fill,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -148,7 +151,7 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
                 ],
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 60),
 
               // Heading
               AnimatedSwitcher(
@@ -169,11 +172,10 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
                     ? _buildOtpSection(otpState)
                     : _buildPhoneSection(otpState),
               ),
-            ],
+            ]
           ),
         ),
-      ),
-    );
+     ) );
   }
 
   Widget _buildPhoneSection(OtpState otpState) {
