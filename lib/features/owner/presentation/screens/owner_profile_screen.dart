@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:merokotha/shared/widgets/owner_botton_nav.dart';
 
-import '../../../../core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../shared/models/user_model.dart';

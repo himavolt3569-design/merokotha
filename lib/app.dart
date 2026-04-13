@@ -17,5 +17,6 @@ class MeroKothaApp extends ConsumerWidget {
       theme: AppTheme.light,
       routerConfig: router,
     );
+    
   }
 }

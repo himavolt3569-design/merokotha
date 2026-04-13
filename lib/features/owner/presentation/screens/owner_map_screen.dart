@@ -7,8 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:merokotha/shared/widgets/owner_botton_nav.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../shared/models/listing_model.dart';
 import '../../../../shared/widgets/mk_widgets.dart';
@@ -318,7 +318,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
               );
             },
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
 
           // ── Selected listing bottom card ──

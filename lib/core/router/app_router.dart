@@ -47,63 +47,63 @@ GoRouter appRouter(Ref ref) {
     },
     routes: [
       // ── Auth ──
-      GoRoute(path: AppRoutes.splash, builder: (_, __) => const SplashScreen()),
+      GoRoute(path: AppRoutes.splash, builder: (_, _) => const SplashScreen()),
       GoRoute(
         path: AppRoutes.login,
-        builder: (_, __) => const OtpLoginScreen(),
+        builder: (_, _) => const OtpLoginScreen(),
       ),
       GoRoute(
         path: AppRoutes.roleSelect,
-        builder: (_, __) => const RoleSelectScreen(),
+        builder: (_, _) => const RoleSelectScreen(),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
-        builder: (_, __) => const OnboardingScreen(),
+        builder: (_, _) => const OnboardingScreen(),
       ),
 
       // ── Owner ──
       GoRoute(
         path: AppRoutes.ownerHome,
-        builder: (_, __) => const OwnerHomeScreen(),
+        builder: (_, _) => const OwnerHomeScreen(),
       ),
       GoRoute(
         path: AppRoutes.uploadListing,
-        builder: (_, __) => const UploadListingScreen(),
+        builder: (_, _) => const UploadListingScreen(),
       ),
       GoRoute(
         path: AppRoutes.myListings,
-        builder: (_, __) => const MyListingsScreen(),
+        builder: (_, _) => const MyListingsScreen(),
       ),
       GoRoute(
         path: AppRoutes.ownerInquiries,
-        builder: (_, __) => const OwnerInquiriesScreen(),
+        builder: (_, _) => const OwnerInquiriesScreen(),
       ),
       GoRoute(
         path: AppRoutes.ownerMap,
-        builder: (_, __) => const OwnerMapScreen(),
+        builder: (_, _) => const OwnerMapScreen(),
       ),
       GoRoute(
         path: AppRoutes.ownerProfile,
-        builder: (_, __) => const OwnerProfileScreen(),
+        builder: (_, _) => const OwnerProfileScreen(),
       ),
 
       // ── Customer ──
       GoRoute(
         path: AppRoutes.customerHome,
-        builder: (_, __) => const CustomerHomeScreen(),
+        builder: (_, _) => const CustomerHomeScreen(),
       ),
-      GoRoute(path: AppRoutes.search, builder: (_, __) => const SearchScreen()),
+      GoRoute(path: AppRoutes.search, builder: (_, _) => const SearchScreen()),
       GoRoute(
         path: AppRoutes.customerMap,
-        builder: (_, __) => const CustomerMapScreen(),
+        builder: (_, _) => const CustomerMapScreen(),
       ),
       GoRoute(
         path: AppRoutes.favourites,
-        builder: (_, __) => const FavouritesScreen(),
+        builder: (_, _) => const FavouritesScreen(),
       ),
       GoRoute(
         path: AppRoutes.customerProfile,
-        builder: (_, __) => const CustomerProfileScreen(),
+        builder: (_, _) => const CustomerProfileScreen(),
       ),
       GoRoute(
         path: AppRoutes.roomDetail,
