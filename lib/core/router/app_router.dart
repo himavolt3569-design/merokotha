@@ -1,32 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:merokotha/features/owner/presentation/screens/my_listing_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../features/auth/presentation/screens/splash_screen.dart';
+import '../../features/auth/presentation/screens/onboarding_screen.dart';
 import '../../features/auth/presentation/screens/otp_login_screen.dart';
 import '../../features/auth/presentation/screens/role_select_screen.dart';
-import '../../features/auth/presentation/screens/onboarding_screen.dart';
+import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
-import '../../shared/models/listing_model.dart';
-import 'app_routes.dart';
-
+// Customer screens
+import '../../features/customer/presentation/screens/customer_home_screen.dart';
+import '../../features/customer/presentation/screens/customer_map_screen.dart';
+import '../../features/customer/presentation/screens/customer_profile_screen.dart';
+import '../../features/customer/presentation/screens/favourites_screen.dart';
+import '../../features/customer/presentation/screens/inquire_screen.dart';
+import '../../features/customer/presentation/screens/room_detail_screen.dart';
+import '../../features/customer/presentation/screens/search_screen.dart';
 // Owner screens
 import '../../features/owner/presentation/screens/owner_home_screen.dart';
-import '../../features/owner/presentation/screens/upload_listing_screen.dart';
 import '../../features/owner/presentation/screens/owner_inquiries_screen.dart';
 import '../../features/owner/presentation/screens/owner_map_screen.dart';
 import '../../features/owner/presentation/screens/owner_profile_screen.dart';
-
-// Customer screens
-import '../../features/customer/presentation/screens/customer_home_screen.dart';
-import '../../features/customer/presentation/screens/search_screen.dart';
-import '../../features/customer/presentation/screens/customer_map_screen.dart';
-import '../../features/customer/presentation/screens/room_detail_screen.dart';
-import '../../features/customer/presentation/screens/favourites_screen.dart';
-import '../../features/customer/presentation/screens/inquire_screen.dart';
-import '../../features/customer/presentation/screens/customer_profile_screen.dart';
+import '../../features/owner/presentation/screens/upload_listing_screen.dart';
+import '../../shared/models/listing_model.dart';
+import 'app_routes.dart';
 
 part 'app_router.g.dart';
 
@@ -48,10 +45,7 @@ GoRouter appRouter(Ref ref) {
     routes: [
       // ── Auth ──
       GoRoute(path: AppRoutes.splash, builder: (_, _) => const SplashScreen()),
-      GoRoute(
-        path: AppRoutes.login,
-        builder: (_, _) => const OtpLoginScreen(),
-      ),
+      GoRoute(path: AppRoutes.login, builder: (_, _) => const OtpLoginScreen()),
       GoRoute(
         path: AppRoutes.roleSelect,
         builder: (_, _) => const RoleSelectScreen(),
