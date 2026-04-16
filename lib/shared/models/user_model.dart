@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum UserRole { owner, customer }
+enum UserRole { owner, customer, superAdmin }
 
 class UserModel {
   final String id;
@@ -11,6 +11,7 @@ class UserModel {
   final String? location;
   final String? fcmToken;
   final bool isVerified;
+  final bool isBanned;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -23,6 +24,7 @@ class UserModel {
     this.location,
     this.fcmToken,
     this.isVerified = false,
+    this.isBanned = false,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -33,11 +35,15 @@ class UserModel {
       id: id,
       name: map['name'] as String? ?? '',
       phone: map['phone'] as String? ?? '',
-      role: map['role'] == 'owner' ? UserRole.owner : UserRole.customer,
+      role: UserRole.values.firstWhere(
+        (e) => e.name == map['role'],
+        orElse: () => UserRole.customer,
+      ),
       photoUrl: map['photoUrl'] as String?,
       location: map['location'] as String?,
       fcmToken: map['fcmToken'] as String?,
       isVerified: map['isVerified'] as bool? ?? false,
+      isBanned: map['isBanned'] as bool? ?? false,
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
@@ -57,6 +63,7 @@ class UserModel {
       'location': location,
       'fcmToken': fcmToken,
       'isVerified': isVerified,
+      'isBanned': isBanned,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
@@ -87,6 +94,7 @@ class UserModel {
 
   bool get isOwner => role == UserRole.owner;
   bool get isCustomer => role == UserRole.customer;
+  bool get isAdmin => role == UserRole.superAdmin;
 
   @override
   String toString() => 'UserModel(id: $id, name: $name, role: ${role.name})';

@@ -27,4 +27,11 @@ class AppRoutes {
   // Shared
   static const chatList = '/chat';
   static const chatThread = '/chat/:chatId';
+
+  // Super admin
+  static const adminHome = '/admin/home';
+  static const adminUsers = '/admin/users';
+  static const adminUserDetail = '/admin/users/:uid';
+  static const adminListings = '/admin/listings';
+  static const adminInquiries = '/admin/inquiries';
 }
