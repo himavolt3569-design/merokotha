@@ -96,7 +96,7 @@ class AdminHomeScreen extends ConsumerWidget {
                             ],
                           ),
                           loading: () => const SizedBox.shrink(),
-                          error: (_, __) => const SizedBox.shrink(),
+                          error: (_, _) => const SizedBox.shrink(),
                         ),
                   ],
                 ),
@@ -228,7 +228,7 @@ class AdminHomeScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               recentUsersAsync.when(
                 loading: () => const MkLoading(fullScreen: false),
-                error: (_, __) => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
                 data: (users) => Column(
                   children: users
                       .map(
@@ -259,7 +259,7 @@ class AdminHomeScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               recentListingsAsync.when(
                 loading: () => const MkLoading(fullScreen: false),
-                error: (_, __) => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
                 data: (listings) => Column(
                   children: listings
                       .map(

@@ -37,8 +37,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
-    final authState = ref.read(authStateProvider);
-    final firebaseUser = authState.whenData((user) => user).value;
+    final firebaseUser = ref.read(authStateProvider).value;
 
     if (firebaseUser == null) {
       context.go(AppRoutes.login);
@@ -56,12 +55,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       // New user — go to role select
       context.go(AppRoutes.roleSelect);
     } else {
-      // Existing user — get their role and go to correct home
+      // Existing user — route based on role
       final user = await ref
           .read(userRepositoryProvider)
           .getUser(firebaseUser.uid);
       if (!mounted) return;
-      if (user?.isOwner == true) {
+      if (user?.isAdmin == true) {
+        context.go(AppRoutes.adminHome);
+      } else if (user?.isOwner == true) {
         context.go(AppRoutes.ownerHome);
       } else {
         context.go(AppRoutes.customerHome);
@@ -85,13 +86,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo from assets
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset(
-                  'assets/merokotha.png',
-                  width: 80,
-                  height: 80,
+              // Logo placeholder — replace with your actual logo asset
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Icon(
+                  Icons.home_rounded,
+                  size: 48,
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 20),

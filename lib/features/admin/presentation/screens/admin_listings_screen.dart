@@ -92,7 +92,7 @@ class _AdminListingsScreenState extends ConsumerState<AdminListingsScreen> {
                 return ListView.separated(
                   padding: const EdgeInsets.all(AppSizes.pagePadding),
                   itemCount: listings.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  separatorBuilder: (_, _) => const SizedBox(height: 8),
                   itemBuilder: (_, i) {
                     final l = listings[i];
                     return AdminListingTile(

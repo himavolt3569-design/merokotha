@@ -132,7 +132,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                   initialZoom: 13,
                   maxZoom: 19,
                   minZoom: 8,
-                  onTap: (_, __) => setState(() => _selectedListing = null),
+                  onTap: (_, _) => setState(() => _selectedListing = null),
                 ),
                 children: [
                   TileLayer(
@@ -243,7 +243,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
               );
             },
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
 
           // ── No listings hint ──

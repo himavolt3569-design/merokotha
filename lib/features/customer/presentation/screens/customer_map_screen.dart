@@ -69,7 +69,7 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
                 initialZoom: 13,
                 maxZoom: 19,
                 minZoom: 8,
-                onTap: (_, __) => setState(() => _selectedListing = null),
+                onTap: (_, _) => setState(() => _selectedListing = null),
               ),
               children: [
                 // OSM tile layer
@@ -180,7 +180,7 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
               );
             },
             loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
 
           // ── Selected listing card ──
@@ -327,7 +327,7 @@ class _ListingPreviewCard extends StatelessWidget {
                       width: 76,
                       height: 76,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _imgPlaceholder,
+                      errorBuilder: (_, _, _) => _imgPlaceholder,
                     )
                   : _imgPlaceholder,
             ),

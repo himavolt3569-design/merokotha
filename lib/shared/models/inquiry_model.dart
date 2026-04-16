@@ -12,6 +12,7 @@ class InquiryModel {
   final String customerName;
   final String? customerPhotoUrl;
   final String ownerId;
+  final String? ownerName;
   final String message;
   final DateTime moveInDate;
   final InquiryStatus status;
@@ -27,6 +28,7 @@ class InquiryModel {
     required this.customerName,
     this.customerPhotoUrl,
     required this.ownerId,
+    this.ownerName,
     required this.message,
     required this.moveInDate,
     required this.status,
@@ -44,6 +46,7 @@ class InquiryModel {
       customerName: map['customerName'] as String? ?? '',
       customerPhotoUrl: map['customerPhotoUrl'] as String?,
       ownerId: map['ownerId'] as String? ?? '',
+      ownerName: map['ownerName'] as String?,
       message: map['message'] as String? ?? '',
       moveInDate: (map['moveInDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
       status: InquiryStatus.values.firstWhere(

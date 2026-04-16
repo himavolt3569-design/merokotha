@@ -52,7 +52,7 @@ class ListingCard extends StatelessWidget {
                           height: 160,
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _photoPlaceholder,
+                          errorBuilder: (_, _, _) => _photoPlaceholder,
                         )
                       : _photoPlaceholder,
                 ),

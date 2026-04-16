@@ -385,7 +385,7 @@ class _PhotoSection extends StatelessWidget {
                     photos[i],
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    errorBuilder: (_, __, ___) => _placeholder,
+                    errorBuilder: (_, _, _) => _placeholder,
                   ),
                 )
               : _placeholder,
