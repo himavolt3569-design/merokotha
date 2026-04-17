@@ -56,7 +56,7 @@ class ListingCard extends StatelessWidget {
                         )
                       : _photoPlaceholder,
                 ),
-                // Room type badge
+                // Category badge (replaces RoomType badge)
                 Positioned(
                   top: 10,
                   left: 10,
@@ -70,7 +70,7 @@ class ListingCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                     ),
                     child: Text(
-                      listing.roomTypeLabel,
+                      listing.roomTypeLabel, // uses categoryLabel alias
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -119,7 +119,6 @@ class ListingCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title
                   Text(
                     listing.title,
                     style: const TextStyle(
@@ -132,7 +131,6 @@ class ListingCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
 
-                  // Location
                   if (listing.address != null)
                     Row(
                       children: [
@@ -158,7 +156,6 @@ class ListingCard extends StatelessWidget {
 
                   const SizedBox(height: 8),
 
-                  // Price row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -191,15 +188,21 @@ class ListingCard extends StatelessWidget {
 }
 
 // ─────────────────────────── Filter Chip Row ───────────────────────────
+// Categories are now dynamic — pass them in from your category provider.
+// Each item is a record with an id (categoryL3Id) and display name.
+
+typedef CategoryChip = ({String id, String name});
 
 class FilterChipRow extends StatelessWidget {
-  final RoomType? selectedType;
-  final void Function(RoomType?) onTypeChanged;
+  final String? selectedCategoryId; // matches categoryL3Id
+  final List<CategoryChip> categories;
+  final void Function(String?) onCategoryChanged;
 
   const FilterChipRow({
     super.key,
-    this.selectedType,
-    required this.onTypeChanged,
+    this.selectedCategoryId,
+    this.categories = const [],
+    required this.onCategoryChanged,
   });
 
   @override
@@ -211,17 +214,18 @@ class FilterChipRow extends StatelessWidget {
         children: [
           _Chip(
             label: 'All',
-            isSelected: selectedType == null,
-            onTap: () => onTypeChanged(null),
+            isSelected: selectedCategoryId == null,
+            onTap: () => onCategoryChanged(null),
           ),
           const SizedBox(width: 8),
-          ...RoomType.values.map(
-            (t) => Padding(
+          ...categories.map(
+            (c) => Padding(
               padding: const EdgeInsets.only(right: 8),
               child: _Chip(
-                label: t.name[0].toUpperCase() + t.name.substring(1),
-                isSelected: selectedType == t,
-                onTap: () => onTypeChanged(selectedType == t ? null : t),
+                label: c.name,
+                isSelected: selectedCategoryId == c.id,
+                onTap: () =>
+                    onCategoryChanged(selectedCategoryId == c.id ? null : c.id),
               ),
             ),
           ),
@@ -430,7 +434,7 @@ class _PriceRangeSliderState extends State<PriceRangeSlider> {
 // ─────────────────────────── Inquiry Status Tracker ───────────────────────────
 
 class InquiryStatusTracker extends StatelessWidget {
-  final String status; // pending / accepted / declined
+  final String status;
 
   const InquiryStatusTracker({super.key, required this.status});
 

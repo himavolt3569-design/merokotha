@@ -6,6 +6,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:merokotha/shared/models/category_model.dart';
+import 'package:merokotha/shared/widgets/category_picker.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
@@ -40,7 +42,11 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
   final _addressCtrl = TextEditingController();
   final _landmarksCtrl = TextEditingController();
 
-  RoomType _roomType = RoomType.single;
+  // ── Category state (replaces _roomType) ──
+  // These will be set by your category picker widget when ready.
+  // 1. Remove all 6 old String? category fields and replace with:
+  CategorySelection _categorySelection = const CategorySelection();
+
   FurnishingType _furnishing = FurnishingType.unfurnished;
   List<String> _facilities = [];
   DateTime _availableFrom = DateTime.now();
@@ -76,7 +82,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
   }
 
   Future<void> _openMapPicker() async {
-    LatLng initial = const LatLng(27.7172, 85.3240); // Kathmandu
+    LatLng initial = const LatLng(27.7172, 85.3240);
     try {
       LocationPermission perm = await Geolocator.checkPermission();
       if (perm == LocationPermission.denied) {
@@ -124,7 +130,12 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
           ownerId: user.id,
           ownerName: user.name,
           title: _titleCtrl.text.trim(),
-          roomType: _roomType,
+          categoryL1Id: _categorySelection.level1?.id,
+          categoryL2Id: _categorySelection.level2?.id,
+          categoryL3Id: _categorySelection.level3?.id,
+          categoryL1Name: _categorySelection.level1?.name,
+          categoryL2Name: _categorySelection.level2?.name,
+          categoryL3Name: _categorySelection.level3?.name,
           rentPerMonth: double.parse(_rentCtrl.text.trim()),
           depositAmount: double.tryParse(_depositCtrl.text.trim()) ?? 0,
           floor: int.tryParse(_floorCtrl.text.trim()) ?? 0,
@@ -178,7 +189,6 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Photo placeholder
               _PhotoPlaceholder(),
               const SizedBox(height: 20),
 
@@ -194,14 +204,79 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                     textCapitalization: TextCapitalization.sentences,
                   ),
                   const SizedBox(height: AppSizes.md),
-                  const _Label('Room type'),
+
+                  // ── Category picker placeholder ──
+                  // Replace this with your CategoryPickerWidget when ready.
+                  // It should call setState(() { _categoryL1Id = ...; etc. })
+                  const _Label('Category'),
                   const SizedBox(height: 8),
-                  _SegmentSelector<RoomType>(
-                    values: RoomType.values,
-                    selected: _roomType,
-                    label: (t) => t.name[0].toUpperCase() + t.name.substring(1),
-                    onChanged: (v) => setState(() => _roomType = v),
+                  Container(
+                    padding: const EdgeInsets.all(AppSizes.md),
+                    decoration: BoxDecoration(
+                      color: AppColors.grey50,
+                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                      border: Border.all(color: AppColors.grey100),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.category_outlined,
+                          size: 18,
+                          color: AppColors.grey400,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _categorySelection.level3?.name ??
+                                _categorySelection.level2?.name ??
+                                _categorySelection.level1?.name ??
+                                'Select category',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: _categorySelection.level3 != null
+                                  ? AppColors.grey900
+                                  : AppColors.grey400,
+                            ),
+                          ),
+                        ),
+                        // TODO: onTap → open category picker bottom sheet
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (_) => Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                  ),
+                                ),
+                                padding: const EdgeInsets.all(
+                                  AppSizes.pagePadding,
+                                ),
+                                child: CategoryPicker(
+                                  selection: _categorySelection,
+                                  onChanged: (updated) {
+                                    setState(
+                                      () => _categorySelection = updated,
+                                    );
+                                    if (updated.level3 != null)
+                                      Navigator.pop(context);
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Icon(
+                            Icons.chevron_right_rounded,
+                            size: 20,
+                            color: AppColors.grey400,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+
                   const SizedBox(height: AppSizes.md),
                   const _Label('Furnishing'),
                   const SizedBox(height: 8),
@@ -374,7 +449,6 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                   ),
                   const SizedBox(height: AppSizes.md),
 
-                  // Map pin button
                   GestureDetector(
                     onTap: _openMapPicker,
                     child: Container(
@@ -448,7 +522,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
   }
 }
 
-// ── Map Picker Screen (flutter_map) ───────────────────────────────
+// ── Map Picker Screen ─────────────────────────────────────────────
 
 class _MapPickerScreen extends StatefulWidget {
   final LatLng initialLocation;
@@ -510,7 +584,6 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
       ),
       body: Stack(
         children: [
-          // flutter_map
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
@@ -518,7 +591,7 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
               initialZoom: 15,
               onPositionChanged: (pos, _) {
                 setState(() => _currentPin = pos.center);
-                            },
+              },
             ),
             children: [
               TileLayer(
@@ -528,8 +601,6 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
               ),
             ],
           ),
-
-          // Fixed center pin
           const Center(
             child: Padding(
               padding: EdgeInsets.only(bottom: 40),
@@ -540,8 +611,6 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
               ),
             ),
           ),
-
-          // Coordinates display
           Positioned(
             top: 12,
             left: 12,
@@ -578,8 +647,6 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
               ),
             ),
           ),
-
-          // Bottom hint
           Positioned(
             bottom: 24,
             left: 16,
@@ -758,4 +825,3 @@ class _SegmentSelector<T> extends StatelessWidget {
     );
   }
 }
-

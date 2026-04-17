@@ -11,6 +11,9 @@ import '../../features/auth/providers/auth_provider.dart';
 import '../../shared/models/listing_model.dart';
 import 'app_routes.dart';
 
+// Landing
+import '../../features/landing/presentation/screens/landing_screen.dart';
+
 // Owner screens
 import '../../features/owner/presentation/screens/owner_home_screen.dart';
 import '../../features/owner/presentation/screens/upload_listing_screen.dart';
@@ -33,6 +36,7 @@ import '../../features/admin/presentation/screens/admin_users_screen.dart';
 import '../../features/admin/presentation/screens/admin_user_detail_screen.dart';
 import '../../features/admin/presentation/screens/admin_listings_screen.dart';
 import '../../features/admin/presentation/screens/admin_inquiries_screen.dart';
+import '../../features/admin/presentation/screens/admin_categories_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -41,20 +45,33 @@ GoRouter appRouter(Ref ref) {
   final authState = ref.watch(authStateProvider);
 
   return GoRouter(
-    // initialLocation: AppRoutes.splash,
+    // Landing is the true initial route — public, no auth needed
+    // initialLocation: AppRoutes.landing,
     initialLocation: AppRoutes.adminHome,
     debugLogDiagnostics: true,
     redirect: (context, state) {
-      // final isLoggedIn = authState.value != null;
-      // final loc = state.matchedLocation;
+     /* final isLoggedIn = authState.value != null;
+      final loc = state.matchedLocation;
 
-      // Not logged in — send to login
-      // final isAuthRoute = loc == AppRoutes.login || loc == AppRoutes.splash;
-      // if (!isLoggedIn && !isAuthRoute) return AppRoutes.login;
+      // These routes are public — no login required
+      final publicRoutes = [
+        AppRoutes.landing,
+        AppRoutes.login,
+        AppRoutes.splash,
+      ];
 
+      if (!isLoggedIn && !publicRoutes.contains(loc)) {
+        return AppRoutes.login;
+      } */
       return null;
     },
     routes: [
+      // ── Public / Landing ──────────────────────────────────────
+      GoRoute(
+        path: AppRoutes.landing,
+        builder: (_, _) => const LandingScreen(),
+      ),
+
       // ── Auth ──────────────────────────────────────────────────
       GoRoute(path: AppRoutes.splash, builder: (_, _) => const SplashScreen()),
       GoRoute(
@@ -63,7 +80,7 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: AppRoutes.roleSelect,
-        builder: (_, _ ) => const RoleSelectScreen(),
+        builder: (_, _) => const RoleSelectScreen(),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
@@ -85,7 +102,7 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: AppRoutes.ownerInquiries,
-        builder: (_,_) => const OwnerInquiriesScreen(),
+        builder: (_, _) => const OwnerInquiriesScreen(),
       ),
       GoRoute(
         path: AppRoutes.ownerMap,
@@ -101,7 +118,7 @@ GoRouter appRouter(Ref ref) {
         path: AppRoutes.customerHome,
         builder: (_, _) => const CustomerHomeScreen(),
       ),
-      GoRoute(path: AppRoutes.search, builder: (_, __) => const SearchScreen()),
+      GoRoute(path: AppRoutes.search, builder: (_, _) => const SearchScreen()),
       GoRoute(
         path: AppRoutes.customerMap,
         builder: (_, _) => const CustomerMapScreen(),
@@ -143,6 +160,10 @@ GoRouter appRouter(Ref ref) {
         builder: (_, _) => const AdminInquiriesScreen(),
       ),
       GoRoute(
+        path: AppRoutes.adminCategories,
+        builder: (_, _) => const AdminCategoriesScreen(),
+      ),
+      GoRoute(
         path: AppRoutes.adminUserDetail,
         builder: (_, state) =>
             AdminUserDetailScreen(uid: state.pathParameters['uid']!),
@@ -165,7 +186,7 @@ GoRouter appRouter(Ref ref) {
             ),
             const SizedBox(height: 8),
             TextButton(
-              onPressed: () => context.go(AppRoutes.splash),
+              onPressed: () => context.go(AppRoutes.landing),
               child: const Text('Go home'),
             ),
           ],

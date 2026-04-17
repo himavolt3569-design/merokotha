@@ -1,8 +1,11 @@
 class AppRoutes {
   AppRoutes._();
 
+  // Landing (public — no login required)
+  static const landing = '/';
+
   // Auth
-  static const splash = '/';
+  static const splash = '/splash';
   static const login = '/login';
   static const roleSelect = '/role-select';
   static const onboarding = '/onboarding';
@@ -34,4 +37,5 @@ class AppRoutes {
   static const adminUserDetail = '/admin/users/:uid';
   static const adminListings = '/admin/listings';
   static const adminInquiries = '/admin/inquiries';
+  static const adminCategories = '/admin/categories';
 }

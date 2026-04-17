@@ -605,7 +605,7 @@ class _SettingsTile extends StatelessWidget {
                   ),
                 ),
               ),
-            if (trailing != null) trailing!,
+            ?trailing,
           ],
         ),
       ),

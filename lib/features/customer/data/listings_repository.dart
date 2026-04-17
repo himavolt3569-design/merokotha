@@ -33,9 +33,17 @@ class ListingsRepository {
       isEqualTo: ListingStatus.active.name,
     );
 
-    if (filter.roomType != null) {
-      q = q.where('roomType', isEqualTo: filter.roomType!.name);
+    // ── Category filters (replaces old roomType) ──
+    if (filter.categoryL1Id != null) {
+      q = q.where('categoryL1Id', isEqualTo: filter.categoryL1Id);
     }
+    if (filter.categoryL2Id != null) {
+      q = q.where('categoryL2Id', isEqualTo: filter.categoryL2Id);
+    }
+    if (filter.categoryL3Id != null) {
+      q = q.where('categoryL3Id', isEqualTo: filter.categoryL3Id);
+    }
+
     if (filter.furnishing != null) {
       q = q.where('furnishing', isEqualTo: filter.furnishing!.name);
     }
@@ -88,7 +96,10 @@ class ListingsRepository {
 
 class SearchFilter {
   final String? query;
-  final RoomType? roomType;
+  // ── Replaces RoomType with dynamic category IDs ──
+  final String? categoryL1Id;
+  final String? categoryL2Id;
+  final String? categoryL3Id;
   final FurnishingType? furnishing;
   final double? minRent;
   final double? maxRent;
@@ -96,7 +107,9 @@ class SearchFilter {
 
   const SearchFilter({
     this.query,
-    this.roomType,
+    this.categoryL1Id,
+    this.categoryL2Id,
+    this.categoryL3Id,
     this.furnishing,
     this.minRent,
     this.maxRent,
@@ -105,16 +118,20 @@ class SearchFilter {
 
   SearchFilter copyWith({
     String? query,
-    RoomType? roomType,
+    String? categoryL1Id,
+    String? categoryL2Id,
+    String? categoryL3Id,
     FurnishingType? furnishing,
     double? minRent,
     double? maxRent,
     List<String>? facilities,
-    bool clearRoomType = false,
+    bool clearCategory = false,
     bool clearFurnishing = false,
   }) => SearchFilter(
     query: query ?? this.query,
-    roomType: clearRoomType ? null : (roomType ?? this.roomType),
+    categoryL1Id: clearCategory ? null : (categoryL1Id ?? this.categoryL1Id),
+    categoryL2Id: clearCategory ? null : (categoryL2Id ?? this.categoryL2Id),
+    categoryL3Id: clearCategory ? null : (categoryL3Id ?? this.categoryL3Id),
     furnishing: clearFurnishing ? null : (furnishing ?? this.furnishing),
     minRent: minRent ?? this.minRent,
     maxRent: maxRent ?? this.maxRent,
@@ -122,7 +139,9 @@ class SearchFilter {
   );
 
   bool get hasActiveFilters =>
-      roomType != null ||
+      categoryL1Id != null ||
+      categoryL2Id != null ||
+      categoryL3Id != null ||
       furnishing != null ||
       minRent != null ||
       maxRent != null ||

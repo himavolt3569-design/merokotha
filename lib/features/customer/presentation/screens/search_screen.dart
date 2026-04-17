@@ -7,7 +7,6 @@ import 'package:merokotha/features/customer/providers/customers_providers.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../shared/models/listing_model.dart';
 import '../../../../shared/widgets/mk_widgets.dart';
 import '../widgets/customer_widgets.dart';
 
@@ -65,7 +64,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           onChanged: (v) => notifier.setQuery(v),
         ),
         actions: [
-          // Filter toggle badge
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Stack(
@@ -148,9 +146,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     return ListingCard(
                       listing: l,
                       isFavourited: favIds.contains(l.id),
-                      onFavourite: () => ref
-                          .read(favouriteProvider.notifier)
-                          .toggle(l),
+                      onFavourite: () =>
+                          ref.read(favouriteProvider.notifier).toggle(l),
                       onTap: () => context.push(
                         AppRoutes.roomDetail.replaceAll(':id', l.id),
                       ),
@@ -214,48 +211,14 @@ class _FilterPanel extends StatelessWidget {
             ],
           ),
 
-          // Room type
-          const Text(
-            'Room type',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: AppColors.grey800,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            children: RoomType.values.map((t) {
-              final on = filter.roomType == t;
-              return GestureDetector(
-                onTap: () => notifier.setRoomType(on ? null : t),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 7,
-                  ),
-                  decoration: BoxDecoration(
-                    color: on ? AppColors.customerLight : AppColors.grey50,
-                    borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                    border: Border.all(
-                      color: on ? AppColors.customerPrimary : AppColors.grey100,
-                    ),
-                  ),
-                  child: Text(
-                    t.name[0].toUpperCase() + t.name.substring(1),
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: on ? FontWeight.w600 : FontWeight.w400,
-                      color: on ? AppColors.customerPrimary : AppColors.grey600,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-
+          // ── Category filter note ──
+          // RoomType chips removed — categories are now dynamic.
+          // Wire up a category provider here when ready, e.g.:
+          //   FilterChipRow(
+          //     selectedCategoryId: filter.categoryL3Id,
+          //     categories: ref.watch(categoriesProvider),
+          //     onCategoryChanged: (id) => notifier.setCategory(categoryL3Id: id),
+          //   )
           const SizedBox(height: 14),
 
           // Price range
@@ -369,7 +332,8 @@ class _ActiveFiltersBar extends StatelessWidget {
 
   String _summary(SearchFilter f) {
     final parts = <String>[];
-    if (f.roomType != null) parts.add(f.roomType!.name);
+    // Show deepest active category name
+    if (f.categoryL3Id != null) parts.add('Category filtered');
     if (f.minRent != null || f.maxRent != null) {
       final min = f.minRent != null
           ? 'NPR ${f.minRent!.toStringAsFixed(0)}'

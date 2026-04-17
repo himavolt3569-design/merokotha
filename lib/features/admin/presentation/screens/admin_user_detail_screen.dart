@@ -281,7 +281,7 @@ class AdminUserDetailScreen extends ConsumerWidget {
                     },
                   ),
                 )
-                .toList(),
+                ,
           ],
         ),
         shape: RoundedRectangleBorder(

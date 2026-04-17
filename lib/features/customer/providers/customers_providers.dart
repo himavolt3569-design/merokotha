@@ -21,7 +21,6 @@ Future<ListingModel?> listingDetail(Ref ref, String listingId) async {
       .watch(listingsRepositoryProvider)
       .getListingById(listingId);
   if (listing != null) {
-    // Increment view count in background
     ref.watch(listingsRepositoryProvider).incrementView(listingId);
   }
   return listing;
@@ -36,9 +35,24 @@ class SearchFilterNotifier extends _$SearchFilterNotifier {
   void setQuery(String q) =>
       state = state.copyWith(query: q.isEmpty ? null : q);
 
-  void setRoomType(RoomType? t) => t == null
-      ? state = state.copyWith(clearRoomType: true)
-      : state = state.copyWith(roomType: t);
+  // ── Replaces setRoomType — filters by deepest category level ──
+  void setCategory({
+    String? categoryL1Id,
+    String? categoryL2Id,
+    String? categoryL3Id,
+  }) {
+    if (categoryL1Id == null && categoryL2Id == null && categoryL3Id == null) {
+      state = state.copyWith(clearCategory: true);
+    } else {
+      state = state.copyWith(
+        categoryL1Id: categoryL1Id,
+        categoryL2Id: categoryL2Id,
+        categoryL3Id: categoryL3Id,
+      );
+    }
+  }
+
+  void clearCategory() => state = state.copyWith(clearCategory: true);
 
   void setFurnishing(FurnishingType? f) => f == null
       ? state = state.copyWith(clearFurnishing: true)

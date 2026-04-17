@@ -215,6 +215,13 @@ class AdminHomeScreen extends ConsumerWidget {
                     color: AppColors.warning,
                     onTap: () => context.go(AppRoutes.adminInquiries),
                   ),
+                  const SizedBox(width: 10),
+                  _QuickAction(
+                    label: 'Categories',
+                    icon: Icons.category_rounded,
+                    color: AppColors.customerPrimary,
+                    onTap: () => context.go(AppRoutes.adminCategories),
+                  ),
                 ],
               ),
 

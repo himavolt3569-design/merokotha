@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../shared/widgets/mk_widgets.dart';
-import '../../../auth/providers/auth_provider.dart';
-import '../widgets/customer_widgets.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/features/customer/presentation/widgets/customer_widgets.dart';
 
 class CustomerHomeScreen extends ConsumerWidget {
   const CustomerHomeScreen({super.key});
@@ -19,8 +19,8 @@ class CustomerHomeScreen extends ConsumerWidget {
     final listingsAsync = ref.watch(activeListingsProvider);
     final favIds = ref.watch(favouriteIdsProvider).value ?? [];
 
-    // Local filter state for chip row
-    final selectedType = ref.watch(searchFilterProvider).roomType;
+    // Category chip filter — now a String? (categoryL3Id) instead of RoomType
+    final selectedCategoryId = ref.watch(searchFilterProvider).categoryL3Id;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
@@ -77,7 +77,6 @@ class CustomerHomeScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      // Avatar
                       userAsync.when(
                         data: (u) => GestureDetector(
                           onTap: () => context.go(AppRoutes.customerProfile),
@@ -89,7 +88,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                           ),
                         ),
                         loading: () => const SizedBox(width: 38, height: 38),
-                        error: (_, __) => const SizedBox.shrink(),
+                        error: (_, _) => const SizedBox.shrink(),
                       ),
                     ],
                   ),
@@ -135,14 +134,17 @@ class CustomerHomeScreen extends ConsumerWidget {
               ),
 
               // ── Filter chips ──
+              // Pass your categories from Firestore here when ready.
+              // For now the chip row shows only "All" until categories are loaded.
               SliverToBoxAdapter(
                 child: Column(
                   children: [
                     FilterChipRow(
-                      selectedType: selectedType,
-                      onTypeChanged: (t) => ref
+                      selectedCategoryId: selectedCategoryId,
+                      categories: const [], // TODO: wire up category provider
+                      onCategoryChanged: (id) => ref
                           .read(searchFilterProvider.notifier)
-                          .setRoomType(t),
+                          .setCategory(categoryL3Id: id),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -180,19 +182,19 @@ class CustomerHomeScreen extends ConsumerWidget {
                   ),
                 ),
                 data: (allListings) {
-                  // Apply room type chip filter client-side
-                  final listings = selectedType == null
+                  // Apply category chip filter client-side
+                  final listings = selectedCategoryId == null
                       ? allListings
                       : allListings
-                            .where((l) => l.roomType == selectedType)
+                            .where((l) => l.categoryL3Id == selectedCategoryId)
                             .toList();
 
                   if (listings.isEmpty) {
                     return SliverToBoxAdapter(
                       child: MkEmptyState(
                         title: 'No rooms found',
-                        subtitle: selectedType != null
-                            ? 'No ${selectedType.name} rooms available. Try a different type.'
+                        subtitle: selectedCategoryId != null
+                            ? 'No rooms in this category. Try a different type.'
                             : 'No listings yet. Check back soon.',
                         icon: Icons.house_outlined,
                       ),
@@ -234,7 +236,6 @@ class CustomerHomeScreen extends ConsumerWidget {
         ),
       ),
 
-      // Map FAB
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.go(AppRoutes.customerMap),
         backgroundColor: AppColors.customerPrimary,

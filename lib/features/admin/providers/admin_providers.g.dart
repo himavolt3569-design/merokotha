@@ -45,7 +45,7 @@ final class DashboardStatsProvider
   }
 }
 
-String _$dashboardStatsHash() => r'1f2a60bf1f48b60c5f4c4c2f49f1b6a858b601a5';
+String _$dashboardStatsHash() => r'cc72131ba923238e933ee43a90c33a3b8303dbde';
 
 @ProviderFor(allUsers)
 final allUsersProvider = AllUsersProvider._();
@@ -84,7 +84,7 @@ final class AllUsersProvider
   }
 }
 
-String _$allUsersHash() => r'c629cb3d7fa58d6268c05a5c421795a76e911201';
+String _$allUsersHash() => r'5dbe9d87dcbd21f5f3324a0ef215ba201f4eddff';
 
 @ProviderFor(allListings)
 final allListingsProvider = AllListingsProvider._();
@@ -125,7 +125,7 @@ final class AllListingsProvider
   }
 }
 
-String _$allListingsHash() => r'de0162fffcf15a9cb7c9053ae1f2f1f879419f53';
+String _$allListingsHash() => r'edb3ae52fc067286249c43be086fa8ec8b3fe561';
 
 @ProviderFor(allInquiries)
 final allInquiriesProvider = AllInquiriesProvider._();
@@ -166,7 +166,7 @@ final class AllInquiriesProvider
   }
 }
 
-String _$allInquiriesHash() => r'1335f541c069bc65cfbeb32b55323ba69a006881';
+String _$allInquiriesHash() => r'b3dbe817e41a47bf1cea12c49c093378d56f4eb7';
 
 @ProviderFor(recentUsers)
 final recentUsersProvider = RecentUsersProvider._();
@@ -205,7 +205,7 @@ final class RecentUsersProvider
   }
 }
 
-String _$recentUsersHash() => r'3961f4962585780fe94f29d9e14749688af51fca';
+String _$recentUsersHash() => r'04bd276e5af44a0e94ac30e611854a1ea18ad533';
 
 @ProviderFor(recentListings)
 final recentListingsProvider = RecentListingsProvider._();
@@ -246,7 +246,7 @@ final class RecentListingsProvider
   }
 }
 
-String _$recentListingsHash() => r'ad8c56b92634fca1c0aef8b641f4664106115249';
+String _$recentListingsHash() => r'dc36af4d90463b35ea7b68342588d3c60c3a193b';
 
 @ProviderFor(adminUserDetail)
 final adminUserDetailProvider = AdminUserDetailFamily._();
@@ -302,7 +302,7 @@ final class AdminUserDetailProvider
   }
 }
 
-String _$adminUserDetailHash() => r'026fa1dd4d4cdbe376d51ec6ea682ade4bd1cd67';
+String _$adminUserDetailHash() => r'17cb9c54e583f1771c79f94648de997a80e5cc17';
 
 final class AdminUserDetailFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<UserModel?>, String> {
@@ -412,7 +412,7 @@ final class SearchedUsersProvider
   }
 }
 
-String _$searchedUsersHash() => r'08d90cf4a69e208c7e53f082c0fb2185e6862460';
+String _$searchedUsersHash() => r'6049b7e9d039a366ef83b8f6ea3818ad541a1478';
 
 @ProviderFor(AdminActionNotifier)
 final adminActionProvider = AdminActionNotifierProvider._();

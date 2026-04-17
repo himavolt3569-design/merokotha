@@ -494,7 +494,7 @@ class _SettingsTile extends StatelessWidget {
                 style: const TextStyle(fontSize: 14, color: AppColors.grey900),
               ),
             ),
-            if (trailing != null) trailing!,
+            ?trailing,
           ],
         ),
       ),
