@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Users ──────────────────────────────────────────────
+    match /users/{userId} {
+      // Any logged-in user can read a profile
+      allow read: if request.auth != null;
+      // Only the owner of the document can write their own profile
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ── Listings ───────────────────────────────────────────
+    match /listings/{listingId} {
+      // Any logged-in user can read listings
+      allow read: if request.auth != null;
+      // Only users with isOwner == true can create a listing
+      allow create: if request.auth != null
+                    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isOwner == true;
+      // Only the listing owner can update or delete
+      allow update, delete: if request.auth != null
+                             && resource.data.ownerId == request.auth.uid;
+    }
+
+    // ── Inquiries ──────────────────────────────────────────
+    match /inquiries/{inquiryId} {
+      // Only sender or receiver can read
+      allow read: if request.auth != null
+                  && (resource.data.customerId == request.auth.uid
+                      || resource.data.ownerId == request.auth.uid);
+      // Only customers can create an inquiry
+      allow create: if request.auth != null
+                    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isOwner == false;
+      // Only the listing owner can update status
+      allow update: if request.auth != null
+                    && resource.data.ownerId == request.auth.uid;
+      // Nobody can delete inquiries
+      allow delete: if false;
+    }
+
+    // ── Chats (reserved for future) ────────────────────────
+    match /chats/{chatId} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid in resource.data.participants;
+    }
+
+    // ── Deny everything else ───────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

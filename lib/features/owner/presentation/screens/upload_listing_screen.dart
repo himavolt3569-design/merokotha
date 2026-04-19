@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +23,7 @@ import '../../../../shared/widgets/mk_app_bar.dart';
 import '../../../../shared/widgets/mk_button.dart';
 import '../../../../shared/widgets/mk_text_field.dart';
 import '../../../auth/providers/auth_provider.dart';
+import '../../data/owner_repository.dart';
 import '../../providers/owner_providers.dart';
 import '../widgets/owner_widgets.dart';
 
@@ -43,14 +48,13 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
   final _landmarksCtrl = TextEditingController();
 
   // ── Category state (replaces _roomType) ──
-  // These will be set by your category picker widget when ready.
-  // 1. Remove all 6 old String? category fields and replace with:
   CategorySelection _categorySelection = const CategorySelection();
 
   FurnishingType _furnishing = FurnishingType.unfurnished;
   List<String> _facilities = [];
   DateTime _availableFrom = DateTime.now();
   LatLng? _pickedLocation;
+  final List<File> _pickedImages = [];
 
   @override
   void dispose() {
@@ -108,6 +112,23 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     if (result != null) setState(() => _pickedLocation = result);
   }
 
+  Future<List<String>> _uploadImages(String listingId) async {
+    final storage = FirebaseStorage.instance;
+    final downloadUrls = <String>[];
+
+    for (var i = 0; i < _pickedImages.length; i++) {
+      final ref = storage.ref().child('listings/$listingId/image_$i.jpg');
+      final task = await ref.putFile(
+        _pickedImages[i],
+        SettableMetadata(contentType: 'image/jpeg'),
+      );
+      final url = await task.ref.getDownloadURL();
+      downloadUrls.add(url);
+    }
+
+    return downloadUrls;
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_pickedLocation == null) {
@@ -154,6 +175,25 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
 
     if (!mounted) return;
     if (id != null) {
+      if (_pickedImages.isNotEmpty) {
+        try {
+          final photoUrls = await _uploadImages(id);
+          await ref.read(ownerRepositoryProvider).updateListing(id, {
+            'photoUrls': photoUrls,
+          });
+        } catch (_) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Listing published, but image upload failed.'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+          context.go(AppRoutes.myListings);
+          return;
+        }
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Listing published!'),
@@ -189,7 +229,14 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _PhotoPlaceholder(),
+              _PhotoPicker(
+                images: _pickedImages,
+                onChanged: (images) => setState(() {
+                  _pickedImages
+                    ..clear()
+                    ..addAll(images);
+                }),
+              ),
               const SizedBox(height: 20),
 
               // Basic info
@@ -260,8 +307,9 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                                     setState(
                                       () => _categorySelection = updated,
                                     );
-                                    if (updated.level3 != null)
+                                    if (updated.level3 != null) {
                                       Navigator.pop(context);
+                                    }
                                   },
                                 ),
                               ),
@@ -689,39 +737,104 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
 
 // ── Helper widgets ─────────────────────────────────────────────────
 
-class _PhotoPlaceholder extends StatelessWidget {
+class _PhotoPicker extends StatelessWidget {
+  final List<File> images;
+  final ValueChanged<List<File>> onChanged;
+
+  const _PhotoPicker({required this.images, required this.onChanged});
+
+  Future<void> _pickImages(BuildContext context) async {
+    try {
+      final pickedFiles = await ImagePicker().pickMultiImage(imageQuality: 75);
+      if (pickedFiles.isEmpty) return;
+      final files = pickedFiles.map((file) => File(file.path)).toList();
+      onChanged(files);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to pick images. Please try again.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 120,
-      decoration: BoxDecoration(
-        color: AppColors.grey50,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey100),
-      ),
-      child: const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.add_photo_alternate_outlined,
-            size: 36,
-            color: AppColors.grey400,
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Add photos',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.grey600,
-            ),
-          ),
-          Text(
-            'Available after Firebase Storage is set up',
-            style: TextStyle(fontSize: 11, color: AppColors.grey400),
-          ),
-        ],
+    return GestureDetector(
+      onTap: () => _pickImages(context),
+      child: Container(
+        width: double.infinity,
+        height: 140,
+        padding: const EdgeInsets.all(AppSizes.md),
+        decoration: BoxDecoration(
+          color: AppColors.grey50,
+          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+          border: Border.all(color: AppColors.grey100),
+        ),
+        child: images.isEmpty
+            ? const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_photo_alternate_outlined,
+                    size: 36,
+                    color: AppColors.grey400,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Add photos',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.grey600,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Tap to select images',
+                    style: TextStyle(fontSize: 11, color: AppColors.grey400),
+                  ),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: images
+                            .map(
+                              (file) => Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                    AppSizes.radiusMd,
+                                  ),
+                                  child: Image.file(
+                                    file,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    '${images.length} photo${images.length == 1 ? '' : 's'} selected. Tap to change.',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.grey700,
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }

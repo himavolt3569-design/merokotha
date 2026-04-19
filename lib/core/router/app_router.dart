@@ -46,11 +46,11 @@ GoRouter appRouter(Ref ref) {
 
   return GoRouter(
     // Landing is the true initial route — public, no auth needed
-    // initialLocation: AppRoutes.landing,
-    initialLocation: AppRoutes.adminHome,
+    initialLocation: AppRoutes.landing,
+    // initialLocation: AppRoutes.adminHome,
     debugLogDiagnostics: true,
     redirect: (context, state) {
-     /* final isLoggedIn = authState.value != null;
+      final isLoggedIn = authState.value != null;
       final loc = state.matchedLocation;
 
       // These routes are public — no login required
@@ -62,7 +62,7 @@ GoRouter appRouter(Ref ref) {
 
       if (!isLoggedIn && !publicRoutes.contains(loc)) {
         return AppRoutes.login;
-      } */
+      } 
       return null;
     },
     routes: [

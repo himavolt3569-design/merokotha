@@ -48,7 +48,7 @@ final class AllCategoriesProvider
   }
 }
 
-String _$allCategoriesHash() => r'32f7aaf5e4c48cad2e6154c0396513f0955440d1';
+String _$allCategoriesHash() => r'dc448091a8b0c396f544d359f53a09b6cdb8d4e4';
 
 @ProviderFor(allCategoriesAdmin)
 final allCategoriesAdminProvider = AllCategoriesAdminProvider._();
@@ -90,7 +90,7 @@ final class AllCategoriesAdminProvider
 }
 
 String _$allCategoriesAdminHash() =>
-    r'f8746029415694f5a51c3c5bf7235d3a764043e2';
+    r'12cb08814020355659fdd75bef7795a3036aca29';
 
 @ProviderFor(level1Categories)
 final level1CategoriesProvider = Level1CategoriesProvider._();
@@ -131,7 +131,7 @@ final class Level1CategoriesProvider
   }
 }
 
-String _$level1CategoriesHash() => r'd86e721cdb665f5bb4c3d94c3e167bbf5bc14b83';
+String _$level1CategoriesHash() => r'4164c5b2f235bcb5430295ca7c5d136f8ca97e47';
 
 @ProviderFor(level2Categories)
 final level2CategoriesProvider = Level2CategoriesFamily._();
@@ -190,7 +190,7 @@ final class Level2CategoriesProvider
   }
 }
 
-String _$level2CategoriesHash() => r'da71cce5718b10acda5156381e1dcf3b1473c903';
+String _$level2CategoriesHash() => r'157e9dc51acc467b5d3d30dbc8df7e99e30ace9b';
 
 final class Level2CategoriesFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<CategoryModel>>, String> {
@@ -267,7 +267,7 @@ final class Level3CategoriesProvider
   }
 }
 
-String _$level3CategoriesHash() => r'093a2a73f7f7240a2c23635c76eb98c6ce84d23a';
+String _$level3CategoriesHash() => r'344929eef196ec88b3d2a2f73931533c594f0f4b';
 
 final class Level3CategoriesFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<CategoryModel>>, String> {
@@ -342,7 +342,7 @@ final class CategoryByIdProvider
   }
 }
 
-String _$categoryByIdHash() => r'f3fac5015aaa734ee2ac4ae2a709a169fd489c02';
+String _$categoryByIdHash() => r'c824c3bef285074f5798a69bba59f7258745c2a1';
 
 final class CategoryByIdFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<CategoryModel?>, String> {
@@ -409,7 +409,7 @@ final class CategoryTreeProvider
   }
 }
 
-String _$categoryTreeHash() => r'a5a944997c9ee2435ec8fc74fd2d4e3a8d586e4b';
+String _$categoryTreeHash() => r'f42f9721cfb02d3ce90211b1cf19ace0f0757f7a';
 
 @ProviderFor(CategorySelectionNotifier)
 final categorySelectionProvider = CategorySelectionNotifierProvider._();
