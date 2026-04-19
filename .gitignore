@@ -1,4 +1,4 @@
-# Firebase
+# Firebase credentials
 google-services.json
 GoogleService-Info.plist
 firebase_options.dart
@@ -34,11 +34,3 @@ Thumbs.db
 .idea/
 .vscode/
 *.iml
-
-# Platform folders (add these)
-/android/
-/ios/
-/linux/
-/macos/
-/windows/
-/web/
