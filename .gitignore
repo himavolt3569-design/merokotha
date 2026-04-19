@@ -34,3 +34,11 @@ Thumbs.db
 .idea/
 .vscode/
 *.iml
+
+# Platform folders (add these)
+/android/
+/ios/
+/linux/
+/macos/
+/windows/
+/web/
