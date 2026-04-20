@@ -9,12 +9,12 @@ plugins {
 }
 
 android {
-    namespace = "com.example.merokotha" // Replace with your package if needed
+    namespace = "com.merokotha.app" // Replace with your package if needed
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     defaultConfig {
-        applicationId = "com.example.merokotha" // Replace with your package
+        applicationId = "com.merokotha.app" // Replace with your package
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -36,6 +36,19 @@ android {
             signingConfig = signingConfigs.getByName("debug") // For testing, replace for production
         }
     }
+        signingConfigs {
+        release {
+            keyAlias 'merokotha'
+            keyPassword 'your_password'
+            storeFile file('merokotha.jks')
+            storePassword 'your_password'
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
 }
 
 flutter {
@@ -45,11 +58,5 @@ flutter {
 dependencies {
     // Core library desugaring (required for some plugins)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
-
-    // Firebase / FlutterFire dependencies
-     implementation("com.google.firebase:firebase-analytics-ktx:21.3.0")
-    implementation("com.google.firebase:firebase-auth-ktx:22.1.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:24.6.0") // ✅ Correct version
-    implementation("com.google.firebase:firebase-messaging-ktx:23.2.0")
 
 }

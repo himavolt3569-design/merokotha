@@ -1,50 +1,242 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ── Users ──────────────────────────────────────────────
+    // ────────────────────────────────────────────────────────────
+    // HELPER FUNCTIONS
+    // ────────────────────────────────────────────────────────────
+
+    // Is request coming from any signed-in user?
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Is the signed-in user this specific uid?
+    function isMe(uid) {
+      return isAuth() && request.auth.uid == uid;
+    }
+
+    // Is the signed-in user a superAdmin?
+    function isAdmin() {
+      return isAuth() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'superAdmin';
+    }
+
+    // Is the signed-in user NOT banned?
+    function notBanned() {
+      return isAuth() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('isBanned', false) == false;
+    }
+
+    // Is the signed-in user an owner role (and not banned)?
+    function isOwnerRole() {
+      return isAuth() && notBanned() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'owner';
+    }
+
+    // Is the signed-in user a customer role (and not banned)?
+    function isCustomerRole() {
+      return isAuth() && notBanned() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'customer';
+    }
+
+    // Does the update only touch the listed fields?
+    function onlyFields(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+
+    // ────────────────────────────────────────────────────────────
+    // USERS
+    // /users/{userId}
+    // ────────────────────────────────────────────────────────────
+
     match /users/{userId} {
-      // Any logged-in user can read a profile
-      allow read: if request.auth != null;
-      // Only the owner of the document can write their own profile
-      allow write: if request.auth != null && request.auth.uid == userId;
+
+      // Any signed-in user can read any profile
+      // (needed to display owner name/photo on listings and chats)
+      allow read: if isAuth();
+
+      // A user can only create their OWN document
+      // Role must be owner or customer — cannot self-assign superAdmin
+      allow create: if isMe(userId)
+        && request.resource.data.keys().hasAll(['name', 'phone', 'role', 'createdAt'])
+        && request.resource.data.role in ['owner', 'customer'];
+
+      // A user can update their own profile
+      // superAdmin can update any user (for ban/unban and role changes)
+      allow update: if isMe(userId) || isAdmin();
+
+      // Only superAdmin can delete user documents
+      allow delete: if isAdmin();
+
+      // ── Favourites sub-collection ──────────────────────────
+      // /users/{userId}/favourites/{listingId}
+      match /favourites/{listingId} {
+        // Only the user themselves (or admin) can read/write their favourites
+        allow read, write: if isMe(userId) || isAdmin();
+      }
     }
 
-    // ── Listings ───────────────────────────────────────────
+
+    // ────────────────────────────────────────────────────────────
+    // LISTINGS
+    // /listings/{listingId}
+    // ────────────────────────────────────────────────────────────
+
     match /listings/{listingId} {
-      // Any logged-in user can read listings
-      allow read: if request.auth != null;
-      // Only users with isOwner == true can create a listing
-      allow create: if request.auth != null
-                    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isOwner == true;
-      // Only the listing owner can update or delete
-      allow update, delete: if request.auth != null
-                             && resource.data.ownerId == request.auth.uid;
+
+      // PUBLIC READ — anyone (logged in or not) can read active listings
+      // This powers the landing page for unauthenticated visitors
+      allow read: if resource.data.status == 'active';
+
+      // Authenticated non-banned users can read all listings
+      // (owner sees their own paused/rented listings, admin sees all)
+      allow read: if isAuth() && notBanned();
+
+      // superAdmin can always read everything
+      allow read: if isAdmin();
+
+      // Only owner-role users (not banned) can create a listing
+      // The listing must be their own (ownerId == their uid)
+      // Listing goes active immediately — no payment required
+      allow create: if isOwnerRole()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.keys().hasAll([
+            'ownerId', 'ownerName', 'title',
+            'rentPerMonth', 'status', 'createdAt'
+          ])
+        && request.resource.data.status == 'active';
+
+      // The listing owner OR superAdmin can update a listing
+      allow update: if isAdmin() ||
+        (isAuth() && notBanned() && resource.data.ownerId == request.auth.uid);
+
+      // The listing owner OR superAdmin can delete a listing
+      allow delete: if isAdmin() ||
+        (isAuth() && resource.data.ownerId == request.auth.uid);
     }
 
-    // ── Inquiries ──────────────────────────────────────────
+
+    // ────────────────────────────────────────────────────────────
+    // INQUIRIES
+    // /inquiries/{inquiryId}
+    // ────────────────────────────────────────────────────────────
+
     match /inquiries/{inquiryId} {
-      // Only sender or receiver can read
-      allow read: if request.auth != null
-                  && (resource.data.customerId == request.auth.uid
-                      || resource.data.ownerId == request.auth.uid);
-      // Only customers can create an inquiry
-      allow create: if request.auth != null
-                    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isOwner == false;
-      // Only the listing owner can update status
-      allow update: if request.auth != null
-                    && resource.data.ownerId == request.auth.uid;
-      // Nobody can delete inquiries
-      allow delete: if false;
+
+      // Only the customer who sent it, the owner who received it,
+      // or a superAdmin can read an inquiry
+      allow read: if isAdmin() || (isAuth() && (
+        resource.data.customerId == request.auth.uid ||
+        resource.data.ownerId   == request.auth.uid
+      ));
+
+      // Only a non-banned customer can create an inquiry
+      // They can only create inquiries as themselves
+      allow create: if isCustomerRole()
+        && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.keys().hasAll([
+            'listingId', 'customerId', 'ownerId',
+            'message', 'status', 'createdAt'
+          ])
+        && request.resource.data.status == 'pending';
+
+      // The listing owner can update the status (accept / decline)
+      // superAdmin can update anything
+      allow update: if isAdmin() ||
+        (isAuth() && resource.data.ownerId == request.auth.uid
+          && onlyFields(['status', 'declineReason', 'updatedAt']));
+
+      // Nobody can delete inquiries from the client
+      // (superAdmin can if needed)
+      allow delete: if isAdmin();
     }
 
-    // ── Chats (reserved for future) ────────────────────────
+
+    // ────────────────────────────────────────────────────────────
+    // CHATS
+    // /chats/{chatId}
+    // /chats/{chatId}/messages/{messageId}
+    // ────────────────────────────────────────────────────────────
+
     match /chats/{chatId} {
-      allow read, write: if request.auth != null
-                         && request.auth.uid in resource.data.participants;
+
+      // Only participants (owner + customer) or superAdmin can read a chat
+      allow read: if isAdmin() || (isAuth() && (
+        resource.data.ownerId    == request.auth.uid ||
+        resource.data.customerId == request.auth.uid
+      ));
+
+      // A chat is created when an inquiry is accepted
+      // Either the owner or customer can create the chat document
+      // Both must be listed as participants
+      allow create: if isAuth() && notBanned()
+        && request.resource.data.keys().hasAll([
+            'ownerId', 'customerId', 'listingId',
+            'listingTitle', 'createdAt'
+          ])
+        && (request.resource.data.ownerId    == request.auth.uid ||
+            request.resource.data.customerId == request.auth.uid);
+
+      // Only participants can update chat metadata (e.g. lastMessage)
+      allow update: if isAdmin() || (isAuth() && (
+        resource.data.ownerId    == request.auth.uid ||
+        resource.data.customerId == request.auth.uid
+      ));
+
+      // Only superAdmin can delete chats
+      allow delete: if isAdmin();
+
+      // ── Messages sub-collection ────────────────────────────
+      // /chats/{chatId}/messages/{messageId}
+      match /messages/{messageId} {
+
+        // Only participants or admin can read messages
+        allow read: if isAdmin() || (isAuth() && (
+          get(/databases/$(database)/documents/chats/$(chatId)).data.ownerId    == request.auth.uid ||
+          get(/databases/$(database)/documents/chats/$(chatId)).data.customerId == request.auth.uid
+        ));
+
+        // Either participant can send a message
+        // The senderId must be their own uid
+        allow create: if isAuth() && notBanned()
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.keys().hasAll([
+              'senderId', 'text', 'createdAt', 'isRead'
+            ]);
+
+        // Only update isRead flag (mark as read)
+        allow update: if isAuth() && onlyFields(['isRead']);
+
+        // Nobody deletes messages
+        allow delete: if isAdmin();
+      }
     }
 
-    // ── Deny everything else ───────────────────────────────
+
+    // ────────────────────────────────────────────────────────────
+    // CATEGORIES
+    // /categories/{categoryId}
+    // ────────────────────────────────────────────────────────────
+
+    match /categories/{categoryId} {
+      // Categories are fully public — anyone can read them
+      // This powers the landing page category chips and search filters
+      // even for logged-out visitors
+      allow read: if true;
+
+      // Only superAdmin can create, update, or delete categories
+      allow write: if isAdmin();
+    }
+
+
+    // ────────────────────────────────────────────────────────────
+    // CATCH-ALL DENY
+    // Anything not explicitly allowed above is denied
+    // ────────────────────────────────────────────────────────────
+
     match /{document=**} {
       allow read, write: if false;
     }

@@ -74,7 +74,6 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                         ),
                       ),
                       const Spacer(),
-                      // Login button
                       GestureDetector(
                         onTap: () => context.go(AppRoutes.login),
                         child: Container(
@@ -103,7 +102,6 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
 
                   const SizedBox(height: 20),
 
-                  // Tagline
                   const Text(
                     'Find your perfect\nroom in Nepal',
                     style: TextStyle(
@@ -168,7 +166,6 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                     onTap: () => setState(() => _selectedL1Name = null),
                   ),
                   const SizedBox(width: 8),
-                  // Build chips from listing data dynamically
                   ...listingsAsync.maybeWhen(
                     data: (listings) {
                       final names = listings
@@ -184,9 +181,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                                 label: n,
                                 isSelected: _selectedL1Name == n,
                                 onTap: () => setState(
-                                  () => _selectedL1Name = _selectedL1Name == n
-                                      ? null
-                                      : n,
+                                  () => _selectedL1Name == n ? null : n,
                                 ),
                               ),
                             ),
@@ -243,8 +238,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             error: (e, _) =>
                 SliverToBoxAdapter(child: MkErrorWidget(message: e.toString())),
             data: (all) {
-              // Apply search + category filter
-              var listings = all.where((l) {
+              final listings = all.where((l) {
                 final matchSearch =
                     _searchQuery.isEmpty ||
                     l.title.toLowerCase().contains(_searchQuery) ||
@@ -289,72 +283,6 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           ),
 
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-          // ── Sign up CTA ──
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSizes.pagePadding,
-                0,
-                AppSizes.pagePadding,
-                40,
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(AppSizes.lg),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-                ),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Ready to find your room?',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Sign up free to save rooms, send inquiries and connect with owners.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white.withOpacity(0.85),
-                        height: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 46,
-                      child: ElevatedButton(
-                        onPressed: () => context.go(AppRoutes.login),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.primary,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              AppSizes.radiusMd,
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          'Get started — it\'s free',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -434,7 +362,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
   }
 }
 
-// ── Landing listing card (no favourite button) ────────────────────
+// ── Landing listing card ──────────────────────────────────────────
 
 class _LandingListingCard extends StatelessWidget {
   final ListingModel listing;
@@ -455,27 +383,31 @@ class _LandingListingCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Photo
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(AppSizes.radiusLg),
-                topRight: Radius.circular(AppSizes.radiusLg),
+            // Photo — Expanded so it fills remaining space flexibly
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(AppSizes.radiusLg),
+                  topRight: Radius.circular(AppSizes.radiusLg),
+                ),
+                child: listing.photoUrls.isNotEmpty
+                    ? Image.network(
+                        listing.photoUrls.first,
+                        height: double.infinity,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => _placeholder,
+                      )
+                    : _placeholder,
               ),
-              child: listing.photoUrls.isNotEmpty
-                  ? Image.network(
-                      listing.photoUrls.first,
-                      height: 140,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => _placeholder,
-                    )
-                  : _placeholder,
             ),
 
+            // Info section
             Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   // Category badge
                   if (listing.categoryLabel.isNotEmpty)
@@ -552,15 +484,15 @@ class _LandingListingCard extends StatelessWidget {
   }
 
   Widget get _placeholder => Container(
-    height: 140,
     color: AppColors.grey50,
+    width: double.infinity,
     child: const Center(
       child: Icon(Icons.image_outlined, size: 36, color: AppColors.grey100),
     ),
   );
 }
 
-// ── Category chip for filter row ──────────────────────────────────
+// ── Category chip ─────────────────────────────────────────────────
 
 class _CategoryChip extends StatelessWidget {
   final String label;

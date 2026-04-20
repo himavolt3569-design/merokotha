@@ -23,14 +23,25 @@ class AuthRepository {
     required void Function(FirebaseAuthException e) onError,
     required void Function(PhoneAuthCredential credential) onAutoVerified,
   }) async {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      timeout: const Duration(seconds: 60),
-      verificationCompleted: onAutoVerified,
-      verificationFailed: onError,
-      codeSent: onCodeSent,
-      codeAutoRetrievalTimeout: (verificationId) {},
-    );
+    try {
+      await _auth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        timeout: const Duration(
+          seconds: 120,
+        ), // Increased timeout from 60 to 120 seconds
+        verificationCompleted: onAutoVerified,
+        verificationFailed: onError,
+        codeSent: onCodeSent,
+        codeAutoRetrievalTimeout: (verificationId) {
+          // Called when auto-retrieval times out
+        },
+      );
+    } catch (e) {
+      // Handle any exceptions during phone number verification
+      if (e is FirebaseAuthException) {
+        onError(e);
+      }
+    }
   }
 
   // Step 2 — Verify OTP and sign in

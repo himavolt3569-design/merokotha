@@ -10,6 +10,7 @@ import '../../../../core/utils/validators.dart';
 import '../../../../shared/models/user_model.dart';
 import '../../data/user_repository.dart';
 import '../../providers/auth_provider.dart';
+import '../../../admin/presentation/widgets/admin_widgets.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -71,9 +72,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       if (!mounted) return;
 
       // Navigate to the correct home based on role
-      context.go(
-        role == UserRole.owner ? AppRoutes.ownerHome : AppRoutes.customerHome,
-      );
+      if (role == UserRole.owner) {
+        context.go(AppRoutes.ownerHome);
+      } else if (role == UserRole.superAdmin) {
+        context.go(AppRoutes.adminHome);
+      } else {
+        context.go(AppRoutes.customerHome);
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -87,12 +92,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
   }
 
-  Color get _themeColor => _role == UserRole.owner
-      ? AppColors.ownerPrimary
-      : AppColors.customerPrimary;
+  Color get _themeColor {
+    if (_role == UserRole.owner) return AppColors.ownerPrimary;
+    if (_role == UserRole.superAdmin) return AdminColors.accent;
+    return AppColors.customerPrimary;
+  }
 
-  Color get _themeLightColor =>
-      _role == UserRole.owner ? AppColors.ownerLight : AppColors.customerLight;
+  Color get _themeLightColor {
+    if (_role == UserRole.owner) return AppColors.ownerLight;
+    if (_role == UserRole.superAdmin) return AdminColors.accentLight;
+    return AppColors.customerLight;
+  }
 
   @override
   Widget build(BuildContext context) {

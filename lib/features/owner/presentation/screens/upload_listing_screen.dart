@@ -150,6 +150,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
         .uploadListing(
           ownerId: user.id,
           ownerName: user.name,
+          ownerPhotoUrl: user.photoUrl,
           title: _titleCtrl.text.trim(),
           categoryL1Id: _categorySelection.level1?.id,
           categoryL2Id: _categorySelection.level2?.id,

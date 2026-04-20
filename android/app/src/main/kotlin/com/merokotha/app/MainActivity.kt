@@ -1,4 +1,4 @@
-package com.example.merokotha
+package com.merokotha.app
 
 import io.flutter.embedding.android.FlutterActivity
 

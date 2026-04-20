@@ -53,16 +53,23 @@ GoRouter appRouter(Ref ref) {
       final isLoggedIn = authState.value != null;
       final loc = state.matchedLocation;
 
-      // These routes are public — no login required
+      // These routes are public — no login required (only for unauthenticated users)
       final publicRoutes = [
         AppRoutes.landing,
         AppRoutes.login,
         AppRoutes.splash,
       ];
 
+      // If user is NOT logged in and trying to access protected route, redirect to login
       if (!isLoggedIn && !publicRoutes.contains(loc)) {
         return AppRoutes.login;
-      } 
+      }
+
+      // If user IS logged in but on landing/login, redirect to splash to determine their home
+      if (isLoggedIn && (loc == AppRoutes.landing || loc == AppRoutes.login)) {
+        return AppRoutes.splash;
+      }
+
       return null;
     },
     routes: [
@@ -74,10 +81,7 @@ GoRouter appRouter(Ref ref) {
 
       // ── Auth ──────────────────────────────────────────────────
       GoRoute(path: AppRoutes.splash, builder: (_, _) => const SplashScreen()),
-      GoRoute(
-        path: AppRoutes.login,
-        builder: (_, _) => const OtpLoginScreen(),
-      ),
+      GoRoute(path: AppRoutes.login, builder: (_, _) => const OtpLoginScreen()),
       GoRoute(
         path: AppRoutes.roleSelect,
         builder: (_, _) => const RoleSelectScreen(),

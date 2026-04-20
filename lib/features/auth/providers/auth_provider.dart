@@ -80,7 +80,7 @@ class OtpNotifier extends _$OtpNotifier {
         .sendOtp(
           phoneNumber: formatted,
           onCodeSent: (verificationId, resendToken) {
-              // print('✅ CODE SENT: $verificationId'); //
+            // print('✅ CODE SENT: $verificationId'); //
             state = state.copyWith(
               isSending: false,
               codeSent: true,
@@ -89,9 +89,9 @@ class OtpNotifier extends _$OtpNotifier {
             );
           },
           onError: (e) {
-              // print('❌ OTP ERROR: ${e.code}'); //
-              // Map Firebase error codes to user-friendly messages
-              // and update state with the error
+            // print('❌ OTP ERROR: ${e.code}'); //
+            // Map Firebase error codes to user-friendly messages
+            // and update state with the error
             state = state.copyWith(
               isSending: false,
               errorMessage: _mapFirebaseError(e.code),
@@ -141,6 +141,10 @@ class OtpNotifier extends _$OtpNotifier {
         return 'OTP expired. Request a new one';
       case 'network-request-failed':
         return 'No internet connection';
+      case 'sms-retriever-timeout':
+        return 'Could not retrieve SMS automatically. Please enter OTP manually';
+      case 'sms-retriever-error':
+        return 'SMS retrieval failed. Please enter OTP manually';
       default:
         return 'Something went wrong. Please try again';
     }

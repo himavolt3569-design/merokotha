@@ -38,99 +38,103 @@ class ListingCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Photo area
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(AppSizes.radiusLg),
-                    topRight: Radius.circular(AppSizes.radiusLg),
+            // Photo area — Expanded so it takes remaining space flexibly
+            Expanded(
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(AppSizes.radiusLg),
+                      topRight: Radius.circular(AppSizes.radiusLg),
+                    ),
+                    child: listing.photoUrls.isNotEmpty
+                        ? Image.network(
+                            listing.photoUrls.first,
+                            height: double.infinity,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => _photoPlaceholder,
+                          )
+                        : _photoPlaceholder,
                   ),
-                  child: listing.photoUrls.isNotEmpty
-                      ? Image.network(
-                          listing.photoUrls.first,
-                          height: 160,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => _photoPlaceholder,
-                        )
-                      : _photoPlaceholder,
-                ),
-                // Category badge (replaces RoomType badge)
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                    ),
-                    child: Text(
-                      listing.roomTypeLabel, // uses categoryLabel alias
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.grey800,
-                      ),
-                    ),
-                  ),
-                ),
-                // Favourite button
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: GestureDetector(
-                    onTap: onFavourite,
+                  // Category badge
+                  Positioned(
+                    top: 10,
+                    left: 10,
                     child: Container(
-                      width: 34,
-                      height: 34,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
-                            blurRadius: 4,
-                          ),
-                        ],
+                        borderRadius: BorderRadius.circular(
+                          AppSizes.radiusFull,
+                        ),
                       ),
-                      child: Icon(
-                        isFavourited
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        size: 18,
-                        color: isFavourited
-                            ? AppColors.error
-                            : AppColors.grey400,
+                      child: Text(
+                        listing.roomTypeLabel,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.grey800,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  // Favourite button
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: onFavourite,
+                      child: Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.08),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          isFavourited
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                          size: 18,
+                          color: isFavourited
+                              ? AppColors.error
+                              : AppColors.grey400,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
 
-            // Info section
+            // Info section — fixed height content, no overflow possible
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     listing.title,
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: AppColors.grey900,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
-
+                  const SizedBox(height: 3),
                   if (listing.address != null)
                     Row(
                       children: [
@@ -144,7 +148,7 @@ class ListingCard extends StatelessWidget {
                           child: Text(
                             listing.address!,
                             style: const TextStyle(
-                              fontSize: 12,
+                              fontSize: 11,
                               color: AppColors.grey400,
                             ),
                             maxLines: 1,
@@ -153,18 +157,22 @@ class ListingCard extends StatelessWidget {
                         ),
                       ],
                     ),
-
-                  const SizedBox(height: 8),
-
+                  const SizedBox(height: 6),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      PriceBadge(amount: listing.rentPerMonth),
-                      Text(
-                        listing.furnishingLabel,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppColors.grey400,
+                      Expanded(child: PriceBadge(amount: listing.rentPerMonth)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          listing.furnishingLabel,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.grey400,
+                          ),
+                          textAlign: TextAlign.right,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -179,8 +187,8 @@ class ListingCard extends StatelessWidget {
   }
 
   Widget get _photoPlaceholder => Container(
-    height: 160,
     color: AppColors.grey50,
+    width: double.infinity,
     child: const Center(
       child: Icon(Icons.image_outlined, size: 40, color: AppColors.grey100),
     ),

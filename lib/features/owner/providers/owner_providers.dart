@@ -75,6 +75,7 @@ class UploadListingNotifier extends _$UploadListingNotifier {
     GeoPoint? geoPoint,
     String? address,
     String? nearbyLandmarks,
+    String? ownerPhotoUrl,
   }) async {
     state = state.copyWith(isLoading: true, clearError: true);
 
@@ -84,6 +85,7 @@ class UploadListingNotifier extends _$UploadListingNotifier {
         id: '',
         ownerId: ownerId,
         ownerName: ownerName,
+        ownerPhotoUrl: ownerPhotoUrl,
         title: title,
         categoryL1Id: categoryL1Id,
         categoryL2Id: categoryL2Id,

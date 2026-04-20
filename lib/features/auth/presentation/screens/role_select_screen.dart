@@ -13,6 +13,9 @@ import '../widgets/role_card.dart';
 // Temporary provider to hold selected role before saving
 final _selectedRoleProvider = StateProvider<UserRole?>((ref) => null);
 
+// Secret admin code — change this in production
+const _ADMIN_SECRET_CODE = 'admin123';
+
 class RoleSelectScreen extends ConsumerWidget {
   const RoleSelectScreen({super.key});
 
@@ -79,6 +82,16 @@ class RoleSelectScreen extends ConsumerWidget {
 
               const Spacer(),
 
+              // Hidden admin code button (tap icon 5 times to reveal)
+              _HiddenAdminButton(
+                onAdminSelected: () =>
+                    ref.read(_selectedRoleProvider.notifier).state =
+                        UserRole.superAdmin,
+                selected: selected,
+              ),
+
+              const SizedBox(height: AppSizes.md),
+
               // Continue button
               SizedBox(
                 width: double.infinity,
@@ -92,6 +105,8 @@ class RoleSelectScreen extends ConsumerWidget {
                         ? AppColors.ownerPrimary
                         : selected == UserRole.customer
                         ? AppColors.customerPrimary
+                        : selected == UserRole.superAdmin
+                        ? Colors.blueGrey
                         : null,
                   ),
                   child: const Text(AppStrings.continueText),
@@ -100,6 +115,115 @@ class RoleSelectScreen extends ConsumerWidget {
 
               const SizedBox(height: AppSizes.md),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Hidden Admin Login Button ──
+class _HiddenAdminButton extends StatefulWidget {
+  final VoidCallback onAdminSelected;
+  final UserRole? selected;
+
+  const _HiddenAdminButton({
+    required this.onAdminSelected,
+    required this.selected,
+  });
+
+  @override
+  State<_HiddenAdminButton> createState() => _HiddenAdminButtonState();
+}
+
+class _HiddenAdminButtonState extends State<_HiddenAdminButton> {
+  int _tapCount = 0;
+
+  void _onTap() {
+    _tapCount++;
+    if (_tapCount >= 5) {
+      _tapCount = 0;
+      _showAdminDialog();
+    }
+  }
+
+  void _showAdminDialog() {
+    final codeController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Admin Access'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.admin_panel_settings_rounded,
+              size: 48,
+              color: Colors.blueGrey,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Enter admin code to proceed',
+              style: TextStyle(fontSize: 14, color: AppColors.grey600),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: codeController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                hintText: 'Admin code',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (codeController.text.trim() == _ADMIN_SECRET_CODE) {
+                Navigator.pop(context);
+                widget.onAdminSelected();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('✓ Admin role selected'),
+                    backgroundColor: Colors.blueGrey,
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('✗ Invalid admin code'),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
+            },
+            child: const Text('Verify'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _onTap,
+      child: Container(
+        alignment: Alignment.center,
+        child: Text(
+          widget.selected == UserRole.superAdmin
+              ? '🔐 Admin Mode'
+              : '👤 Select role above',
+          style: TextStyle(
+            fontSize: 12,
+            color: widget.selected == UserRole.superAdmin
+                ? Colors.blueGrey
+                : AppColors.grey400,
           ),
         ),
       ),

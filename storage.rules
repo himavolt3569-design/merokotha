@@ -1,12 +1,93 @@
 rules_version = '2';
+
 service firebase.storage {
   match /b/{bucket}/o {
-    match /listings/{listingId}/{image} {
-      allow read: if true;
-      allow write: if request.auth != null
-                   && request.resource.size < 5 * 1024 * 1024
-                   && request.resource.contentType.matches('image/.*');
+
+    // ────────────────────────────────────────────────────────────
+    // HELPER FUNCTIONS
+    // ────────────────────────────────────────────────────────────
+
+    // Is the request from a signed-in user?
+    function isAuth() {
+      return request.auth != null;
     }
+
+    // Is the request from this specific user?
+    function isMe(uid) {
+      return request.auth.uid == uid;
+    }
+
+    // Is the file a valid image under 5MB?
+    function isValidImage() {
+      return request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+
+    // ────────────────────────────────────────────────────────────
+    // LISTING PHOTOS
+    // Path: listings/{listingId}/{fileName}
+    // ────────────────────────────────────────────────────────────
+
+    match /listings/{listingId}/{fileName} {
+
+      // Anyone can read listing photos
+      // (public so landing page can show photos to non-logged-in visitors)
+      allow read: if true;
+
+      // Any signed-in user can upload a listing photo
+      // Must be a valid image under 5MB
+      allow write: if isAuth() && isValidImage();
+
+      // Any signed-in user can delete listing photos
+      // (ownership check is enforced at the Firestore level)
+      allow delete: if isAuth();
+    }
+
+
+    // ────────────────────────────────────────────────────────────
+    // USER PROFILE PHOTOS
+    // Path: users/{userId}/{fileName}
+    // ────────────────────────────────────────────────────────────
+
+    match /users/{userId}/{fileName} {
+
+      // Anyone signed in can view profile photos
+      allow read: if isAuth();
+
+      // Only the user themselves can upload their profile photo
+      // Must be a valid image under 5MB
+      allow write: if isAuth() && isMe(userId) && isValidImage();
+
+      // Only the user themselves can delete their profile photo
+      allow delete: if isAuth() && isMe(userId);
+    }
+
+
+    // ────────────────────────────────────────────────────────────
+    // CHAT PHOTOS
+    // Path: chats/{chatId}/{fileName}
+    // ────────────────────────────────────────────────────────────
+
+    match /chats/{chatId}/{fileName} {
+
+      // Anyone signed in can read chat photos
+      allow read: if isAuth();
+
+      // Any signed-in user can upload a chat photo
+      // Must be a valid image under 5MB
+      allow write: if isAuth() && isValidImage();
+
+      // Sender can delete their own chat photo
+      allow delete: if isAuth();
+    }
+
+
+    // ────────────────────────────────────────────────────────────
+    // CATCH-ALL DENY
+    // Anything not matched above is denied
+    // ────────────────────────────────────────────────────────────
+
     match /{allPaths=**} {
       allow read, write: if false;
     }
