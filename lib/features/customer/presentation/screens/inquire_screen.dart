@@ -29,8 +29,6 @@ class _InquireScreenState extends ConsumerState<InquireScreen> {
   final _messageCtrl = TextEditingController();
   DateTime _moveInDate = DateTime.now().add(const Duration(days: 7));
   bool _submitted = false;
-  // ignore: unused_field
-  String? _inquiryId;
 
   @override
   void initState() {
@@ -64,10 +62,8 @@ class _InquireScreenState extends ConsumerState<InquireScreen> {
         );
 
     if (success && mounted) {
-      final state = ref.read(sendInquiryProvider);
       setState(() {
         _submitted = true;
-        _inquiryId = state.inquiryId;
       });
     }
   }

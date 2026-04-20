@@ -158,7 +158,7 @@ final class SearchFilterNotifierProvider
 }
 
 String _$searchFilterNotifierHash() =>
-    r'3cc78a0051643bf0c701e8deadae7c42c1a801eb';
+    r'15c8bbbfd201ea31b76ba71521a8dde0276133dc';
 
 abstract class _$SearchFilterNotifier extends $Notifier<SearchFilter> {
   SearchFilter build();
@@ -178,19 +178,11 @@ abstract class _$SearchFilterNotifier extends $Notifier<SearchFilter> {
   }
 }
 
-@ProviderFor(searchResults)
+@ProviderFor(SearchResults)
 final searchResultsProvider = SearchResultsProvider._();
 
 final class SearchResultsProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<ListingModel>>,
-          List<ListingModel>,
-          FutureOr<List<ListingModel>>
-        >
-    with
-        $FutureModifier<List<ListingModel>>,
-        $FutureProvider<List<ListingModel>> {
+    extends $AsyncNotifierProvider<SearchResults, List<ListingModel>> {
   SearchResultsProvider._()
     : super(
         from: null,
@@ -207,17 +199,29 @@ final class SearchResultsProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<ListingModel>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<ListingModel>> create(Ref ref) {
-    return searchResults(ref);
-  }
+  SearchResults create() => SearchResults();
 }
 
-String _$searchResultsHash() => r'483b534d68446b51b68d5ef18b95d07a4d1fc67e';
+String _$searchResultsHash() => r'47bb49ea43291481b2961dc2dabeb4db22eddafd';
+
+abstract class _$SearchResults extends $AsyncNotifier<List<ListingModel>> {
+  FutureOr<List<ListingModel>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref =
+        this.ref as $Ref<AsyncValue<List<ListingModel>>, List<ListingModel>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<ListingModel>>, List<ListingModel>>,
+              AsyncValue<List<ListingModel>>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
 
 @ProviderFor(favouriteIds)
 final favouriteIdsProvider = FavouriteIdsProvider._();

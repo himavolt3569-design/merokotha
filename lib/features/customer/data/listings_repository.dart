@@ -47,13 +47,13 @@ class ListingsRepository {
     if (filter.furnishing != null) {
       q = q.where('furnishing', isEqualTo: filter.furnishing!.name);
     }
-    if (filter.minRent != null) {
+if (filter.minRent != null) {
       q = q.where('rentPerMonth', isGreaterThanOrEqualTo: filter.minRent);
     }
     if (filter.maxRent != null) {
       q = q.where('rentPerMonth', isLessThanOrEqualTo: filter.maxRent);
     }
-
+    // Move orderBy after the range filters
     q = q.orderBy('rentPerMonth');
 
     final snap = await q.get();

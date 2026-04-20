@@ -32,7 +32,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final filter = ref.watch(searchFilterProvider);
     final notifier = ref.read(searchFilterProvider.notifier);
     final resultsAsync = ref.watch(searchResultsProvider);
-    final favIds = ref.watch(favouriteIdsProvider).value ?? [];
+    final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
@@ -124,7 +124,13 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               loading: () => const MkLoading(fullScreen: false),
               error: (e, _) => MkErrorWidget(message: e.toString()),
               data: (listings) {
-                if (listings.isEmpty) {
+                // Filter out any listings with null or empty ids
+                final validListings = listings
+                    // ignore: unnecessary_null_comparison
+                    .where((l) => l.id != null && l.id.isNotEmpty)
+                    .toList();
+
+                if (validListings.isEmpty) {
                   return MkEmptyState(
                     title: 'No results found',
                     subtitle: 'Try different keywords or remove some filters',
@@ -139,10 +145,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
                 return ListView.separated(
                   padding: const EdgeInsets.all(AppSizes.pagePadding),
-                  itemCount: listings.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  itemCount: validListings.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (_, i) {
-                    final l = listings[i];
+                    final l = validListings[i];
                     return ListingCard(
                       listing: l,
                       isFavourited: favIds.contains(l.id),
@@ -211,14 +217,6 @@ class _FilterPanel extends StatelessWidget {
             ],
           ),
 
-          // ── Category filter note ──
-          // RoomType chips removed — categories are now dynamic.
-          // Wire up a category provider here when ready, e.g.:
-          //   FilterChipRow(
-          //     selectedCategoryId: filter.categoryL3Id,
-          //     categories: ref.watch(categoriesProvider),
-          //     onCategoryChanged: (id) => notifier.setCategory(categoryL3Id: id),
-          //   )
           const SizedBox(height: 14),
 
           // Price range
@@ -332,7 +330,6 @@ class _ActiveFiltersBar extends StatelessWidget {
 
   String _summary(SearchFilter f) {
     final parts = <String>[];
-    // Show deepest active category name
     if (f.categoryL3Id != null) parts.add('Category filtered');
     if (f.minRent != null || f.maxRent != null) {
       final min = f.minRent != null

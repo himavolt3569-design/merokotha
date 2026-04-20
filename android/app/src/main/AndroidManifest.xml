@@ -3,11 +3,8 @@
     <!-- Location permissions for geolocator -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Internet for OpenStreetMap tiles -->
+    <!-- Internet for OpenStreetMap tiles and Firebase -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- SMS retriever for Firebase phone auth -->
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
 
     <application
         android:label="MeroKotha"
@@ -38,21 +35,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-
-        <!-- Firebase SMS Retriever API Receiver -->
-        <receiver
-            android:name="com.google.firebase.auth.internal.InternalAuthProvider"
-            android:exported="false" />
-
-        <!-- Broadcast receiver for SMS retrieval -->
-        <receiver
-            android:name="com.google.android.gms.auth.api.phone.SmsRetrieverReceiver"
-            android:exported="true"
-            android:permission="android.permission.SEND_SMS">
-            <intent-filter>
-                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
-            </intent-filter>
-        </receiver>
 
     </application>
 

@@ -146,7 +146,7 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final userAsync = ref.watch(currentUserProvider);
-    final favIds = ref.watch(favouriteIdsProvider).value ?? [];
+      final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,

@@ -17,7 +17,7 @@ class CustomerHomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(currentUserProvider);
     final listingsAsync = ref.watch(activeListingsProvider);
-    final favIds = ref.watch(favouriteIdsProvider).value ?? [];
+     final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
 
     // Category chip filter — now a String? (categoryL3Id) instead of RoomType
     final selectedCategoryId = ref.watch(searchFilterProvider).categoryL3Id;
@@ -141,7 +141,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                   children: [
                     FilterChipRow(
                       selectedCategoryId: selectedCategoryId,
-                      categories: const [], // TODO: wire up category provider
+                      categories: const [],
                       onCategoryChanged: (id) => ref
                           .read(searchFilterProvider.notifier)
                           .setCategory(categoryL3Id: id),

@@ -80,7 +80,6 @@ class OtpNotifier extends _$OtpNotifier {
         .sendOtp(
           phoneNumber: formatted,
           onCodeSent: (verificationId, resendToken) {
-            // print('✅ CODE SENT: $verificationId'); //
             state = state.copyWith(
               isSending: false,
               codeSent: true,
@@ -89,9 +88,6 @@ class OtpNotifier extends _$OtpNotifier {
             );
           },
           onError: (e) {
-            // print('❌ OTP ERROR: ${e.code}'); //
-            // Map Firebase error codes to user-friendly messages
-            // and update state with the error
             state = state.copyWith(
               isSending: false,
               errorMessage: _mapFirebaseError(e.code),

@@ -142,7 +142,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     }
     FocusScope.of(context).unfocus();
 
-    final user = ref.read(currentUserProvider).asData?.value;
+    final user = await ref.read(currentUserProvider.future);
     if (user == null) return;
 
     final id = await ref
@@ -258,71 +258,70 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                   // It should call setState(() { _categoryL1Id = ...; etc. })
                   const _Label('Category'),
                   const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(AppSizes.md),
-                    decoration: BoxDecoration(
-                      color: AppColors.grey50,
-                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                      border: Border.all(color: AppColors.grey100),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.category_outlined,
-                          size: 18,
-                          color: AppColors.grey400,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            _categorySelection.level3?.name ??
-                                _categorySelection.level2?.name ??
-                                _categorySelection.level1?.name ??
-                                'Select category',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: _categorySelection.level3 != null
-                                  ? AppColors.grey900
-                                  : AppColors.grey400,
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (_) => Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
                             ),
                           ),
+                          padding: const EdgeInsets.all(
+                            AppSizes.pagePadding,
+                          ),
+                          child: CategoryPicker(
+                            selection: _categorySelection,
+                            onChanged: (updated) {
+                              setState(
+                                () => _categorySelection = updated,
+                              );
+                              if (updated.level3 != null) {
+                                Navigator.pop(context);
+                              }
+                            },
+                          ),
                         ),
-                        // TODO: onTap → open category picker bottom sheet
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (_) => Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(20),
-                                  ),
-                                ),
-                                padding: const EdgeInsets.all(
-                                  AppSizes.pagePadding,
-                                ),
-                                child: CategoryPicker(
-                                  selection: _categorySelection,
-                                  onChanged: (updated) {
-                                    setState(
-                                      () => _categorySelection = updated,
-                                    );
-                                    if (updated.level3 != null) {
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(AppSizes.md),
+                      decoration: BoxDecoration(
+                        color: AppColors.grey50,
+                        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                        border: Border.all(color: AppColors.grey100),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.category_outlined,
+                            size: 18,
+                            color: AppColors.grey400,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              _categorySelection.level3?.name ??
+                                  _categorySelection.level2?.name ??
+                                  _categorySelection.level1?.name ??
+                                  'Select category',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: _categorySelection.level3 != null
+                                    ? AppColors.grey900
+                                    : AppColors.grey400,
                               ),
-                            );
-                          },
-                          child: const Icon(
+                            ),
+                          ),
+                          const Icon(
                             Icons.chevron_right_rounded,
                             size: 20,
                             color: AppColors.grey400,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
 

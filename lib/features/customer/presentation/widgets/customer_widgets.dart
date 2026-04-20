@@ -22,7 +22,7 @@ class ListingCard extends StatelessWidget {
     this.onTap,
   });
 
-  @override
+@override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap:
@@ -35,28 +35,26 @@ class ListingCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           border: Border.all(color: AppColors.grey50),
         ),
+        clipBehavior: Clip.hardEdge, // ✅ clips overflow instead of crashing
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Photo area — Expanded so it takes remaining space flexibly
-            Expanded(
+            // Photo area — fixed height
+            SizedBox(
+              height: 160, // ✅ slightly reduced to give info section more room
+              width: double.infinity,
               child: Stack(
+                fit: StackFit.expand, // ✅ ensures Stack fills the SizedBox
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(AppSizes.radiusLg),
-                      topRight: Radius.circular(AppSizes.radiusLg),
-                    ),
-                    child: listing.photoUrls.isNotEmpty
-                        ? Image.network(
-                            listing.photoUrls.first,
-                            height: double.infinity,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => _photoPlaceholder,
-                          )
-                        : _photoPlaceholder,
-                  ),
+                  listing.photoUrls.isNotEmpty
+                      ? Image.network(
+                          listing.photoUrls.first,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              _photoPlaceholder,
+                        )
+                      : _photoPlaceholder,
                   // Category badge
                   Positioned(
                     top: 10,
@@ -117,7 +115,7 @@ class ListingCard extends StatelessWidget {
               ),
             ),
 
-            // Info section — fixed height content, no overflow possible
+            // Info section
             Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
@@ -189,6 +187,7 @@ class ListingCard extends StatelessWidget {
   Widget get _photoPlaceholder => Container(
     color: AppColors.grey50,
     width: double.infinity,
+    height: double.infinity, // ✅ fills the SizedBox parent properly
     child: const Center(
       child: Icon(Icons.image_outlined, size: 40, color: AppColors.grey100),
     ),
@@ -196,13 +195,11 @@ class ListingCard extends StatelessWidget {
 }
 
 // ─────────────────────────── Filter Chip Row ───────────────────────────
-// Categories are now dynamic — pass them in from your category provider.
-// Each item is a record with an id (categoryL3Id) and display name.
 
 typedef CategoryChip = ({String id, String name});
 
 class FilterChipRow extends StatelessWidget {
-  final String? selectedCategoryId; // matches categoryL3Id
+  final String? selectedCategoryId;
   final List<CategoryChip> categories;
   final void Function(String?) onCategoryChanged;
 

@@ -25,7 +25,6 @@ void main() async {
         AndroidProvider.debug, // 🔁 Change to .playIntegrity for production
     appleProvider:
         AppleProvider.debug, // 🔁 Change to .appAttest for production
-    webProvider: ReCaptchaV3Provider('YOUR_RECAPTCHA_SITE_KEY'), // for web
   );
 
   runApp(const ProviderScope(child: MeroKothaApp()));

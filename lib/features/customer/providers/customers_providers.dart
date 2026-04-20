@@ -1,3 +1,4 @@
+import 'package:merokotha/features/owner/data/inquiry_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../shared/models/inquiry_model.dart';
@@ -52,7 +53,11 @@ class SearchFilterNotifier extends _$SearchFilterNotifier {
     }
   }
 
-  void clearCategory() => state = state.copyWith(clearCategory: true);
+  void clearCategories() => state = state.copyWith(
+    categoryL1Id: null,
+    categoryL2Id: null,
+    categoryL3Id: null,
+  );
 
   void setFurnishing(FurnishingType? f) => f == null
       ? state = state.copyWith(clearFurnishing: true)
@@ -68,9 +73,12 @@ class SearchFilterNotifier extends _$SearchFilterNotifier {
 
 // ── Search results (re-runs when filter changes) ──
 @riverpod
-Future<List<ListingModel>> searchResults(Ref ref) {
-  final filter = ref.watch(searchFilterProvider);
-  return ref.watch(listingsRepositoryProvider).searchListings(filter);
+class SearchResults extends _$SearchResults {
+  @override
+  Future<List<ListingModel>> build() async {
+    final filter = ref.watch(searchFilterProvider);
+    return ref.watch(listingsRepositoryProvider).searchListings(filter);
+  }
 }
 
 // ── Favourite IDs stream ──
@@ -84,8 +92,9 @@ Stream<List<String>> favouriteIds(Ref ref) {
 // ── Check if a specific listing is favourited ──
 @riverpod
 bool isListingFavourited(Ref ref, String listingId) {
-  final ids = ref.watch(favouriteIdsProvider).value ?? [];
-  return ids.contains(listingId);
+  final asyncFavIds = ref.watch(favouriteIdsProvider);
+  final favIds = asyncFavIds.hasValue ? asyncFavIds.value! : <String>[];
+  return favIds.contains(listingId);
 }
 
 // ── Favourite listings (fetched from listings collection by IDs) ──
@@ -179,9 +188,11 @@ class SendInquiryNotifier extends _$SendInquiryNotifier {
         createdAt: now,
         updatedAt: now,
       );
+
       final id = await ref
-          .read(SendInquiryNotifierProvider as ProviderListenable<dynamic>)
-          .sendInquiry(inquiry);
+          .read(inquiryRepositoryProvider)
+          .createInquiry(inquiry);
+
       state = state.copyWith(isLoading: false, success: true, inquiryId: id);
       return true;
     } catch (e) {

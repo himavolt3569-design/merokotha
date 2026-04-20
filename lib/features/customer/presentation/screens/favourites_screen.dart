@@ -16,7 +16,7 @@ class FavouritesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favListingsAsync = ref.watch(favouriteListingsProvider);
-    final favIds = ref.watch(favouriteIdsProvider).value ?? [];
+     final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
