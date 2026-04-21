@@ -20,7 +20,9 @@ class CustomerHomeScreen extends ConsumerWidget {
      final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
 
     // Category chip filter — now a String? (categoryL3Id) instead of RoomType
-    final selectedCategoryId = ref.watch(searchFilterProvider).categoryL3Id;
+  final selectedCategoryId = ref
+        .watch(searchFilterProvider)
+        .categoryL3Id;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
@@ -79,7 +81,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                       ),
                       userAsync.when(
                         data: (u) => GestureDetector(
-                          onTap: () => context.go(AppRoutes.customerProfile),
+                          onTap: () => context.push(AppRoutes.customerProfile),
                           child: UserAvatar(
                             name: u?.name ?? 'User',
                             photoUrl: u?.photoUrl,
@@ -100,7 +102,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(AppSizes.pagePadding),
                   child: GestureDetector(
-                    onTap: () => context.go(AppRoutes.search),
+                    onTap: () => context.push(AppRoutes.search),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -142,7 +144,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                     FilterChipRow(
                       selectedCategoryId: selectedCategoryId,
                       categories: const [],
-                      onCategoryChanged: (id) => ref
+                     onCategoryChanged: (id) => ref
                           .read(searchFilterProvider.notifier)
                           .setCategory(categoryL3Id: id),
                     ),
@@ -237,7 +239,7 @@ class CustomerHomeScreen extends ConsumerWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go(AppRoutes.customerMap),
+        onPressed: () => context.push(AppRoutes.customerMap),
         backgroundColor: AppColors.customerPrimary,
         foregroundColor: Colors.white,
         child: const Icon(Icons.map_rounded),

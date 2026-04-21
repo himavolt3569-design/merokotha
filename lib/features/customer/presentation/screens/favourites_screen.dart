@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:merokotha/features/customer/presentation/screens/customer_home_screen.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
 
 import '../../../../core/constants/app_colors.dart';
@@ -16,11 +17,22 @@ class FavouritesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favListingsAsync = ref.watch(favouriteListingsProvider);
-     final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
+    final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
-      appBar: const MkAppBar(title: 'Saved rooms', showBack: false),
+      appBar: MkAppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: AppColors.grey800,
+          ),
+          onPressed: () => context.pop(CustomerHomeScreen()),
+        ),
+        title: 'Saved rooms',
+        showBack: false,
+      ),
       body: favListingsAsync.when(
         loading: () => const MkLoading(),
         error: (e, _) => MkErrorWidget(message: e.toString()),

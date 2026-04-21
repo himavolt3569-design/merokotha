@@ -1,0 +1,81 @@
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../../features/auth/providers/auth_provider.dart';
+import '../data/chat_model.dart';
+import '../data/chat_repository.dart';
+
+part 'chat_providers.g.dart';
+
+// ── All chats for current user ──
+@riverpod
+Stream<List<ChatModel>> myChats(Ref ref) {
+  final user = ref.watch(currentUserProvider).asData?.value;
+  if (user == null) return const Stream.empty();
+
+  if (user.isOwner) {
+    return ref.watch(chatRepositoryProvider).watchOwnerChats(user.id);
+  } else {
+    return ref.watch(chatRepositoryProvider).watchCustomerChats(user.id);
+  }
+}
+
+// ── Single chat thread ──
+@riverpod
+Stream<ChatModel?> chatThread(Ref ref, String chatId) {
+  return ref.watch(chatRepositoryProvider).watchChat(chatId);
+}
+
+// ── Messages in a thread ──
+@riverpod
+Stream<List<MessageModel>> chatMessages(Ref ref, String chatId) {
+  return ref.watch(chatRepositoryProvider).watchMessages(chatId);
+}
+
+// ── Total unread count (for badge on nav) ──
+@riverpod
+Stream<int> totalUnread(Ref ref) {
+  final user = ref.watch(currentUserProvider).asData?.value;
+  if (user == null) return Stream.value(0);
+
+  return ref
+      .watch(chatRepositoryProvider)
+      .watchTotalUnread(userId: user.id, isOwner: user.isOwner);
+}
+
+// ── Send message notifier ──
+class SendMessageState {
+  final bool isSending;
+  final String? error;
+  const SendMessageState({this.isSending = false, this.error});
+}
+
+@riverpod
+class SendMessageNotifier extends _$SendMessageNotifier {
+  @override
+  SendMessageState build() => const SendMessageState();
+
+  Future<void> send({
+    required String chatId,
+    required String senderId,
+    required String text,
+    String? imageUrl,
+    required bool senderIsOwner,
+  }) async {
+    if (text.trim().isEmpty && imageUrl == null) return;
+    state = const SendMessageState(isSending: true);
+    try {
+      await ref
+          .read(chatRepositoryProvider)
+          .sendMessage(
+            chatId: chatId,
+            senderId: senderId,
+            text: text.trim(),
+            imageUrl: imageUrl,
+            senderIsOwner: senderIsOwner,
+          );
+      state = const SendMessageState();
+    } catch (e) {
+      state = SendMessageState(error: e.toString());
+    }
+  }
+}

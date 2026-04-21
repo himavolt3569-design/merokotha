@@ -10,7 +10,7 @@ import '../../../../shared/models/listing_model.dart';
 import '../../../../shared/widgets/mk_app_bar.dart';
 import '../../../../shared/widgets/mk_widgets.dart';
 import '../../providers/owner_providers.dart';
-import '../widgets/owner_widgets.dart';
+import '../widgets/owner_widgets.dart'; // ← ADD THIS
 
 class MyListingsScreen extends ConsumerWidget {
   const MyListingsScreen({super.key});
@@ -27,7 +27,7 @@ class MyListingsScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_rounded, color: AppColors.primary),
-            onPressed: () => context.go(AppRoutes.uploadListing),
+            onPressed: () => context.push(AppRoutes.uploadListing),
           ),
         ],
       ),
@@ -44,7 +44,7 @@ class MyListingsScreen extends ConsumerWidget {
               subtitle: 'Add your first room to start receiving inquiries',
               icon: Icons.house_outlined,
               actionLabel: 'Add listing',
-              onAction: () => context.go(AppRoutes.uploadListing),
+              onAction: () => context.push(AppRoutes.uploadListing),
             );
           }
 
@@ -54,7 +54,7 @@ class MyListingsScreen extends ConsumerWidget {
             child: ListView.separated(
               padding: const EdgeInsets.all(AppSizes.pagePadding),
               itemCount: listings.length,
-              separatorBuilder: (_, _) => const SizedBox(height: AppSizes.md),
+              separatorBuilder: (_, i) => const SizedBox(height: AppSizes.md),
               itemBuilder: (_, i) {
                 final l = listings[i];
                 return OwnerListingCard(

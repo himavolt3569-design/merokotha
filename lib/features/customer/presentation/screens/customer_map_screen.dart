@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +11,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../shared/models/listing_model.dart';
 import '../../../../shared/widgets/mk_widgets.dart';
 import '../widgets/customer_widgets.dart';
+import 'dart:ui' as ui;
 
 class CustomerMapScreen extends ConsumerStatefulWidget {
   const CustomerMapScreen({super.key});
@@ -98,7 +97,7 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: GestureDetector(
-                    onTap: () => context.go(AppRoutes.search),
+                    onTap: () => context.push(AppRoutes.search),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
@@ -202,7 +201,7 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
             ),
         ],
       ),
-      bottomNavigationBar: const CustomerBottomNav(currentIndex: 2),
+      bottomNavigationBar: const CustomerBottomNav(currentIndex: 4),
     );
   }
 }

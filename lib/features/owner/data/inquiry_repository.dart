@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../shared/models/inquiry_model.dart';
 import '../../../shared/providers/firebase_providers.dart';
+import '../../chat/data/chat_repository.dart';
 
 part 'inquiry_repository.g.dart';
 
@@ -51,12 +52,33 @@ class InquiryRepository {
     return ref.id;
   }
 
-  // ── Accept inquiry ──
-  Future<void> acceptInquiry(String id) async {
-    await _inquiries.doc(id).update({
+  // ── Accept inquiry + auto-create chat thread ──
+  Future<String> acceptInquiry({
+    required String inquiryId,
+    required InquiryModel inquiry,
+    required String ownerName,
+    String? ownerPhotoUrl,
+  }) async {
+    // 1. Mark inquiry as accepted
+    await _inquiries.doc(inquiryId).update({
       'status': InquiryStatus.accepted.name,
       'updatedAt': FieldValue.serverTimestamp(),
     });
+
+    // 2. Auto-create a chat thread between owner and customer
+    final chatRepo = ChatRepository(_db);
+    final chatId = await chatRepo.createChat(
+      ownerId: inquiry.ownerId,
+      ownerName: ownerName,
+      ownerPhotoUrl: ownerPhotoUrl,
+      customerId: inquiry.customerId,
+      customerName: inquiry.customerName,
+      customerPhotoUrl: inquiry.customerPhotoUrl,
+      listingId: inquiry.listingId,
+      listingTitle: inquiry.listingTitle,
+    );
+
+    return chatId;
   }
 
   // ── Decline inquiry ──

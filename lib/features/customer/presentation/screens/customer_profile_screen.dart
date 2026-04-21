@@ -146,7 +146,7 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final userAsync = ref.watch(currentUserProvider);
-      final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
+    final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
@@ -363,7 +363,7 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
           );
         },
       ),
-      bottomNavigationBar: const CustomerBottomNav(currentIndex: 4),
+      bottomNavigationBar: const CustomerBottomNav(currentIndex: 5),
     );
   }
 }

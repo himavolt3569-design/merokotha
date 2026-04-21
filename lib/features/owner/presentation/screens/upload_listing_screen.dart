@@ -222,7 +222,17 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
-      appBar: const MkAppBar(title: 'Add listing'),
+      appBar: MkAppBar(
+        title: 'Add listing',
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: AppColors.grey800,
+          ),
+          onPressed: () => context.pop(),
+        ),
+      ),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -269,15 +279,11 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                               top: Radius.circular(20),
                             ),
                           ),
-                          padding: const EdgeInsets.all(
-                            AppSizes.pagePadding,
-                          ),
+                          padding: const EdgeInsets.all(AppSizes.pagePadding),
                           child: CategoryPicker(
                             selection: _categorySelection,
                             onChanged: (updated) {
-                              setState(
-                                () => _categorySelection = updated,
-                              );
+                              setState(() => _categorySelection = updated);
                               if (updated.level3 != null) {
                                 Navigator.pop(context);
                               }

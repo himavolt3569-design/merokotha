@@ -46,6 +46,14 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
     }
 
+    // Is the current user a participant of a given chat?
+    function isChatParticipant(chatId) {
+      return isAuth() && (
+        get(/databases/$(database)/documents/chats/$(chatId)).data.ownerId    == request.auth.uid ||
+        get(/databases/$(database)/documents/chats/$(chatId)).data.customerId == request.auth.uid
+      );
+    }
+
 
     // ────────────────────────────────────────────────────────────
     // USERS
@@ -170,8 +178,7 @@ service cloud.firestore {
       ));
 
       // A chat is created when an inquiry is accepted
-      // Either the owner or customer can create the chat document
-      // Both must be listed as participants
+      // The creator must be one of the participants
       allow create: if isAuth() && notBanned()
         && request.resource.data.keys().hasAll([
             'ownerId', 'customerId', 'listingId',
@@ -180,7 +187,8 @@ service cloud.firestore {
         && (request.resource.data.ownerId    == request.auth.uid ||
             request.resource.data.customerId == request.auth.uid);
 
-      // Only participants can update chat metadata (e.g. lastMessage)
+      // Only participants can update chat metadata
+      // (e.g. lastMessage, lastMessageAt, unreadCount after a message is sent)
       allow update: if isAdmin() || (isAuth() && (
         resource.data.ownerId    == request.auth.uid ||
         resource.data.customerId == request.auth.uid
@@ -189,28 +197,30 @@ service cloud.firestore {
       // Only superAdmin can delete chats
       allow delete: if isAdmin();
 
+
       // ── Messages sub-collection ────────────────────────────
       // /chats/{chatId}/messages/{messageId}
       match /messages/{messageId} {
 
-        // Only participants or admin can read messages
-        allow read: if isAdmin() || (isAuth() && (
-          get(/databases/$(database)/documents/chats/$(chatId)).data.ownerId    == request.auth.uid ||
-          get(/databases/$(database)/documents/chats/$(chatId)).data.customerId == request.auth.uid
-        ));
+        // Only participants or superAdmin can read messages
+        allow read: if isAdmin() || isChatParticipant(chatId);
 
-        // Either participant can send a message
-        // The senderId must be their own uid
+        // ── FIXED: sender must be a participant of THIS chat ──
+        // Prevents anyone who knows a chatId from injecting messages
         allow create: if isAuth() && notBanned()
           && request.resource.data.senderId == request.auth.uid
+          && isChatParticipant(chatId)
           && request.resource.data.keys().hasAll([
               'senderId', 'text', 'createdAt', 'isRead'
             ]);
 
-        // Only update isRead flag (mark as read)
-        allow update: if isAuth() && onlyFields(['isRead']);
+        // Only the isRead flag can be updated (mark as read)
+        // Message content cannot be edited after sending
+        allow update: if isAuth()
+          && isChatParticipant(chatId)
+          && onlyFields(['isRead']);
 
-        // Nobody deletes messages
+        // Nobody can delete messages (superAdmin only)
         allow delete: if isAdmin();
       }
     }

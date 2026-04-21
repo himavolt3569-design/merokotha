@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:merokotha/features/owner/presentation/widgets/owner_widgets.dart';
 import 'package:merokotha/shared/widgets/owner_botton_nav.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../shared/models/inquiry_model.dart';
 import '../../../../shared/widgets/mk_app_bar.dart';
 import '../../../../shared/widgets/mk_widgets.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../data/inquiry_repository.dart';
-import '../widgets/owner_widgets.dart';
+
 
 class OwnerInquiriesScreen extends ConsumerStatefulWidget {
   const OwnerInquiriesScreen({super.key});
@@ -42,7 +45,6 @@ class _OwnerInquiriesScreenState extends ConsumerState<OwnerInquiriesScreen>
       appBar: MkAppBar(title: 'Inquiries', showBack: false, actions: const []),
       body: Column(
         children: [
-          // Tab bar
           Container(
             color: Colors.white,
             child: TabBar(
@@ -105,7 +107,9 @@ class _InquiryTab extends ConsumerWidget {
                     title: 'No ${status.name} inquiries',
                     subtitle: status == InquiryStatus.pending
                         ? 'New inquiries from renters will appear here'
-                        : 'No inquiries have been ${status.name} yet',
+                        : status == InquiryStatus.accepted
+                        ? 'Accepted inquiries open a chat — check Messages tab'
+                        : 'No inquiries have been declined yet',
                     icon: Icons.inbox_outlined,
                   );
                 }
@@ -120,12 +124,14 @@ class _InquiryTab extends ConsumerWidget {
                     return InquiryCard(
                       inquiry: inq,
                       onAccept: status == InquiryStatus.pending
-                          ? () => ref
-                                .read(inquiryRepositoryProvider)
-                                .acceptInquiry(inq.id)
+                          ? () => _acceptAndChat(context, ref, user, inq)
                           : null,
                       onDecline: status == InquiryStatus.pending
                           ? () => _showDeclineDialog(context, ref, inq.id)
+                          : null,
+                      // Show "Open chat" button for accepted inquiries
+                      onOpenChat: status == InquiryStatus.accepted
+                          ? () => _openChat(context, ref, user, inq)
                           : null,
                     );
                   },
@@ -136,6 +142,86 @@ class _InquiryTab extends ConsumerWidget {
           loading: () => const MkLoading(),
           error: (_, _) => const SizedBox.shrink(),
         );
+  }
+
+  // ── Accept inquiry → create chat → open thread ──
+  Future<void> _acceptAndChat(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic user,
+    InquiryModel inq,
+  ) async {
+    try {
+      final chatId = await ref
+          .read(inquiryRepositoryProvider)
+          .acceptInquiry(
+            inquiryId: inq.id,
+            inquiry: inq,
+            ownerName: user.name,
+            ownerPhotoUrl: user.photoUrl,
+          );
+
+      if (context.mounted) {
+        // Show success snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text('Accepted! Chat opened with ${inq.customerName}'),
+              ],
+            ),
+            backgroundColor: AppColors.success,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+
+        // Navigate to chat thread
+        context.push(AppRoutes.chatThread.replaceAll(':chatId', chatId));
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to accept: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  // ── Open existing chat for accepted inquiry ──
+  Future<void> _openChat(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic user,
+    InquiryModel inq,
+  ) async {
+    try {
+      // Find or create the chat (idempotent)
+      final chatId = await ref
+          .read(inquiryRepositoryProvider)
+          .acceptInquiry(
+            inquiryId: inq.id,
+            inquiry: inq,
+            ownerName: user.name,
+            ownerPhotoUrl: user.photoUrl,
+          );
+
+      if (context.mounted) {
+        context.push(AppRoutes.chatThread.replaceAll(':chatId', chatId));
+      }
+    } catch (_) {
+      if (context.mounted) {
+        context.push(AppRoutes.chatList);
+      }
+    }
   }
 
   void _showDeclineDialog(

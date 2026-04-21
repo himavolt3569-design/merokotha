@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../shared/models/listing_model.dart';
 import '../../../../shared/widgets/mk_widgets.dart';
+import '../../../chat/providers/chat_providers.dart';
 
 // ─────────────────────────── Listing Card ───────────────────────────
 
@@ -22,7 +24,7 @@ class ListingCard extends StatelessWidget {
     this.onTap,
   });
 
-@override
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap:
@@ -35,104 +37,104 @@ class ListingCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           border: Border.all(color: AppColors.grey50),
         ),
-        clipBehavior: Clip.hardEdge, // ✅ clips overflow instead of crashing
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
-            // Photo area — fixed height
-            SizedBox(
-              height: 160, // ✅ slightly reduced to give info section more room
-              width: double.infinity,
-              child: Stack(
-                fit: StackFit.expand, // ✅ ensures Stack fills the SizedBox
-                children: [
-                  listing.photoUrls.isNotEmpty
+            // Photo area
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(AppSizes.radiusLg),
+                    topRight: Radius.circular(AppSizes.radiusLg),
+                  ),
+                  child: listing.photoUrls.isNotEmpty
                       ? Image.network(
                           listing.photoUrls.first,
+                          height: 160,
+                          width: double.infinity,
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              _photoPlaceholder,
+                          errorBuilder: (_, _, _) => _photoPlaceholder,
                         )
                       : _photoPlaceholder,
-                  // Category badge
-                  Positioned(
-                    top: 10,
-                    left: 10,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
+                ),
+                // Room type badge
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                    ),
+                    child: Text(
+                      listing.roomTypeLabel,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.grey800,
                       ),
+                    ),
+                  ),
+                ),
+                // Favourite button
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: onFavourite,
+                    child: Container(
+                      width: 34,
+                      height: 34,
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(
-                          AppSizes.radiusFull,
-                        ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 4,
+                          ),
+                        ],
                       ),
-                      child: Text(
-                        listing.roomTypeLabel,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.grey800,
-                        ),
-                      ),
-                    ),
-                  ),
-                  // Favourite button
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: GestureDetector(
-                      onTap: onFavourite,
-                      child: Container(
-                        width: 34,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 4,
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          isFavourited
-                              ? Icons.favorite_rounded
-                              : Icons.favorite_border_rounded,
-                          size: 18,
-                          color: isFavourited
-                              ? AppColors.error
-                              : AppColors.grey400,
-                        ),
+                      child: Icon(
+                        isFavourited
+                            ? Icons.favorite_rounded
+                            : Icons.favorite_border_rounded,
+                        size: 18,
+                        color: isFavourited
+                            ? AppColors.error
+                            : AppColors.grey400,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
 
             // Info section
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
                 children: [
+                  // Title
                   Text(
                     listing.title,
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: AppColors.grey900,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 3),
+                  const SizedBox(height: 4),
+
+                  // Location
                   if (listing.address != null)
                     Row(
                       children: [
@@ -146,7 +148,7 @@ class ListingCard extends StatelessWidget {
                           child: Text(
                             listing.address!,
                             style: const TextStyle(
-                              fontSize: 11,
+                              fontSize: 12,
                               color: AppColors.grey400,
                             ),
                             maxLines: 1,
@@ -155,22 +157,23 @@ class ListingCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                  const SizedBox(height: 6),
+
+                  const SizedBox(height: 8),
+
+                  // Price row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(child: PriceBadge(amount: listing.rentPerMonth)),
-                      const SizedBox(width: 8),
-                      Expanded(
+                      PriceBadge(amount: listing.rentPerMonth),
+                      Flexible(
                         child: Text(
                           listing.furnishingLabel,
                           style: const TextStyle(
                             fontSize: 11,
                             color: AppColors.grey400,
                           ),
-                          textAlign: TextAlign.right,
-                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.end,
                         ),
                       ),
                     ],
@@ -185,9 +188,8 @@ class ListingCard extends StatelessWidget {
   }
 
   Widget get _photoPlaceholder => Container(
+    height: 160,
     color: AppColors.grey50,
-    width: double.infinity,
-    height: double.infinity, // ✅ fills the SizedBox parent properly
     child: const Center(
       child: Icon(Icons.image_outlined, size: 40, color: AppColors.grey100),
     ),
@@ -196,17 +198,15 @@ class ListingCard extends StatelessWidget {
 
 // ─────────────────────────── Filter Chip Row ───────────────────────────
 
-typedef CategoryChip = ({String id, String name});
-
 class FilterChipRow extends StatelessWidget {
   final String? selectedCategoryId;
-  final List<CategoryChip> categories;
+  final List<({String id, String name})> categories;
   final void Function(String?) onCategoryChanged;
 
   const FilterChipRow({
     super.key,
     this.selectedCategoryId,
-    this.categories = const [],
+    required this.categories,
     required this.onCategoryChanged,
   });
 
@@ -439,7 +439,7 @@ class _PriceRangeSliderState extends State<PriceRangeSlider> {
 // ─────────────────────────── Inquiry Status Tracker ───────────────────────────
 
 class InquiryStatusTracker extends StatelessWidget {
-  final String status;
+  final String status; // pending / accepted / declined
 
   const InquiryStatusTracker({super.key, required this.status});
 
@@ -467,58 +467,63 @@ class InquiryStatusTracker extends StatelessWidget {
         final isDone = stepIndex < activeIndex;
         final isActive = stepIndex == activeIndex;
         final isDeclined = status == 'declined' && stepIndex == activeIndex;
-        return Column(
-          children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDeclined
-                    ? AppColors.errorLight
-                    : isDone || isActive
-                    ? AppColors.primary
-                    : AppColors.grey50,
-                border: Border.all(
+        return Flexible(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDeclined
+                      ? AppColors.errorLight
+                      : isDone || isActive
+                      ? AppColors.primary
+                      : AppColors.grey50,
+                  border: Border.all(
+                    color: isDeclined
+                        ? AppColors.error
+                        : isDone || isActive
+                        ? AppColors.primary
+                        : AppColors.grey100,
+                  ),
+                ),
+                child: Icon(
+                  isDeclined
+                      ? Icons.close_rounded
+                      : isDone || isActive
+                      ? Icons.check_rounded
+                      : Icons.circle_outlined,
+                  size: 14,
                   color: isDeclined
                       ? AppColors.error
                       : isDone || isActive
-                      ? AppColors.primary
-                      : AppColors.grey100,
+                      ? Colors.white
+                      : AppColors.grey400,
                 ),
               ),
-              child: Icon(
-                isDeclined
-                    ? Icons.close_rounded
-                    : isDone || isActive
-                    ? Icons.check_rounded
-                    : Icons.circle_outlined,
-                size: 14,
-                color: isDeclined
-                    ? AppColors.error
-                    : isDone || isActive
-                    ? Colors.white
-                    : AppColors.grey400,
+              const SizedBox(height: 4),
+              Text(
+                stepIndex == 2
+                    ? (status == 'accepted'
+                          ? 'Accepted'
+                          : status == 'declined'
+                          ? 'Declined'
+                          : 'Response')
+                    : steps[stepIndex],
+                style: TextStyle(
+                  fontSize: 10,
+                  color: isActive || isDone
+                      ? AppColors.grey800
+                      : AppColors.grey400,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              stepIndex == 2
-                  ? (status == 'accepted'
-                        ? 'Accepted'
-                        : status == 'declined'
-                        ? 'Declined'
-                        : 'Response')
-                  : steps[stepIndex],
-              style: TextStyle(
-                fontSize: 10,
-                color: isActive || isDone
-                    ? AppColors.grey800
-                    : AppColors.grey400,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-              ),
-            ),
-          ],
+            ],
+          ),
         );
       }),
     );
@@ -527,12 +532,14 @@ class InquiryStatusTracker extends StatelessWidget {
 
 // ─────────────────────────── Customer Bottom Nav ───────────────────────────
 
-class CustomerBottomNav extends StatelessWidget {
+class CustomerBottomNav extends ConsumerWidget {
   final int currentIndex;
   const CustomerBottomNav({super.key, required this.currentIndex});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unread = ref.watch(totalUnreadProvider).asData?.value ?? 0;
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -559,44 +566,94 @@ class CustomerBottomNav extends StatelessWidget {
               context.go(AppRoutes.search);
               break;
             case 2:
-              context.go(AppRoutes.customerMap);
+              context.go(AppRoutes.chatList);
               break;
             case 3:
               context.go(AppRoutes.favourites);
               break;
             case 4:
+              context.go(AppRoutes.customerMap);
+              break;
+            case 5:
               context.go(AppRoutes.customerProfile);
               break;
           }
         },
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             activeIcon: Icon(Icons.home_rounded),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.search_outlined),
             activeIcon: Icon(Icons.search_rounded),
             label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
-            activeIcon: Icon(Icons.map_rounded),
-            label: 'Map',
+            icon: _ChatBadge(unread: unread, filled: false),
+            activeIcon: _ChatBadge(unread: unread, filled: true),
+            label: 'Messages',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.favorite_outline_rounded),
             activeIcon: Icon(Icons.favorite_rounded),
             label: 'Saved',
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.map_outlined),
+            activeIcon: Icon(Icons.map_rounded),
+            label: 'Map',
+          ),
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_rounded),
             activeIcon: Icon(Icons.person_rounded),
             label: 'Profile',
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ChatBadge extends StatelessWidget {
+  final int unread;
+  final bool filled;
+  const _ChatBadge({required this.unread, required this.filled});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Icon(
+          filled
+              ? Icons.chat_bubble_rounded
+              : Icons.chat_bubble_outline_rounded,
+        ),
+        if (unread > 0)
+          Positioned(
+            top: -4,
+            right: -6,
+            child: Container(
+              padding: const EdgeInsets.all(3),
+              decoration: const BoxDecoration(
+                color: AppColors.error,
+                shape: BoxShape.circle,
+              ),
+              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+              child: Text(
+                unread > 9 ? '9+' : '$unread',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

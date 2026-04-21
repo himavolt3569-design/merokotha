@@ -30,7 +30,9 @@ import '../../features/customer/presentation/screens/favourites_screen.dart';
 import '../../features/customer/presentation/screens/inquire_screen.dart';
 import '../../features/customer/presentation/screens/customer_profile_screen.dart';
 
-// Admin screens
+// Chat screens
+import '../../features/chat/presentation/screens/chat_list_screen.dart';
+import '../../features/chat/presentation/screens/chat_thread_screen.dart';
 import '../../features/admin/presentation/screens/admin_home_screen.dart';
 import '../../features/admin/presentation/screens/admin_users_screen.dart';
 import '../../features/admin/presentation/screens/admin_user_detail_screen.dart';
@@ -47,29 +49,21 @@ GoRouter appRouter(Ref ref) {
   return GoRouter(
     // Landing is the true initial route — public, no auth needed
     initialLocation: AppRoutes.landing,
-    // initialLocation: AppRoutes.adminHome,
     debugLogDiagnostics: true,
     redirect: (context, state) {
       final isLoggedIn = authState.value != null;
       final loc = state.matchedLocation;
 
-      // These routes are public — no login required (only for unauthenticated users)
+      // These routes are public — no login required
       final publicRoutes = [
         AppRoutes.landing,
         AppRoutes.login,
         AppRoutes.splash,
       ];
 
-      // If user is NOT logged in and trying to access protected route, redirect to login
       if (!isLoggedIn && !publicRoutes.contains(loc)) {
         return AppRoutes.login;
       }
-
-      // If user IS logged in but on landing/login, redirect to splash to determine their home
-      if (isLoggedIn && (loc == AppRoutes.landing || loc == AppRoutes.login)) {
-        return AppRoutes.splash;
-      }
-
       return null;
     },
     routes: [
@@ -81,7 +75,10 @@ GoRouter appRouter(Ref ref) {
 
       // ── Auth ──────────────────────────────────────────────────
       GoRoute(path: AppRoutes.splash, builder: (_, _) => const SplashScreen()),
-      GoRoute(path: AppRoutes.login, builder: (_, _) => const OtpLoginScreen()),
+      GoRoute(
+        path: AppRoutes.login,
+        builder: (_, _) => const OtpLoginScreen(),
+      ),
       GoRoute(
         path: AppRoutes.roleSelect,
         builder: (_, _) => const RoleSelectScreen(),
@@ -144,6 +141,17 @@ GoRouter appRouter(Ref ref) {
         path: AppRoutes.inquire,
         builder: (_, state) =>
             InquireScreen(listing: state.extra as ListingModel),
+      ),
+
+      // ── Chat (shared for owner and customer) ──────────────────
+      GoRoute(
+        path: AppRoutes.chatList,
+        builder: (_, _) => const ChatListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.chatThread,
+        builder: (_, state) =>
+            ChatThreadScreen(chatId: state.pathParameters['chatId']!),
       ),
 
       // ── Super Admin ───────────────────────────────────────────

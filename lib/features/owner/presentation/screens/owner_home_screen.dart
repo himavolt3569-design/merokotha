@@ -13,7 +13,7 @@ import '../../../../shared/widgets/mk_app_bar.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../providers/owner_providers.dart';
 import '../../data/inquiry_repository.dart';
-import '../widgets/owner_widgets.dart';
+import '../widgets/owner_widgets.dart' hide UserAvatar; // ← ADD THIS
 
 class OwnerHomeScreen extends ConsumerWidget {
   const OwnerHomeScreen({super.key});
@@ -37,7 +37,7 @@ class OwnerHomeScreen extends ConsumerWidget {
                   Icons.notifications_outlined,
                   color: AppColors.grey800,
                 ),
-                onPressed: () => context.go(AppRoutes.ownerInquiries),
+                onPressed: () => context.push(AppRoutes.ownerInquiries),
               ),
               pendingCount.when(
                 data: (count) => count > 0
@@ -73,7 +73,7 @@ class OwnerHomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(right: 12),
             child: userAsync.when(
               data: (u) => GestureDetector(
-                onTap: () => context.go(AppRoutes.ownerProfile),
+                onTap: () => context.push(AppRoutes.ownerProfile),
                 child: UserAvatar(
                   name: u?.name ?? 'Owner',
                   photoUrl: u?.photoUrl,
@@ -99,7 +99,6 @@ class OwnerHomeScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Greeting
               userAsync.when(
                 data: (u) => _Greeting(name: u?.name ?? 'Owner'),
                 loading: () => const SizedBox(height: 48),
@@ -107,7 +106,6 @@ class OwnerHomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
 
-              // Stats
               listingsAsync.when(
                 data: (l) => _StatsRow(listings: l),
                 loading: () => const SizedBox(
@@ -118,25 +116,22 @@ class OwnerHomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
 
-              // Quick actions
               const _SectionHeader(title: 'Quick actions'),
               const SizedBox(height: 12),
               _QuickActions(),
               const SizedBox(height: 24),
 
-              // Recent pending inquiries
               _SectionHeader(
                 title: 'Pending inquiries',
-                onSeeAll: () => context.go(AppRoutes.ownerInquiries),
+                onSeeAll: () => context.push(AppRoutes.ownerInquiries),
               ),
               const SizedBox(height: 12),
-              _RecentInquiries(),
+              const _RecentInquiries(),
               const SizedBox(height: 24),
 
-              // Listings preview
               _SectionHeader(
                 title: 'My listings',
-                onSeeAll: () => context.go(AppRoutes.myListings),
+                onSeeAll: () => context.push(AppRoutes.myListings),
               ),
               const SizedBox(height: 12),
               listingsAsync.when(
@@ -146,7 +141,7 @@ class OwnerHomeScreen extends ConsumerWidget {
                         subtitle: 'Tap "Add listing" to post your first room',
                         icon: Icons.house_outlined,
                         actionLabel: 'Add listing',
-                        onAction: () => context.go(AppRoutes.uploadListing),
+                        onAction: () => context.push(AppRoutes.uploadListing),
                       )
                     : Column(
                         children: listings
@@ -183,7 +178,7 @@ class OwnerHomeScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.go(AppRoutes.uploadListing),
+        onPressed: () => context.push(AppRoutes.uploadListing),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add_rounded),
@@ -318,28 +313,28 @@ class _QuickActions extends StatelessWidget {
           label: 'Add room',
           icon: Icons.add_home_outlined,
           color: AppColors.primary,
-          onTap: () => context.go(AppRoutes.uploadListing),
+          onTap: () => context.push(AppRoutes.uploadListing),
         ),
         const SizedBox(width: 10),
         _QA(
           label: 'Listings',
           icon: Icons.list_alt_rounded,
           color: AppColors.info,
-          onTap: () => context.go(AppRoutes.myListings),
+          onTap: () => context.push(AppRoutes.myListings),
         ),
         const SizedBox(width: 10),
         _QA(
           label: 'Inquiries',
           icon: Icons.inbox_rounded,
           color: AppColors.warning,
-          onTap: () => context.go(AppRoutes.ownerInquiries),
+          onTap: () => context.push(AppRoutes.ownerInquiries),
         ),
         const SizedBox(width: 10),
         _QA(
           label: 'Map',
           icon: Icons.map_outlined,
           color: AppColors.success,
-          onTap: () => context.go(AppRoutes.ownerMap),
+          onTap: () => context.push(AppRoutes.ownerMap),
         ),
       ],
     );
@@ -391,7 +386,10 @@ class _QA extends StatelessWidget {
   }
 }
 
+// ── Fixed: fetch user inside widget so ownerName/ownerPhotoUrl are available ──
 class _RecentInquiries extends ConsumerWidget {
+  const _RecentInquiries();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ref
@@ -440,9 +438,15 @@ class _RecentInquiries extends ConsumerWidget {
                           padding: const EdgeInsets.only(bottom: 10),
                           child: InquiryCard(
                             inquiry: inq,
+                            // ← Pass all required named params
                             onAccept: () => ref
                                 .read(inquiryRepositoryProvider)
-                                .acceptInquiry(inq.id),
+                                .acceptInquiry(
+                                  inquiryId: inq.id,
+                                  inquiry: inq,
+                                  ownerName: user.name,
+                                  ownerPhotoUrl: user.photoUrl,
+                                ),
                             onDecline: () => ref
                                 .read(inquiryRepositoryProvider)
                                 .declineInquiry(inq.id),

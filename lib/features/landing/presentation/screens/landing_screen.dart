@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
 
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/router/app_routes.dart';
 import '../../../../shared/models/listing_model.dart';
 import '../../../../shared/widgets/mk_widgets.dart';
 
@@ -24,53 +22,44 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
   @override
   Widget build(BuildContext context) {
     final listingsAsync = ref.watch(activeListingsProvider);
+    final topPadding = MediaQuery.of(context).padding.top;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundSecondary,
+      backgroundColor: const Color(0xFFF7F6F2),
       body: CustomScrollView(
         slivers: [
-          // ── Hero header ──
+          // ── Hero ──
           SliverToBoxAdapter(
             child: Container(
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(28),
-                  bottomRight: Radius.circular(28),
-                ),
-              ),
-              padding: EdgeInsets.fromLTRB(
-                AppSizes.pagePadding,
-                MediaQuery.of(context).padding.top + 20,
-                AppSizes.pagePadding,
-                28,
-              ),
+              color: AppColors.primary,
+              padding: EdgeInsets.fromLTRB(20, topPadding + 16, 20, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // App name row + login button
+                  // Top bar
                   Row(
                     children: [
                       Container(
-                        width: 36,
-                        height: 36,
+                        width: 28,
+                        height: 28,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Icon(
                           Icons.home_rounded,
                           color: Colors.white,
-                          size: 20,
+                          size: 15,
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
                       const Text(
-                        AppStrings.appName,
+                        'MeroKotha',
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                           color: Colors.white,
+                          letterSpacing: -0.3,
                         ),
                       ),
                       const Spacer(),
@@ -78,21 +67,20 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                         onTap: () => context.go(AppRoutes.login),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
+                            horizontal: 14,
+                            vertical: 6,
                           ),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                              AppSizes.radiusFull,
-                            ),
+                            borderRadius: BorderRadius.circular(100),
                           ),
                           child: const Text(
                             'Sign in',
                             style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
                               color: AppColors.primary,
+                              letterSpacing: -0.1,
                             ),
                           ),
                         ),
@@ -100,126 +88,128 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 20),
-
-                  const Text(
-                    'Find your perfect\nroom in Nepal',
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Browse hundreds of verified rooms near you',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.white.withOpacity(0.8),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
                   // Search bar
                   Container(
+                    height: 44,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: TextField(
                       onChanged: (v) =>
                           setState(() => _searchQuery = v.toLowerCase()),
-                      decoration: const InputDecoration(
-                        hintText: 'Search area, landmark...',
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        color: Color(0xFF1A1A18),
+                        fontWeight: FontWeight.w400,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Search by location or title…',
+                        hintStyle: TextStyle(
+                          fontSize: 13.5,
+                          color: Colors.black.withOpacity(0.3),
+                        ),
                         prefixIcon: Icon(
                           Icons.search_rounded,
-                          color: AppColors.grey400,
+                          color: Colors.black.withOpacity(0.3),
+                          size: 18,
                         ),
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 14),
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 13,
+                        ),
                       ),
                     ),
                   ),
+
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
           ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 20)),
-
-          // ── Category filter chips ──
+          // ── Category chips ──
           SliverToBoxAdapter(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.pagePadding,
-              ),
-              child: Row(
-                children: [
-                  _CategoryChip(
-                    label: 'All',
-                    isSelected: _selectedL1Name == null,
-                    onTap: () => setState(() => _selectedL1Name = null),
-                  ),
-                  const SizedBox(width: 8),
-                  ...listingsAsync.maybeWhen(
-                    data: (listings) {
-                      final names = listings
-                          .map((l) => l.categoryL1Name)
-                          .whereType<String>()
-                          .toSet()
-                          .toList();
-                      return names
-                          .map(
-                            (n) => Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: _CategoryChip(
-                                label: n,
-                                isSelected: _selectedL1Name == n,
-                                onTap: () => setState(
-                                  () => _selectedL1Name == n ? null : n,
+            child: Container(
+              color: AppColors.primary,
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Color(0xFFF7F6F2),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    children: [
+                      _Chip(
+                        label: 'All',
+                        isSelected: _selectedL1Name == null,
+                        onTap: () => setState(() => _selectedL1Name = null),
+                      ),
+                      const SizedBox(width: 7),
+                      ...listingsAsync.maybeWhen(
+                        data: (listings) {
+                          final names = listings
+                              .map((l) => l.categoryL1Name)
+                              .whereType<String>()
+                              .toSet()
+                              .toList();
+                          return names
+                              .map(
+                                (n) => Padding(
+                                  padding: const EdgeInsets.only(right: 7),
+                                  child: _Chip(
+                                    label: n,
+                                    isSelected: _selectedL1Name == n,
+                                    onTap: () => setState(
+                                      () => _selectedL1Name =
+                                          _selectedL1Name == n ? null : n,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          )
-                          .toList();
-                    },
-                    orElse: () => [],
+                              )
+                              .toList();
+                        },
+                        orElse: () => [],
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-          // ── Section title ──
+          // ── Section header ──
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSizes.pagePadding,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 6, 20, 14),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
                 children: [
                   const Text(
                     'Available rooms',
                     style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.grey900,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF1A1A18),
+                      letterSpacing: -0.4,
                     ),
                   ),
                   listingsAsync.maybeWhen(
                     data: (l) => Text(
-                      '${l.length} rooms',
+                      '${l.length} listings',
                       style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.grey400,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFF8A8980),
                       ),
                     ),
                     orElse: () => const SizedBox.shrink(),
@@ -229,9 +219,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             ),
           ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 12)),
-
-          // ── Listings grid ──
+          // ── Grid ──
           listingsAsync.when(
             loading: () =>
                 const SliverToBoxAdapter(child: MkLoading(fullScreen: false)),
@@ -260,18 +248,16 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
               }
 
               return SliverPadding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.pagePadding,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 sliver: SliverGrid(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.72,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
+                    childAspectRatio: 0.70,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
                   ),
                   delegate: SliverChildBuilderDelegate(
-                    (_, i) => _LandingListingCard(
+                    (_, i) => _ListingCard(
                       listing: listings[i],
                       onTap: () => _promptLogin(context),
                     ),
@@ -282,7 +268,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             },
           ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ],
       ),
     );
@@ -291,70 +277,109 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
   void _promptLogin(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppSizes.radiusXl),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
         ),
-      ),
-      builder: (_) => Padding(
-        padding: const EdgeInsets.all(AppSizes.pagePadding),
+        padding: EdgeInsets.fromLTRB(
+          24,
+          0,
+          24,
+          MediaQuery.of(context).padding.bottom + 28,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.grey100,
-                borderRadius: BorderRadius.circular(2),
+            // Handle
+            Center(
+              child: Container(
+                width: 32,
+                height: 3,
+                margin: const EdgeInsets.only(top: 10, bottom: 24),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE0DFD9),
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-            const SizedBox(height: 20),
-            const Icon(
-              Icons.lock_outline_rounded,
-              size: 40,
-              color: AppColors.primary,
+
+            // Icon
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Icon(
+                Icons.lock_outline_rounded,
+                size: 22,
+                color: AppColors.primary,
+              ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
+
             const Text(
               'Sign in to continue',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AppColors.grey900,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1A1A18),
+                letterSpacing: -0.4,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 7),
             const Text(
-              'Create a free account to save rooms, send inquiries and message owners.',
+              'Save rooms, send inquiries,\nand message owners for free.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 14,
-                color: AppColors.grey600,
-                height: 1.5,
+                fontSize: 13,
+                color: Color(0xFF8A8980),
+                height: 1.6,
               ),
             ),
             const SizedBox(height: 24),
+
             SizedBox(
               width: double.infinity,
-              height: AppSizes.buttonHeight,
+              height: 48,
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  textStyle: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.2,
+                  ),
+                ),
                 onPressed: () {
                   Navigator.pop(context);
                   context.go(AppRoutes.login);
                 },
-                child: const Text('Sign in / Sign up'),
+                child: const Text('Sign in / Create account'),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
+
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'Continue browsing',
-                style: TextStyle(color: AppColors.grey400),
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF8A8980),
+                textStyle: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
+              child: const Text('Continue browsing'),
             ),
-            SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
           ],
         ),
       ),
@@ -362,13 +387,13 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
   }
 }
 
-// ── Landing listing card ──────────────────────────────────────────
+// ── Listing Card ─────────────────────────────────────────────────
 
-class _LandingListingCard extends StatelessWidget {
+class _ListingCard extends StatelessWidget {
   final ListingModel listing;
   final VoidCallback onTap;
 
-  const _LandingListingCard({required this.listing, required this.onTap});
+  const _ListingCard({required this.listing, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -377,23 +402,22 @@ class _LandingListingCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-          border: Border.all(color: AppColors.grey50),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.black.withOpacity(0.06), width: 0.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Photo — Expanded so it fills remaining space flexibly
-            Expanded(
+            // Photo
+            AspectRatio(
+              aspectRatio: 4 / 3,
               child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(AppSizes.radiusLg),
-                  topRight: Radius.circular(AppSizes.radiusLg),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(14),
                 ),
                 child: listing.photoUrls.isNotEmpty
                     ? Image.network(
                         listing.photoUrls.first,
-                        height: double.infinity,
                         width: double.infinity,
                         fit: BoxFit.cover,
                         errorBuilder: (_, _, _) => _placeholder,
@@ -402,78 +426,99 @@ class _LandingListingCard extends StatelessWidget {
               ),
             ),
 
-            // Info section
+            // Info
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 11),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Category badge
-                  if (listing.categoryLabel.isNotEmpty)
+                  // Badge
+                  if (listing.categoryLabel.isNotEmpty) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
+                        horizontal: 6,
+                        vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(
-                          AppSizes.radiusFull,
-                        ),
+                        color: AppColors.primary.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(5),
                       ),
                       child: Text(
                         listing.categoryLabel,
-                        style: const TextStyle(
-                          fontSize: 10,
+                        style: TextStyle(
+                          fontSize: 9.5,
                           fontWeight: FontWeight.w600,
                           color: AppColors.primary,
+                          letterSpacing: 0.1,
                         ),
                       ),
                     ),
-                  const SizedBox(height: 5),
+                    const SizedBox(height: 5),
+                  ],
 
                   // Title
                   Text(
                     listing.title,
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 12.5,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.grey900,
+                      color: Color(0xFF1A1A18),
+                      letterSpacing: -0.2,
+                      height: 1.3,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
 
                   // Location
-                  if (listing.address != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 3),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.location_on_outlined,
-                            size: 11,
-                            color: AppColors.grey400,
-                          ),
-                          Expanded(
-                            child: Text(
-                              listing.address!,
-                              style: const TextStyle(
-                                fontSize: 11,
-                                color: AppColors.grey400,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                  if (listing.address != null) ...[
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on_outlined,
+                          size: 10,
+                          color: Color(0xFFAAAAAA),
+                        ),
+                        const SizedBox(width: 2),
+                        Expanded(
+                          child: Text(
+                            listing.address!,
+                            style: const TextStyle(
+                              fontSize: 10.5,
+                              color: Color(0xFFAAAAAA),
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  const SizedBox(height: 6),
+                  ],
 
-                  // Price
-                  PriceBadge(amount: listing.rentPerMonth),
+                  const SizedBox(height: 9),
+
+                  // Price row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      PriceBadge(amount: listing.rentPerMonth),
+                      Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF7F6F2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.favorite_border_rounded,
+                          size: 12,
+                          color: Color(0xFFCCCBC3),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -484,22 +529,21 @@ class _LandingListingCard extends StatelessWidget {
   }
 
   Widget get _placeholder => Container(
-    color: AppColors.grey50,
-    width: double.infinity,
+    color: const Color(0xFFEAE9E3),
     child: const Center(
-      child: Icon(Icons.image_outlined, size: 36, color: AppColors.grey100),
+      child: Icon(Icons.image_outlined, size: 24, color: Color(0xFFCCCBC3)),
     ),
   );
 }
 
-// ── Category chip ─────────────────────────────────────────────────
+// ── Category Chip ─────────────────────────────────────────────────
 
-class _CategoryChip extends StatelessWidget {
+class _Chip extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _CategoryChip({
+  const _Chip({
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -511,20 +555,25 @@ class _CategoryChip extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 5),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary : Colors.white,
-          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+          borderRadius: BorderRadius.circular(100),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.grey100,
+            color: isSelected
+                ? AppColors.primary
+                : Colors.black.withOpacity(0.08),
+            width: 0.5,
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 13,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            color: isSelected ? Colors.white : AppColors.grey600,
+            fontSize: 12.5,
+            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+            color: isSelected ? Colors.white : const Color(0xFF555450),
+            letterSpacing: -0.1,
           ),
         ),
       ),

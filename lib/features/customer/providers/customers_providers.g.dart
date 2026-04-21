@@ -320,7 +320,7 @@ final class IsListingFavouritedProvider
 }
 
 String _$isListingFavouritedHash() =>
-    r'312a02ac36a7506071121745b7049997f1945625';
+    r'f6e58db9caa1f7a1b98720c691b69bb7ec8dbdd3';
 
 final class IsListingFavouritedFamily extends $Family
     with $FunctionalFamilyOverride<bool, String> {
@@ -466,7 +466,7 @@ final class SendInquiryNotifierProvider
 }
 
 String _$sendInquiryNotifierHash() =>
-    r'd557f14d410e7e400bffab728faf6d670136bd13';
+    r'06a94692262405619abb87adbbc3dd7fe336da28';
 
 abstract class _$SendInquiryNotifier extends $Notifier<SendInquiryState> {
   SendInquiryState build();

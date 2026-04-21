@@ -21,9 +21,13 @@ class Formatters {
     return DateFormat('dd MMM yyyy').format(date);
   }
 
+  // HH:mm — used in chat message timestamps
+  static String time(DateTime date) {
+    return DateFormat('HH:mm').format(date);
+  }
+
   static String dateShort(DateTime date) {
-    final formatter = DateFormat('dd MMM');
-    return formatter.format(date);
+    return DateFormat('dd MMM').format(date);
   }
 
   static String timeAgo(DateTime date) {
