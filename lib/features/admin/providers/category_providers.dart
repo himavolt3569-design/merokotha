@@ -25,19 +25,13 @@ Future<List<CategoryModel>> level1Categories(Ref ref) {
 
 // ── Level 2 under a given parent ──
 @riverpod
-Future<List<CategoryModel>> level2Categories(
-  Ref ref,
-  String parentId,
-) {
+Future<List<CategoryModel>> level2Categories(Ref ref, String parentId) {
   return ref.watch(categoryRepositoryProvider).getLevel2(parentId);
 }
 
 // ── Level 3 under a given parent ──
 @riverpod
-Future<List<CategoryModel>> level3Categories(
-  Ref ref,
-  String parentId,
-) {
+Future<List<CategoryModel>> level3Categories(Ref ref, String parentId) {
   return ref.watch(categoryRepositoryProvider).getLevel3(parentId);
 }
 

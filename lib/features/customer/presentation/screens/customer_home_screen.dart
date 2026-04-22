@@ -9,6 +9,8 @@ import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
 import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/features/customer/presentation/widgets/customer_widgets.dart';
+import 'package:merokotha/features/ads/data/ad_model.dart';
+import 'package:merokotha/features/ads/presentation/widgets/ad_banner.dart';
 
 class CustomerHomeScreen extends ConsumerWidget {
   const CustomerHomeScreen({super.key});
@@ -17,12 +19,10 @@ class CustomerHomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(currentUserProvider);
     final listingsAsync = ref.watch(activeListingsProvider);
-     final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
+    final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
 
     // Category chip filter — now a String? (categoryL3Id) instead of RoomType
-  final selectedCategoryId = ref
-        .watch(searchFilterProvider)
-        .categoryL3Id;
+    final selectedCategoryId = ref.watch(searchFilterProvider).categoryL3Id;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
@@ -74,7 +74,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                                 ],
                               ),
                               loading: () => const SizedBox.shrink(),
-                              error: (_, _) => const SizedBox.shrink(),
+                              error: (_, __) => const SizedBox.shrink(),
                             ),
                           ],
                         ),
@@ -90,7 +90,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                           ),
                         ),
                         loading: () => const SizedBox(width: 38, height: 38),
-                        error: (_, _) => const SizedBox.shrink(),
+                        error: (_, __) => const SizedBox.shrink(),
                       ),
                     ],
                   ),
@@ -136,15 +136,13 @@ class CustomerHomeScreen extends ConsumerWidget {
               ),
 
               // ── Filter chips ──
-              // Pass your categories from Firestore here when ready.
-              // For now the chip row shows only "All" until categories are loaded.
               SliverToBoxAdapter(
                 child: Column(
                   children: [
                     FilterChipRow(
                       selectedCategoryId: selectedCategoryId,
                       categories: const [],
-                     onCategoryChanged: (id) => ref
+                      onCategoryChanged: (id) => ref
                           .read(searchFilterProvider.notifier)
                           .setCategory(categoryL3Id: id),
                     ),
@@ -172,7 +170,7 @@ class CustomerHomeScreen extends ConsumerWidget {
 
               const SliverToBoxAdapter(child: SizedBox(height: 12)),
 
-              // ── Listings grid ──
+              // ── Listings with injected ads ──
               listingsAsync.when(
                 loading: () => const SliverToBoxAdapter(
                   child: MkLoading(fullScreen: false),
@@ -203,31 +201,42 @@ class CustomerHomeScreen extends ConsumerWidget {
                     );
                   }
 
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSizes.pagePadding,
-                    ),
-                    sliver: SliverGrid(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.65,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
+                  // SliverList with an ad injected every 5 listings
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate((_, i) {
+                      final showAdBefore = i > 0 && i % 5 == 0;
+                      final l = listings[i];
+                      return Column(
+                        children: [
+                          if (showAdBefore)
+                            AdBanner(
+                              placement: AdPlacement.homeFeed,
+                              padding: const EdgeInsets.fromLTRB(
+                                AppSizes.pagePadding,
+                                4,
+                                AppSizes.pagePadding,
+                                4,
+                              ),
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.pagePadding,
+                              vertical: 6,
+                            ),
+                            child: ListingCard(
+                              listing: l,
+                              isFavourited: favIds.contains(l.id),
+                              onFavourite: () => ref
+                                  .read(favouriteProvider.notifier)
+                                  .toggle(l),
+                              onTap: () => context.push(
+                                AppRoutes.roomDetail.replaceAll(':id', l.id),
+                              ),
+                            ),
                           ),
-                      delegate: SliverChildBuilderDelegate((_, i) {
-                        final l = listings[i];
-                        return ListingCard(
-                          listing: l,
-                          isFavourited: favIds.contains(l.id),
-                          onFavourite: () =>
-                              ref.read(favouriteProvider.notifier).toggle(l),
-                          onTap: () => context.push(
-                            AppRoutes.roomDetail.replaceAll(':id', l.id),
-                          ),
-                        );
-                      }, childCount: listings.length),
-                    ),
+                        ],
+                      );
+                    }, childCount: listings.length),
                   );
                 },
               ),

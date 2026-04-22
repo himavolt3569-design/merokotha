@@ -12,6 +12,8 @@ import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/features/ads/data/ad_model.dart';
+import 'package:merokotha/features/ads/presentation/widgets/ad_banner.dart';
 
 class RoomDetailScreen extends ConsumerStatefulWidget {
   final String listingId;
@@ -50,9 +52,8 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                       currentIndex: _photoIndex,
                       onPageChanged: (i) => setState(() => _photoIndex = i),
                       isFavourited: isFav,
-                      onFavourite: () => ref
-                          .read(favouriteProvider.notifier)
-                          .toggle(listing),
+                      onFavourite: () =>
+                          ref.read(favouriteProvider.notifier).toggle(listing),
                       onBack: () => context.pop(),
                     ),
                   ),
@@ -278,6 +279,12 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                             ],
                           ),
 
+                          // ── Ad banner after stats ──
+                          const AdBanner(
+                            placement: AdPlacement.roomDetail,
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                          ),
+
                           const SizedBox(height: 120),
                         ],
                       ),
@@ -319,7 +326,6 @@ class _StaticMapPreview extends StatelessWidget {
           options: MapOptions(
             initialCenter: point,
             initialZoom: 15,
-            // Disable all interactions — this is a preview only
             interactionOptions: const InteractionOptions(
               flags: InteractiveFlag.none,
             ),
@@ -385,7 +391,7 @@ class _PhotoSection extends StatelessWidget {
                     photos[i],
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    errorBuilder: (_, _, _) => _placeholder,
+                    errorBuilder: (_, __, ___) => _placeholder,
                   ),
                 )
               : _placeholder,

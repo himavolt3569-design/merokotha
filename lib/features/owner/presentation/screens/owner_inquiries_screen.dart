@@ -13,7 +13,6 @@ import '../../../../shared/widgets/mk_widgets.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../data/inquiry_repository.dart';
 
-
 class OwnerInquiriesScreen extends ConsumerStatefulWidget {
   const OwnerInquiriesScreen({super.key});
 

@@ -172,10 +172,11 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
                     ? _buildOtpSection(otpState)
                     : _buildPhoneSection(otpState),
               ),
-            ]
+            ],
           ),
         ),
-     ) );
+      ),
+    );
   }
 
   Widget _buildPhoneSection(OtpState otpState) {

@@ -47,7 +47,7 @@ class ListingsRepository {
     if (filter.furnishing != null) {
       q = q.where('furnishing', isEqualTo: filter.furnishing!.name);
     }
-if (filter.minRent != null) {
+    if (filter.minRent != null) {
       q = q.where('rentPerMonth', isGreaterThanOrEqualTo: filter.minRent);
     }
     if (filter.maxRent != null) {

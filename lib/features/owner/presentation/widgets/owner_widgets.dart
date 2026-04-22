@@ -202,7 +202,7 @@ class OwnerListingCard extends StatelessWidget {
                     const SizedBox(width: 3),
                     Expanded(
                       child: Text(
-           listing.address ?? '',
+                        listing.address ?? '',
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.grey400,
@@ -218,7 +218,7 @@ class OwnerListingCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                     'Rs ${listing.rentPerMonth.toStringAsFixed(0)}/mo',
+                      'Rs ${listing.rentPerMonth.toStringAsFixed(0)}/mo',
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -232,16 +232,16 @@ class OwnerListingCard extends StatelessWidget {
                         _IconBtn(
                           icon: Icons.visibility_outlined,
                           color: AppColors.info,
-                        onTap: () => context.push(
-  AppRoutes.roomDetail.replaceAll(':id', listing.id),
-),
+                          onTap: () => context.push(
+                            AppRoutes.roomDetail.replaceAll(':id', listing.id),
+                          ),
                         ),
                         const SizedBox(width: 6),
                         // Edit
                         _IconBtn(
                           icon: Icons.edit_outlined,
                           color: AppColors.grey600,
-                        onTap: () => context.push(
+                          onTap: () => context.push(
                             '${AppRoutes.uploadListing}?id=${listing.id}',
                           ),
                         ),

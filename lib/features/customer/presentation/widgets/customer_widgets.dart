@@ -560,22 +560,19 @@ class CustomerBottomNav extends ConsumerWidget {
         onTap: (i) {
           switch (i) {
             case 0:
-              context.go(AppRoutes.customerHome);
+              context.push(AppRoutes.customerHome);
               break;
             case 1:
-              context.go(AppRoutes.search);
+              context.push(AppRoutes.search);
               break;
             case 2:
-              context.go(AppRoutes.chatList);
+              context.push(AppRoutes.chatList);
               break;
             case 3:
-              context.go(AppRoutes.favourites);
+              context.push(AppRoutes.favourites);
               break;
             case 4:
-              context.go(AppRoutes.customerMap);
-              break;
-            case 5:
-              context.go(AppRoutes.customerProfile);
+              context.push(AppRoutes.customerProfile);
               break;
           }
         },
@@ -599,11 +596,6 @@ class CustomerBottomNav extends ConsumerWidget {
             icon: Icon(Icons.favorite_outline_rounded),
             activeIcon: Icon(Icons.favorite_rounded),
             label: 'Saved',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
-            activeIcon: Icon(Icons.map_rounded),
-            label: 'Map',
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_rounded),

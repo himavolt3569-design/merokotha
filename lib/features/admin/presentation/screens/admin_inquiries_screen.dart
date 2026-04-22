@@ -109,7 +109,7 @@ class _InquiryTab extends ConsumerWidget {
               itemCount: list.length,
               separatorBuilder: (_, _) => const SizedBox(height: 8),
               itemBuilder: (_, i) => _AdminInquiryCard(list[i]),
-            );  
+            );
           },
         );
   }

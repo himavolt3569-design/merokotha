@@ -201,7 +201,7 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
             ),
         ],
       ),
-      bottomNavigationBar: const CustomerBottomNav(currentIndex: 4),
+      bottomNavigationBar: const CustomerBottomNav(currentIndex: 0),
     );
   }
 }

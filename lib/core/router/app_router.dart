@@ -75,10 +75,7 @@ GoRouter appRouter(Ref ref) {
 
       // ── Auth ──────────────────────────────────────────────────
       GoRoute(path: AppRoutes.splash, builder: (_, _) => const SplashScreen()),
-      GoRoute(
-        path: AppRoutes.login,
-        builder: (_, _) => const OtpLoginScreen(),
-      ),
+      GoRoute(path: AppRoutes.login, builder: (_, _) => const OtpLoginScreen()),
       GoRoute(
         path: AppRoutes.roleSelect,
         builder: (_, _) => const RoleSelectScreen(),

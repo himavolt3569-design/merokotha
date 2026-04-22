@@ -280,8 +280,7 @@ class AdminUserDetailScreen extends ConsumerWidget {
                           .then((_) => context.pop());
                     },
                   ),
-                )
-                ,
+                ),
           ],
         ),
         shape: RoundedRectangleBorder(

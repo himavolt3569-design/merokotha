@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:merokotha/features/customer/data/listings_repository.dart';
-import 'package:merokotha/features/customer/presentation/screens/customer_home_screen.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../shared/widgets/mk_widgets.dart';
+import '../../../ads/data/ad_model.dart';
+import '../../../ads/presentation/widgets/ad_banner.dart';
 import '../widgets/customer_widgets.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
@@ -147,17 +148,30 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 return ListView.separated(
                   padding: const EdgeInsets.all(AppSizes.pagePadding),
                   itemCount: validListings.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  separatorBuilder: (_, i) => const SizedBox(height: 12),
                   itemBuilder: (_, i) {
                     final l = validListings[i];
-                    return ListingCard(
-                      listing: l,
-                      isFavourited: favIds.contains(l.id),
-                      onFavourite: () =>
-                          ref.read(favouriteProvider.notifier).toggle(l),
-                      onTap: () => context.push(
-                        AppRoutes.roomDetail.replaceAll(':id', l.id),
-                      ),
+                    return Column(
+                      children: [
+                        // Show ad before every 5th result
+                        if (i > 0 && i % 5 == 0)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: AdBanner(
+                              placement: AdPlacement.searchResults,
+                              padding: EdgeInsets.zero,
+                            ),
+                          ),
+                        ListingCard(
+                          listing: l,
+                          isFavourited: favIds.contains(l.id),
+                          onFavourite: () =>
+                              ref.read(favouriteProvider.notifier).toggle(l),
+                          onTap: () => context.push(
+                            AppRoutes.roomDetail.replaceAll(':id', l.id),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 );
@@ -217,10 +231,7 @@ class _FilterPanel extends StatelessWidget {
               ),
             ],
           ),
-
-          const SizedBox(height: 14),
-
-          // Price range
+          // ── Price range ──
           const Text(
             'Price range',
             style: TextStyle(
@@ -240,7 +251,7 @@ class _FilterPanel extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // Facilities
+          // ── Facilities ──
           const Text(
             'Facilities',
             style: TextStyle(

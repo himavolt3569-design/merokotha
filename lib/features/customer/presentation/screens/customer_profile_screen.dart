@@ -363,7 +363,7 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
           );
         },
       ),
-      bottomNavigationBar: const CustomerBottomNav(currentIndex: 5),
+      bottomNavigationBar: const CustomerBottomNav(currentIndex: 4),
     );
   }
 }

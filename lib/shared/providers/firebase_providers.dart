@@ -18,6 +18,5 @@ FirebaseFirestore firebaseFirestore(Ref ref) {
   return firestore;
 }
 
-
 @riverpod
 FirebaseStorage firebaseStorage(Ref ref) => FirebaseStorage.instance;

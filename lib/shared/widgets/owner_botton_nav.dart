@@ -37,19 +37,19 @@ class OwnerBottomNav extends ConsumerWidget {
         onTap: (i) {
           switch (i) {
             case 0:
-              context.go(AppRoutes.ownerHome);
+              context.push(AppRoutes.ownerHome);
               break;
             case 1:
-              context.go(AppRoutes.myListings);
+              context.push(AppRoutes.myListings);
               break;
             case 2:
-              context.go(AppRoutes.uploadListing);
+              context.push(AppRoutes.uploadListing);
               break;
             case 3:
-              context.go(AppRoutes.chatList);
+              context.push(AppRoutes.chatList);
               break;
             case 4:
-              context.go(AppRoutes.ownerProfile);
+              context.push(AppRoutes.ownerProfile);
               break;
           }
         },

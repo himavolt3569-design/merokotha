@@ -78,13 +78,10 @@ class AdminRepository {
   // ── Search users by name or phone ──
   Future<List<UserModel>> searchUsers(String query) async {
     final snap = await _users.get();
-    final all =
-        snap.docs.map((d) => UserModel.fromSnapshot(d)).toList();
+    final all = snap.docs.map((d) => UserModel.fromSnapshot(d)).toList();
     final q = query.toLowerCase();
     return all
-        .where((u) =>
-            u.name.toLowerCase().contains(q) ||
-            u.phone.contains(q))
+        .where((u) => u.name.toLowerCase().contains(q) || u.phone.contains(q))
         .toList();
   }
 
@@ -127,8 +124,7 @@ class AdminRepository {
     return _listings
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((s) =>
-            s.docs.map((d) => ListingModel.fromSnapshot(d)).toList());
+        .map((s) => s.docs.map((d) => ListingModel.fromSnapshot(d)).toList());
   }
 
   // ── Delete any listing ──
@@ -137,8 +133,7 @@ class AdminRepository {
   }
 
   // ── Force listing status ──
-  Future<void> setListingStatus(
-      String listingId, ListingStatus status) async {
+  Future<void> setListingStatus(String listingId, ListingStatus status) async {
     await _listings.doc(listingId).update({
       'status': status.name,
       'updatedAt': FieldValue.serverTimestamp(),
@@ -150,14 +145,12 @@ class AdminRepository {
     return _inquiries
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((s) =>
-            s.docs.map((d) => InquiryModel.fromSnapshot(d)).toList());
+        .map((s) => s.docs.map((d) => InquiryModel.fromSnapshot(d)).toList());
   }
 
   // ── Get listings by owner (for user detail screen) ──
   Future<List<ListingModel>> getListingsByOwner(String ownerId) async {
-    final snap =
-        await _listings.where('ownerId', isEqualTo: ownerId).get();
+    final snap = await _listings.where('ownerId', isEqualTo: ownerId).get();
     return snap.docs.map((d) => ListingModel.fromSnapshot(d)).toList();
   }
 
