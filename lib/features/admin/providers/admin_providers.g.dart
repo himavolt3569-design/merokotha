@@ -322,12 +322,11 @@ final class AdminUserDetailFamily extends $Family
   String toString() => r'adminUserDetailProvider';
 }
 
-@ProviderFor(UserSearchNotifier)
-final userSearchProvider = UserSearchNotifierProvider._();
+@ProviderFor(UserSearch)
+final userSearchProvider = UserSearchProvider._();
 
-final class UserSearchNotifierProvider
-    extends $NotifierProvider<UserSearchNotifier, String> {
-  UserSearchNotifierProvider._()
+final class UserSearchProvider extends $NotifierProvider<UserSearch, String> {
+  UserSearchProvider._()
     : super(
         from: null,
         argument: null,
@@ -339,11 +338,11 @@ final class UserSearchNotifierProvider
       );
 
   @override
-  String debugGetCreateSourceHash() => _$userSearchNotifierHash();
+  String debugGetCreateSourceHash() => _$userSearchHash();
 
   @$internal
   @override
-  UserSearchNotifier create() => UserSearchNotifier();
+  UserSearch create() => UserSearch();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String value) {
@@ -354,10 +353,9 @@ final class UserSearchNotifierProvider
   }
 }
 
-String _$userSearchNotifierHash() =>
-    r'6180984c54dad4e7a034893227cf9a40cc7ac7b2';
+String _$userSearchHash() => r'623c92cb1ba9049766eff07d6dc7a926f1336b24';
 
-abstract class _$UserSearchNotifier extends $Notifier<String> {
+abstract class _$UserSearch extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override
@@ -414,12 +412,12 @@ final class SearchedUsersProvider
 
 String _$searchedUsersHash() => r'6049b7e9d039a366ef83b8f6ea3818ad541a1478';
 
-@ProviderFor(AdminActionNotifier)
-final adminActionProvider = AdminActionNotifierProvider._();
+@ProviderFor(AdminAction)
+final adminActionProvider = AdminActionProvider._();
 
-final class AdminActionNotifierProvider
-    extends $NotifierProvider<AdminActionNotifier, AdminActionState> {
-  AdminActionNotifierProvider._()
+final class AdminActionProvider
+    extends $NotifierProvider<AdminAction, AdminActionState> {
+  AdminActionProvider._()
     : super(
         from: null,
         argument: null,
@@ -431,11 +429,11 @@ final class AdminActionNotifierProvider
       );
 
   @override
-  String debugGetCreateSourceHash() => _$adminActionNotifierHash();
+  String debugGetCreateSourceHash() => _$adminActionHash();
 
   @$internal
   @override
-  AdminActionNotifier create() => AdminActionNotifier();
+  AdminAction create() => AdminAction();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AdminActionState value) {
@@ -446,10 +444,9 @@ final class AdminActionNotifierProvider
   }
 }
 
-String _$adminActionNotifierHash() =>
-    r'adab718de3e7eac3e0f112e63f9a91bd58a258d8';
+String _$adminActionHash() => r'59a8099766c0f2b31249f9c17e64422671c1301c';
 
-abstract class _$AdminActionNotifier extends $Notifier<AdminActionState> {
+abstract class _$AdminAction extends $Notifier<AdminActionState> {
   AdminActionState build();
   @$mustCallSuper
   @override

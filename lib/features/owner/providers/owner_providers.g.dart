@@ -82,7 +82,7 @@ final class PendingInquiryCountProvider
 }
 
 String _$pendingInquiryCountHash() =>
-    r'b543945a01ad18d4625af8f0ef7e1023b9478589';
+    r'be0f0aff9c011d792152372aea6c076bef55f679';
 
 @ProviderFor(UploadListingNotifier)
 final uploadListingProvider = UploadListingNotifierProvider._();

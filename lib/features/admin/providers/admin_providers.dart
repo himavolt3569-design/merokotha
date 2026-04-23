@@ -49,8 +49,9 @@ Future<UserModel?> adminUserDetail(Ref ref, String uid) {
 }
 
 // ── User search query state ──
+// Generated name: userSearchProvider (used in screens as ref.watch(userSearchProvider))
 @riverpod
-class UserSearchNotifier extends _$UserSearchNotifier {
+class UserSearch extends _$UserSearch {
   @override
   String build() => '';
   void setQuery(String q) => state = q;
@@ -91,8 +92,9 @@ class AdminActionState {
   );
 }
 
+// Generated name: adminActionProvider (used in screens as ref.read(adminActionProvider.notifier))
 @riverpod
-class AdminActionNotifier extends _$AdminActionNotifier {
+class AdminAction extends _$AdminAction {
   @override
   AdminActionState build() => const AdminActionState();
 

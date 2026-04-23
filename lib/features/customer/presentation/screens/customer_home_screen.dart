@@ -21,7 +21,6 @@ class CustomerHomeScreen extends ConsumerWidget {
     final listingsAsync = ref.watch(activeListingsProvider);
     final favIds = ref.watch(favouriteIdsProvider).asData?.value ?? [];
 
-    // Category chip filter — now a String? (categoryL3Id) instead of RoomType
     final selectedCategoryId = ref.watch(searchFilterProvider).categoryL3Id;
 
     return Scaffold(

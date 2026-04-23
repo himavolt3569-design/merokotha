@@ -59,6 +59,7 @@ class _AdminCategoriesScreenState extends ConsumerState<AdminCategoriesScreen>
         ],
       ),
       body: catAsync.when(
+        skipLoadingOnReload: true,
         loading: () => const MkLoading(),
         error: (e, _) => MkErrorWidget(message: e.toString()),
         data: (allCats) {

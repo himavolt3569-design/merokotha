@@ -20,7 +20,6 @@ Stream<List<ListingModel>> ownerListings(Ref ref) {
 @riverpod
 Stream<int> pendingInquiryCount(Ref ref) {
   final user = ref.watch(authStateProvider).asData?.value;
-  ;
   if (user == null) return Stream.value(0);
   return ref.watch(inquiryRepositoryProvider).watchPendingCount(user.uid);
 }
