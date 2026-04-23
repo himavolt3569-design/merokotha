@@ -145,6 +145,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     final user = await ref.read(currentUserProvider.future);
     if (user == null) return;
 
+    // uploadListingProvider is the generated name from UploadListingNotifier
     final id = await ref
         .read(uploadListingProvider.notifier)
         .uploadListing(
@@ -207,6 +208,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // uploadListingProvider is generated from UploadListingNotifier
     final uploadState = ref.watch(uploadListingProvider);
 
     ref.listen(uploadListingProvider, (_, next) {
@@ -263,31 +265,51 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                   ),
                   const SizedBox(height: AppSizes.md),
 
-                  // ── Category picker placeholder ──
-                  // Replace this with your CategoryPickerWidget when ready.
-                  // It should call setState(() { _categoryL1Id = ...; etc. })
+                  // ── Category picker ──
                   const _Label('Category'),
                   const SizedBox(height: 8),
                   GestureDetector(
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
-                        builder: (_) => Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(20),
-                            ),
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
                           ),
-                          padding: const EdgeInsets.all(AppSizes.pagePadding),
-                          child: CategoryPicker(
-                            selection: _categorySelection,
-                            onChanged: (updated) {
-                              setState(() => _categorySelection = updated);
-                              if (updated.level3 != null) {
-                                Navigator.pop(context);
-                              }
-                            },
+                        ),
+                        builder: (_) => Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            AppSizes.pagePadding,
+                            AppSizes.pagePadding,
+                            AppSizes.pagePadding,
+                            MediaQuery.of(context).viewInsets.bottom +
+                                AppSizes.pagePadding,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Select category',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              CategoryPicker(
+                                selection: _categorySelection,
+                                onChanged: (updated) {
+                                  setState(() => _categorySelection = updated);
+                                  // Auto-close when level 3 selected
+                                  if (updated.level3 != null) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                            ],
                           ),
                         ),
                       );
@@ -295,36 +317,48 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(AppSizes.md),
                       decoration: BoxDecoration(
-                        color: AppColors.grey50,
+                        color: _categorySelection.hasLevel1
+                            ? AppColors.primaryLight
+                            : AppColors.grey50,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        border: Border.all(color: AppColors.grey100),
+                        border: Border.all(
+                          color: _categorySelection.hasLevel1
+                              ? AppColors.primary
+                              : AppColors.grey100,
+                        ),
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.category_outlined,
                             size: 18,
-                            color: AppColors.grey400,
+                            color: _categorySelection.hasLevel1
+                                ? AppColors.primary
+                                : AppColors.grey400,
                           ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              _categorySelection.level3?.name ??
-                                  _categorySelection.level2?.name ??
-                                  _categorySelection.level1?.name ??
-                                  'Select category',
+                              _categorySelection.displayPath.isNotEmpty
+                                  ? _categorySelection.displayPath
+                                  : 'Select category',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: _categorySelection.level3 != null
-                                    ? AppColors.grey900
+                                color: _categorySelection.hasLevel1
+                                    ? AppColors.primary
                                     : AppColors.grey400,
+                                fontWeight: _categorySelection.hasLevel1
+                                    ? FontWeight.w600
+                                    : FontWeight.w400,
                               ),
                             ),
                           ),
-                          const Icon(
+                          Icon(
                             Icons.chevron_right_rounded,
                             size: 20,
-                            color: AppColors.grey400,
+                            color: _categorySelection.hasLevel1
+                                ? AppColors.primary
+                                : AppColors.grey400,
                           ),
                         ],
                       ),
@@ -502,7 +536,6 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                     textCapitalization: TextCapitalization.sentences,
                   ),
                   const SizedBox(height: AppSizes.md),
-
                   GestureDetector(
                     onTap: _openMapPicker,
                     child: Container(
@@ -741,7 +774,7 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
   }
 }
 
-// ── Helper widgets ─────────────────────────────────────────────────
+// ── Helper widgets ────────────────────────────────────────────────
 
 class _PhotoPicker extends StatelessWidget {
   final List<File> images;

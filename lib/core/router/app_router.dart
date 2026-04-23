@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:merokotha/features/ads/presentation/screen/admin_ads_screen.dart';
 import 'package:merokotha/features/owner/presentation/screens/my_listing_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -171,6 +172,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.adminCategories,
         builder: (_, _) => const AdminCategoriesScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.adminAds,
+        builder: (_, _) => const AdminAdsScreen(),
       ),
       GoRoute(
         path: AppRoutes.adminUserDetail,

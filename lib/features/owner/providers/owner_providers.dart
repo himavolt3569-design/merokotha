@@ -11,15 +11,16 @@ part 'owner_providers.g.dart';
 // ── Watch owner's listings in real time ──
 @riverpod
 Stream<List<ListingModel>> ownerListings(Ref ref) {
-  final user = ref.watch(authStateProvider).value;
+  final user = ref.watch(authStateProvider).asData?.value;
   if (user == null) return const Stream.empty();
   return ref.watch(ownerRepositoryProvider).watchMyListings(user.uid);
 }
 
-// ── Watch pending inquiry count for badge ──
+// ── Watch pending inquiry count for notification badge ──
 @riverpod
 Stream<int> pendingInquiryCount(Ref ref) {
-  final user = ref.watch(authStateProvider).value;
+  final user = ref.watch(authStateProvider).asData?.value;
+  ;
   if (user == null) return Stream.value(0);
   return ref.watch(inquiryRepositoryProvider).watchPendingCount(user.uid);
 }
@@ -48,16 +49,19 @@ class UploadListingState {
   );
 }
 
+// NOTE: The generated provider name will be uploadListingProvider
+// because the class is UploadListingNotifier → uploadListing + Provider
 @riverpod
 class UploadListingNotifier extends _$UploadListingNotifier {
   @override
   UploadListingState build() => const UploadListingState();
 
+  // Returns the new listing ID on success, null on failure
   Future<String?> uploadListing({
-    required String ownerName,
     required String ownerId,
+    required String ownerName,
+    String? ownerPhotoUrl,
     required String title,
-    // ── Dynamic category (replaces RoomType) ──
     String? categoryL1Id,
     String? categoryL2Id,
     String? categoryL3Id,
@@ -75,7 +79,6 @@ class UploadListingNotifier extends _$UploadListingNotifier {
     GeoPoint? geoPoint,
     String? address,
     String? nearbyLandmarks,
-    String? ownerPhotoUrl,
   }) async {
     state = state.copyWith(isLoading: true, clearError: true);
 
@@ -105,7 +108,7 @@ class UploadListingNotifier extends _$UploadListingNotifier {
         address: address,
         nearbyLandmarks: nearbyLandmarks,
         availableFrom: availableFrom,
-        status: ListingStatus.active,
+        status: ListingStatus.active, // all listings go live immediately
         createdAt: now,
         updatedAt: now,
       );
@@ -117,7 +120,7 @@ class UploadListingNotifier extends _$UploadListingNotifier {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'Failed to publish listing. Please try again.',
+        error: 'Failed to save listing. Please try again.',
       );
       return null;
     }
@@ -126,7 +129,7 @@ class UploadListingNotifier extends _$UploadListingNotifier {
   void reset() => state = const UploadListingState();
 }
 
-// ── Toggle listing status ──
+// ── Toggle / update listing status ──
 @riverpod
 class ListingStatusNotifier extends _$ListingStatusNotifier {
   @override

@@ -9,6 +9,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../shared/widgets/mk_widgets.dart';
 import '../../../auth/data/auth_repository.dart';
 import '../../../auth/providers/auth_provider.dart';
+
 import '../../providers/admin_providers.dart';
 import '../widgets/admin_widgets.dart';
 
@@ -222,6 +223,13 @@ class AdminHomeScreen extends ConsumerWidget {
                     color: AppColors.customerPrimary,
                     onTap: () => context.go(AppRoutes.adminCategories),
                   ),
+                  const SizedBox(width: 10),
+                  _QuickAction(
+                    label: 'Ads',
+                    icon: Icons.campaign_rounded,
+                    color: AppColors.secondary,
+                    onTap: () => context.go(AppRoutes.adminAds),
+                  ),
                 ],
               ),
 
@@ -335,6 +343,7 @@ class AdminHomeScreen extends ConsumerWidget {
   }
 }
 
+// ── Section header ──
 class _SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback? onSeeAll;
@@ -368,6 +377,7 @@ class _SectionHeader extends StatelessWidget {
   );
 }
 
+// ── Quick action button ──
 class _QuickAction extends StatelessWidget {
   final String label;
   final IconData icon;

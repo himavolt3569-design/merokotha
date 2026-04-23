@@ -227,6 +227,22 @@ service cloud.firestore {
 
 
     // ────────────────────────────────────────────────────────────
+    // ADS
+    // /ads/{adId}
+    // ────────────────────────────────────────────────────────────
+
+    match /ads/{adId} {
+      // Anyone (logged in or not) can read ads
+      // This powers the ad banners on the landing page
+      // and all customer-facing screens
+      allow read: if true;
+
+      // Only superAdmin can create, update, or delete ads
+      allow write: if isAdmin();
+    }
+
+
+    // ────────────────────────────────────────────────────────────
     // CATEGORIES
     // /categories/{categoryId}
     // ────────────────────────────────────────────────────────────

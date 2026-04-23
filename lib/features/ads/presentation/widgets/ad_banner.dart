@@ -34,7 +34,7 @@ class AdBanner extends ConsumerWidget {
     return adsAsync.when(
       // Show nothing while loading — no skeleton, no flash
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
       data: (ads) {
         if (ads.isEmpty) return const SizedBox.shrink();
 
@@ -107,7 +107,7 @@ class _AdCard extends StatelessWidget {
                     width: double.infinity,
                     height: 100,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
+                    errorBuilder: (_, _, _) => Container(
                       height: 100,
                       color: AppColors.grey50,
                       child: const Center(

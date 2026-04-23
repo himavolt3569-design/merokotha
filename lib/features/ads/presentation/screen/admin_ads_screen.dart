@@ -36,7 +36,7 @@ class AdminAdsScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.all(AppSizes.pagePadding),
             itemCount: ads.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            separatorBuilder: (_, i) => const SizedBox(height: 10),
             itemBuilder: (_, i) => _AdTile(ad: ads[i]),
           );
         },
@@ -104,7 +104,7 @@ class _AdTile extends ConsumerWidget {
                 height: 90,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
+                errorBuilder: (_, _, _) => Container(
                   height: 90,
                   color: AppColors.grey50,
                   child: const Center(
