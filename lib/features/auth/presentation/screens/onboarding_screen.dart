@@ -232,59 +232,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
                 const SizedBox(height: AppSizes.xl),
 
-                // Profile photo hint (placeholder — will use Storage later)
-                Container(
-                  padding: const EdgeInsets.all(AppSizes.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.grey50,
-                    borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: AppColors.grey100,
-                          borderRadius: BorderRadius.circular(
-                            AppSizes.radiusFull,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.camera_alt_outlined,
-                          color: AppColors.grey400,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: AppSizes.md),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Add profile photo',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.grey800,
-                              ),
-                            ),
-                            Text(
-                              'Coming soon — photo upload will be enabled shortly',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.grey400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: AppSizes.xl),
-
                 // Save button
                 SizedBox(
                   width: double.infinity,

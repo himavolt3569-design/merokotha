@@ -12,19 +12,13 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await FirebaseAppCheck.instance.activate(
-    // Use debug provider in debug mode, Play Integrity in release
-    androidProvider:
-        AndroidProvider.debug, // 🔁 Change to .playIntegrity for production
-    appleProvider:
-        AppleProvider.debug, // 🔁 Change to .appAttest for production
+    androidProvider: AndroidProvider.playIntegrity, // 🔁 Change to .playIntegrity for production
+    appleProvider: AppleProvider.appAttest, // 🔁 Change to .appAttest for production
   );
 
   runApp(const ProviderScope(child: MeroKothaApp()));

@@ -34,6 +34,8 @@ import '../../features/customer/presentation/screens/customer_profile_screen.dar
 // Chat screens
 import '../../features/chat/presentation/screens/chat_list_screen.dart';
 import '../../features/chat/presentation/screens/chat_thread_screen.dart';
+
+// Admin screens
 import '../../features/admin/presentation/screens/admin_home_screen.dart';
 import '../../features/admin/presentation/screens/admin_users_screen.dart';
 import '../../features/admin/presentation/screens/admin_user_detail_screen.dart';
@@ -48,24 +50,29 @@ GoRouter appRouter(Ref ref) {
   final authState = ref.watch(authStateProvider);
 
   return GoRouter(
-    // Landing is the true initial route — public, no auth needed
-    initialLocation: AppRoutes.landing,
+    initialLocation: AppRoutes.splash, // ← always start at splash
     debugLogDiagnostics: true,
     redirect: (context, state) {
+      // Wait for Firebase Auth to resolve
+      if (authState.isLoading) return null;
+
       final isLoggedIn = authState.value != null;
       final loc = state.matchedLocation;
 
-      // These routes are public — no login required
       final publicRoutes = [
         AppRoutes.landing,
         AppRoutes.login,
         AppRoutes.splash,
+        AppRoutes.roleSelect,
+        AppRoutes.onboarding,
       ];
 
+      // Only redirect unauthenticated users away from protected routes
       if (!isLoggedIn && !publicRoutes.contains(loc)) {
         return AppRoutes.login;
       }
-      return null;
+
+      return null; // splash handles all role-based routing
     },
     routes: [
       // ── Public / Landing ──────────────────────────────────────
@@ -141,7 +148,7 @@ GoRouter appRouter(Ref ref) {
             InquireScreen(listing: state.extra as ListingModel),
       ),
 
-      // ── Chat (shared for owner and customer) ──────────────────
+      // ── Chat ──────────────────────────────────────────────────
       GoRoute(
         path: AppRoutes.chatList,
         builder: (_, _) => const ChatListScreen(),

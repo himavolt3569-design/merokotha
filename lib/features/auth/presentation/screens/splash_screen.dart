@@ -33,18 +33,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   Future<void> _navigate() async {
-    // Wait for animation + minimum splash time
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
-    final firebaseUser = ref.read(authStateProvider).value;
+    final firebaseUser = await ref.read(authStateProvider.future);
 
     if (firebaseUser == null) {
-      context.go(AppRoutes.login);
+      context.go(AppRoutes.landing);
       return;
     }
 
-    // User is logged in — check if their profile is complete
     final userExists = await ref
         .read(userRepositoryProvider)
         .userExists(firebaseUser.uid);
@@ -52,14 +50,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (!mounted) return;
 
     if (!userExists) {
-      // New user — go to role select
       context.go(AppRoutes.roleSelect);
     } else {
-      // Existing user — route based on role
       final user = await ref
           .read(userRepositoryProvider)
           .getUser(firebaseUser.uid);
+
       if (!mounted) return;
+
       if (user?.isAdmin == true) {
         context.go(AppRoutes.adminHome);
       } else if (user?.isOwner == true) {
@@ -86,7 +84,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo placeholder — replace with your actual logo asset
               Container(
                 width: 80,
                 height: 80,
@@ -94,11 +91,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Icon(
-                  Icons.home_rounded,
-                  size: 48,
-                  color: AppColors.primary,
-                ),
+                child: Image.asset('assets/merokotha.png'),
               ),
               const SizedBox(height: 20),
               const Text(

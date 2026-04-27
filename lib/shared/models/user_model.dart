@@ -31,6 +31,7 @@ class UserModel {
 
   // From Firestore document
   factory UserModel.fromMap(Map<String, dynamic> map, String id) {
+    print('🗂️ Raw map role value: ${map['role']}'); // ADD THIS
     return UserModel(
       id: id,
       name: map['name'] as String? ?? '',
