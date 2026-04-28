@@ -31,8 +31,7 @@ class UploadListingScreen extends ConsumerStatefulWidget {
   const UploadListingScreen({super.key});
 
   @override
-  ConsumerState<UploadListingScreen> createState() =>
-      _UploadListingScreenState();
+  ConsumerState<UploadListingScreen> createState() => _UploadListingScreenState();
 }
 
 class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
@@ -76,9 +75,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (ctx, child) => Theme(
-        data: Theme.of(ctx).copyWith(
-          colorScheme: const ColorScheme.light(primary: AppColors.primary),
-        ),
+        data: Theme.of(ctx).copyWith(colorScheme: const ColorScheme.light(primary: AppColors.primary)),
         child: child!,
       ),
     );
@@ -92,11 +89,8 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
       if (perm == LocationPermission.denied) {
         perm = await Geolocator.requestPermission();
       }
-      if (perm == LocationPermission.whileInUse ||
-          perm == LocationPermission.always) {
-        final pos = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.medium,
-        );
+      if (perm == LocationPermission.whileInUse || perm == LocationPermission.always) {
+        final pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
         initial = LatLng(pos.latitude, pos.longitude);
       }
     } catch (_) {}
@@ -105,9 +99,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
 
     final result = await Navigator.push<LatLng>(
       context,
-      MaterialPageRoute(
-        builder: (_) => _MapPickerScreen(initialLocation: initial),
-      ),
+      MaterialPageRoute(builder: (_) => _MapPickerScreen(initialLocation: initial)),
     );
     if (result != null) setState(() => _pickedLocation = result);
   }
@@ -118,10 +110,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
 
     for (var i = 0; i < _pickedImages.length; i++) {
       final ref = storage.ref().child('listings/$listingId/image_$i.jpg');
-      final task = await ref.putFile(
-        _pickedImages[i],
-        SettableMetadata(contentType: 'image/jpeg'),
-      );
+      final task = await ref.putFile(_pickedImages[i], SettableMetadata(contentType: 'image/jpeg'));
       final url = await task.ref.getDownloadURL();
       downloadUrls.add(url);
     }
@@ -133,10 +122,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_pickedLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please pin your room location on the map'),
-          backgroundColor: AppColors.error,
-        ),
+        const SnackBar(content: Text('Please pin your room location on the map'), backgroundColor: AppColors.error),
       );
       return;
     }
@@ -167,10 +153,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
           facilities: _facilities,
           description: _descCtrl.text.trim(),
           availableFrom: _availableFrom,
-          geoPoint: GeoPoint(
-            _pickedLocation!.latitude,
-            _pickedLocation!.longitude,
-          ),
+          geoPoint: GeoPoint(_pickedLocation!.latitude, _pickedLocation!.longitude),
           address: _addressCtrl.text.trim(),
           nearbyLandmarks: _landmarksCtrl.text.trim(),
         );
@@ -180,9 +163,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
       if (_pickedImages.isNotEmpty) {
         try {
           final photoUrls = await _uploadImages(id);
-          await ref.read(ownerRepositoryProvider).updateListing(id, {
-            'photoUrls': photoUrls,
-          });
+          await ref.read(ownerRepositoryProvider).updateListing(id, {'photoUrls': photoUrls});
         } catch (_) {
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -196,12 +177,9 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
         }
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Listing published!'),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Listing published!'), backgroundColor: AppColors.success));
       context.go(AppRoutes.myListings);
     }
   }
@@ -213,12 +191,9 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
 
     ref.listen(uploadListingProvider, (_, next) {
       if (next.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.error!),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.error!), backgroundColor: AppColors.error));
       }
     });
 
@@ -227,11 +202,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
       appBar: MkAppBar(
         title: 'Add listing',
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 20,
-            color: AppColors.grey800,
-          ),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: AppColors.grey800),
           onPressed: () => context.pop(),
         ),
       ),
@@ -274,42 +245,38 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                         context: context,
                         isScrollControlled: true,
                         shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(20),
-                          ),
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                         ),
-                        builder: (_) => Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            AppSizes.pagePadding,
-                            AppSizes.pagePadding,
-                            AppSizes.pagePadding,
-                            MediaQuery.of(context).viewInsets.bottom +
-                                AppSizes.pagePadding,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Select category',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
+                        builder: (_) => StatefulBuilder(
+                          builder: (sheetCtx, setSheetState) => Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              AppSizes.pagePadding,
+                              AppSizes.pagePadding,
+                              AppSizes.pagePadding,
+                              MediaQuery.of(context).viewInsets.bottom + AppSizes.pagePadding,
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Select category',
+                                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
-                              CategoryPicker(
-                                selection: _categorySelection,
-                                onChanged: (updated) {
-                                  setState(() => _categorySelection = updated);
-                                  // Auto-close when level 3 selected
-                                  if (updated.level3 != null) {
-                                    Navigator.pop(context);
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 16),
-                            ],
+                                const SizedBox(height: 16),
+                                CategoryPicker(
+                                  selection: _categorySelection,
+                                  onChanged: (updated) {
+                                    setState(() => _categorySelection = updated); // rebuilds parent trigger
+                                    setSheetState(() {}); // rebuilds sheet so picker sees new selection
+                                    if (updated.level3 != null) {
+                                      Navigator.pop(sheetCtx);
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -317,24 +284,16 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(AppSizes.md),
                       decoration: BoxDecoration(
-                        color: _categorySelection.hasLevel1
-                            ? AppColors.primaryLight
-                            : AppColors.grey50,
+                        color: _categorySelection.hasLevel1 ? AppColors.primaryLight : AppColors.grey50,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        border: Border.all(
-                          color: _categorySelection.hasLevel1
-                              ? AppColors.primary
-                              : AppColors.grey100,
-                        ),
+                        border: Border.all(color: _categorySelection.hasLevel1 ? AppColors.primary : AppColors.grey100),
                       ),
                       child: Row(
                         children: [
                           Icon(
                             Icons.category_outlined,
                             size: 18,
-                            color: _categorySelection.hasLevel1
-                                ? AppColors.primary
-                                : AppColors.grey400,
+                            color: _categorySelection.hasLevel1 ? AppColors.primary : AppColors.grey400,
                           ),
                           const SizedBox(width: 10),
                           Expanded(
@@ -344,21 +303,15 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                                   : 'Select category',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: _categorySelection.hasLevel1
-                                    ? AppColors.primary
-                                    : AppColors.grey400,
-                                fontWeight: _categorySelection.hasLevel1
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
+                                color: _categorySelection.hasLevel1 ? AppColors.primary : AppColors.grey400,
+                                fontWeight: _categorySelection.hasLevel1 ? FontWeight.w600 : FontWeight.w400,
                               ),
                             ),
                           ),
                           Icon(
                             Icons.chevron_right_rounded,
                             size: 20,
-                            color: _categorySelection.hasLevel1
-                                ? AppColors.primary
-                                : AppColors.grey400,
+                            color: _categorySelection.hasLevel1 ? AppColors.primary : AppColors.grey400,
                           ),
                         ],
                       ),
@@ -403,11 +356,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: MkPriceField(
-                          label: 'Deposit',
-                          hint: '0',
-                          controller: _depositCtrl,
-                        ),
+                        child: MkPriceField(label: 'Deposit', hint: '0', controller: _depositCtrl),
                       ),
                     ],
                   ),
@@ -427,9 +376,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                           hint: '2',
                           controller: _floorCtrl,
                           keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -439,9 +386,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                           hint: '4',
                           controller: _totalFloorsCtrl,
                           keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         ),
                       ),
                     ],
@@ -452,10 +397,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                   GestureDetector(
                     onTap: _pickDate,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 14,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
@@ -463,25 +405,14 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.calendar_today_outlined,
-                            size: 18,
-                            color: AppColors.grey400,
-                          ),
+                          const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.grey400),
                           const SizedBox(width: 10),
                           Text(
                             '${_availableFrom.day}/${_availableFrom.month}/${_availableFrom.year}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: AppColors.grey900,
-                            ),
+                            style: const TextStyle(fontSize: 15, color: AppColors.grey900),
                           ),
                           const Spacer(),
-                          const Icon(
-                            Icons.chevron_right_rounded,
-                            size: 20,
-                            color: AppColors.grey400,
-                          ),
+                          const Icon(Icons.chevron_right_rounded, size: 20, color: AppColors.grey400),
                         ],
                       ),
                     ),
@@ -494,10 +425,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               _Card(
                 title: 'Facilities',
                 children: [
-                  FacilitiesSelector(
-                    selected: _facilities,
-                    onChanged: (v) => setState(() => _facilities = v),
-                  ),
+                  FacilitiesSelector(selected: _facilities, onChanged: (v) => setState(() => _facilities = v)),
                 ],
               ),
               const SizedBox(height: 16),
@@ -508,8 +436,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                 children: [
                   MkTextField(
                     label: 'About this room',
-                    hint:
-                        'Describe the room, neighbourhood, transport access...',
+                    hint: 'Describe the room, neighbourhood, transport access...',
                     controller: _descCtrl,
                     validator: Validators.description,
                     maxLines: 4,
@@ -541,25 +468,15 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(AppSizes.md),
                       decoration: BoxDecoration(
-                        color: _pickedLocation != null
-                            ? AppColors.primaryLight
-                            : AppColors.grey50,
+                        color: _pickedLocation != null ? AppColors.primaryLight : AppColors.grey50,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        border: Border.all(
-                          color: _pickedLocation != null
-                              ? AppColors.primary
-                              : AppColors.grey100,
-                        ),
+                        border: Border.all(color: _pickedLocation != null ? AppColors.primary : AppColors.grey100),
                       ),
                       child: Row(
                         children: [
                           Icon(
-                            _pickedLocation != null
-                                ? Icons.location_on_rounded
-                                : Icons.add_location_alt_outlined,
-                            color: _pickedLocation != null
-                                ? AppColors.primary
-                                : AppColors.grey400,
+                            _pickedLocation != null ? Icons.location_on_rounded : Icons.add_location_alt_outlined,
+                            color: _pickedLocation != null ? AppColors.primary : AppColors.grey400,
                             size: 22,
                           ),
                           const SizedBox(width: 10),
@@ -570,21 +487,15 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                                   : AppStrings.pinLocation,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: _pickedLocation != null
-                                    ? AppColors.primary
-                                    : AppColors.grey600,
-                                fontWeight: _pickedLocation != null
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
+                                color: _pickedLocation != null ? AppColors.primary : AppColors.grey600,
+                                fontWeight: _pickedLocation != null ? FontWeight.w600 : FontWeight.w400,
                               ),
                             ),
                           ),
                           Icon(
                             Icons.chevron_right_rounded,
                             size: 20,
-                            color: _pickedLocation != null
-                                ? AppColors.primary
-                                : AppColors.grey400,
+                            color: _pickedLocation != null ? AppColors.primary : AppColors.grey400,
                           ),
                         ],
                       ),
@@ -645,22 +556,14 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
         elevation: 0,
         title: const Text(
           'Pin your room location',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: AppColors.grey900,
-          ),
+          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.grey900),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, _currentPin),
             child: const Text(
               'Confirm',
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w700,
-                fontSize: 15,
-              ),
+              style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 15),
             ),
           ),
         ],
@@ -691,11 +594,7 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
           const Center(
             child: Padding(
               padding: EdgeInsets.only(bottom: 40),
-              child: Icon(
-                Icons.location_on_rounded,
-                size: 48,
-                color: AppColors.error,
-              ),
+              child: Icon(Icons.location_on_rounded, size: 48, color: AppColors.error),
             ),
           ),
           Positioned(
@@ -707,28 +606,15 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 6,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6)],
               ),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.location_on_rounded,
-                    size: 16,
-                    color: AppColors.primary,
-                  ),
+                  const Icon(Icons.location_on_rounded, size: 16, color: AppColors.primary),
                   const SizedBox(width: 8),
                   Text(
                     '${_currentPin.latitude.toStringAsFixed(5)},  ${_currentPin.longitude.toStringAsFixed(5)}',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontFamily: 'monospace',
-                      color: AppColors.grey700,
-                    ),
+                    style: const TextStyle(fontSize: 13, fontFamily: 'monospace', color: AppColors.grey700),
                   ),
                 ],
               ),
@@ -743,20 +629,11 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 8,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8)],
               ),
               child: const Row(
                 children: [
-                  Icon(
-                    Icons.info_outline_rounded,
-                    size: 16,
-                    color: AppColors.grey400,
-                  ),
+                  Icon(Icons.info_outline_rounded, size: 16, color: AppColors.grey400),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -790,10 +667,7 @@ class _PhotoPicker extends StatelessWidget {
       onChanged(files);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to pick images. Please try again.'),
-          backgroundColor: AppColors.error,
-        ),
+        const SnackBar(content: Text('Failed to pick images. Please try again.'), backgroundColor: AppColors.error),
       );
     }
   }
@@ -815,25 +689,14 @@ class _PhotoPicker extends StatelessWidget {
             ? const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.add_photo_alternate_outlined,
-                    size: 36,
-                    color: AppColors.grey400,
-                  ),
+                  Icon(Icons.add_photo_alternate_outlined, size: 36, color: AppColors.grey400),
                   SizedBox(height: 8),
                   Text(
                     'Add photos',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.grey600,
-                    ),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.grey600),
                   ),
                   SizedBox(height: 4),
-                  Text(
-                    'Tap to select images',
-                    style: TextStyle(fontSize: 11, color: AppColors.grey400),
-                  ),
+                  Text('Tap to select images', style: TextStyle(fontSize: 11, color: AppColors.grey400)),
                 ],
               )
             : Column(
@@ -848,15 +711,8 @@ class _PhotoPicker extends StatelessWidget {
                               (file) => Padding(
                                 padding: const EdgeInsets.only(right: 10),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                    AppSizes.radiusMd,
-                                  ),
-                                  child: Image.file(
-                                    file,
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                                  child: Image.file(file, width: 100, height: 100, fit: BoxFit.cover),
                                 ),
                               ),
                             )
@@ -867,10 +723,7 @@ class _PhotoPicker extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text(
                     '${images.length} photo${images.length == 1 ? '' : 's'} selected. Tap to change.',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.grey700,
-                    ),
+                    style: const TextStyle(fontSize: 13, color: AppColors.grey700),
                   ),
                 ],
               ),
@@ -899,11 +752,7 @@ class _Card extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: AppColors.grey900,
-            ),
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.grey900),
           ),
           const SizedBox(height: 14),
           const Divider(height: 1, color: AppColors.grey50),
@@ -921,11 +770,7 @@ class _Label extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     text,
-    style: const TextStyle(
-      fontSize: 13,
-      fontWeight: FontWeight.w500,
-      color: AppColors.grey800,
-    ),
+    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.grey800),
   );
 }
 
@@ -935,12 +780,7 @@ class _SegmentSelector<T> extends StatelessWidget {
   final String Function(T) label;
   final void Function(T) onChanged;
 
-  const _SegmentSelector({
-    required this.values,
-    required this.selected,
-    required this.label,
-    required this.onChanged,
-  });
+  const _SegmentSelector({required this.values, required this.selected, required this.label, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -957,9 +797,7 @@ class _SegmentSelector<T> extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primaryLight : Colors.white,
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.grey100,
-                ),
+                border: Border.all(color: isSelected ? AppColors.primary : AppColors.grey100),
               ),
               child: Text(
                 label(v),

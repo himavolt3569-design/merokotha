@@ -5,23 +5,50 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/features/admin/providers/category_providers.dart';
 
-// ─── ENHANCED DESIGN TOKENS ─────────────────────────────────────────────
+// ─── DESIGN TOKENS ──────────────────────────────────────────────────────────
+// Aesthetic: "Quiet Luxury" — off-white base, deep forest green accent,
+// warm stone neutrals. No gradients, no heavy shadows. Just air and precision.
 
 class _T {
-  static const bg = Color(0xFFF9FAFB);
-  static const surface = Colors.white;
-  static const primary = Color(0xFF10B981); // Vibrant Emerald
-  static const primaryDark = Color(0xFF065F46); // Amber for prices/ratings
-  static const textMain = Color(0xFF111827);
-  static const textSub = Color(0xFF6B7280);
-  static const border = Color(0xFFE5E7EB);
+  // Palette
+  static const bg = Color(0xFFF7F6F3); // Warm off-white
+  static const surface = Color(0xFFFFFFFF);
+  static const accent = Color(0xFF1C4A3A); // Deep forest green
+  static const accentMuted = Color(0xFF4A7C6A); // Sage — for tags, icons
+  static const stone = Color(0xFF8C8880); // Warm grey — secondary text
+  static const ink = Color(0xFF1A1917); // Near-black — primary text
+  static const hairline = Color(0xFFE8E5E0); // Warm hairline
 
-  static const double radius = 16.0;
-  static const shadow = [BoxShadow(color: Color(0x08000000), blurRadius: 10, offset: Offset(0, 4))];
+  // Type scale
+  static TextStyle get displayLg => GoogleFonts.cormorantGaramond(
+    fontSize: 38,
+    fontWeight: FontWeight.w600,
+    height: 1.1,
+    letterSpacing: -0.5,
+    color: ink,
+  );
+
+  static TextStyle get labelSm =>
+      GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 1.4, color: accentMuted);
+
+  static TextStyle get bodyMd => GoogleFonts.dmSans(fontSize: 13, color: stone, height: 1.5);
+
+  static TextStyle get priceLg =>
+      GoogleFonts.cormorantGaramond(fontSize: 20, fontWeight: FontWeight.w700, color: ink, letterSpacing: -0.3);
+
+  static TextStyle get titleMd =>
+      GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: ink, letterSpacing: -0.1);
+
+  // Shape
+  static const double r = 12.0;
+
+  // Shadow — single, barely-there
+  static const shadow = [BoxShadow(color: Color(0x0A1A1917), blurRadius: 16, offset: Offset(0, 4))];
 }
 
-// ─── ENHANCED MAIN SCREEN ─────────────────────────────────────────────
+// ─── LANDING SCREEN ─────────────────────────────────────────────────────────
 
 class LandingScreen extends ConsumerStatefulWidget {
   const LandingScreen({super.key});
@@ -42,70 +69,124 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
     return Scaffold(
       backgroundColor: _T.bg,
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
-          // 1. Sticky Modern Navbar
+          // ── NAVBAR ────────────────────────────────────────────────────────
           SliverAppBar(
             floating: true,
-            backgroundColor: _T.bg.withOpacity(0.8),
+            snap: true,
+            backgroundColor: _T.bg,
+            surfaceTintColor: Colors.transparent,
             elevation: 0,
-            title: Text(
-              "MeroKotha",
-              style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: _T.primaryDark, letterSpacing: -0.5),
+            titleSpacing: 20,
+            title: Row(
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(color: _T.accent, borderRadius: BorderRadius.circular(6)),
+                  child: const Center(
+                    child: Text(
+                      'M',
+                      style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'MeroKotha',
+                  style: GoogleFonts.dmSans(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
+                    color: _T.ink,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+              ],
             ),
             actions: [
               Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: TextButton.icon(
-                  onPressed: () => context.go(AppRoutes.login),
-                  icon: const Icon(Icons.account_circle_outlined, size: 20),
-                  label: const Text("Sign In"),
-                  style: TextButton.styleFrom(foregroundColor: _T.primaryDark),
+                padding: const EdgeInsets.only(right: 16),
+                child: GestureDetector(
+                  onTap: () => context.go(AppRoutes.login),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: _T.hairline, width: 1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Sign In',
+                      style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w600, color: _T.ink),
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
 
-          // 2. Dynamic Hero & Search Header
+          // ── HERO ──────────────────────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Find Your Next\nHome in Nepal",
-                    style: GoogleFonts.poppins(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                      height: 1.2,
-                      color: _T.textMain,
-                    ),
+                  // Eyebrow
+                  Row(
+                    children: [
+                      Container(width: 20, height: 1.5, color: _T.accentMuted),
+                      const SizedBox(width: 8),
+                      Text('KATHMANDU & BEYOND', style: _T.labelSm),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  _EnhancedSearchBar(onChanged: (v) => setState(() => _search = v.toLowerCase())),
+                  const SizedBox(height: 14),
+                  Text('Find Your\nNext Home\nin Nepal', style: _T.displayLg),
+                  const SizedBox(height: 24),
+                  // Search bar — minimal pill
+                  _SearchBar(onChanged: (v) => setState(() => _search = v.toLowerCase())),
                 ],
               ),
             ),
           ),
 
-          // 3. Horizontal Categories
+          // ── CATEGORY FILTER ───────────────────────────────────────────────
           SliverToBoxAdapter(
-            child: _FilterRow(
-              listingsAsync: listingsAsync,
-              selected: _category,
-              onSelect: (c) => setState(() => _category = c),
+            child: _CategoryRow(selected: _category, onSelect: (c) => setState(() => _category = c)),
+          ),
+
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+
+          // ── SECTION HEADER ────────────────────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 16, 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text('AVAILABLE ROOMS', style: _T.labelSm),
+                  const Spacer(),
+                  // Grid/List toggle — minimal icon pair
+                  _ToggleView(isGrid: _isGrid, onToggle: () => setState(() => _isGrid = !_isGrid)),
+                ],
+              ),
             ),
           ),
 
-          // 4. Results Header
-          SliverToBoxAdapter(
-            child: _Header(isGrid: _isGrid, onToggle: () => setState(() => _isGrid = !_isGrid)),
-          ),
-
-          // 5. Responsive Grid/List
+          // ── LISTINGS ──────────────────────────────────────────────────────
           listingsAsync.when(
-            loading: () => const SliverFillRemaining(child: Center(child: CircularProgressIndicator())),
-            error: (e, _) => SliverFillRemaining(child: Center(child: Text("Error: $e"))),
+            loading: () => const SliverFillRemaining(
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 1.5, color: _T.accent),
+                ),
+              ),
+            ),
+            error: (e, _) => SliverFillRemaining(
+              child: Center(child: Text('Error: $e', style: _T.bodyMd)),
+            ),
             data: (list) {
               final listings = list.where((l) {
                 final matchQ = _search.isEmpty || l.title.toLowerCase().contains(_search);
@@ -114,29 +195,40 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
               }).toList();
 
               if (listings.isEmpty) {
-                return const SliverFillRemaining(child: Center(child: Text("No properties found.")));
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.search_off_rounded, color: _T.stone, size: 40),
+                        const SizedBox(height: 12),
+                        Text('No properties found', style: _T.bodyMd),
+                      ],
+                    ),
+                  ),
+                );
               }
 
               return SliverPadding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
                 sliver: _isGrid
                     ? SliverGrid(
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 0.72,
+                          mainAxisSpacing: 14,
+                          crossAxisSpacing: 14,
+                          childAspectRatio: 0.70,
                         ),
                         delegate: SliverChildBuilderDelegate(
-                          (context, i) => _EnhancedGridCard(listing: listings[i], onTap: () => _showLogin(context)),
+                          (ctx, i) => _GridCard(listing: listings[i], onTap: () => _showLoginSheet(context)),
                           childCount: listings.length,
                         ),
                       )
                     : SliverList(
                         delegate: SliverChildBuilderDelegate(
-                          (context, i) => Padding(
+                          (ctx, i) => Padding(
                             padding: const EdgeInsets.only(bottom: 12),
-                            child: _EnhancedListCard(listing: listings[i], onTap: () => _showLogin(context)),
+                            child: _ListCard(listing: listings[i], onTap: () => _showLoginSheet(context)),
                           ),
                           childCount: listings.length,
                         ),
@@ -149,107 +241,258 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
     );
   }
 
-  void _showLogin(BuildContext context) => showModalBottomSheet(
-    context: context,
-    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-    builder: (_) => const _LoginSheet(),
-  );
+  void _showLoginSheet(BuildContext context) {
+    showModalBottomSheet(context: context, backgroundColor: Colors.transparent, builder: (_) => const _LoginSheet());
+  }
 }
 
-// ─── COMPONENT REFINEMENTS ─────────────────────────────────────────────
+// ─── SEARCH BAR ─────────────────────────────────────────────────────────────
 
-class _EnhancedSearchBar extends StatelessWidget {
+class _SearchBar extends StatelessWidget {
   final ValueChanged<String> onChanged;
-  const _EnhancedSearchBar({required this.onChanged});
+  const _SearchBar({required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(_T.radius),
-        boxShadow: _T.shadow,
+        color: _T.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: _T.hairline, width: 1),
       ),
-      child: TextField(
-        onChanged: onChanged,
-        decoration: InputDecoration(
-          hintText: "Search by location or name...",
-          hintStyle: const TextStyle(color: _T.textSub),
-          prefixIcon: const Icon(Icons.search, color: _T.primary),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+      child: Row(
+        children: [
+          const SizedBox(width: 16),
+          Icon(Icons.search_rounded, color: _T.stone, size: 18),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              onChanged: onChanged,
+              style: GoogleFonts.dmSans(fontSize: 14, color: _T.ink),
+              decoration: InputDecoration(
+                hintText: 'Search by location or name…',
+                hintStyle: GoogleFonts.dmSans(fontSize: 14, color: _T.stone),
+                border: InputBorder.none,
+                isDense: true,
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.all(6),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            decoration: BoxDecoration(color: _T.accent, borderRadius: BorderRadius.circular(7)),
+            height: 38,
+            alignment: Alignment.center,
+            child: Text(
+              'Search',
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                letterSpacing: 0.2,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── CATEGORY ROW ────────────────────────────────────────────────────────────
+class _CategoryRow extends ConsumerWidget {
+  final String? selected;
+  final ValueChanged<String?> onSelect;
+
+  const _CategoryRow({required this.selected, required this.onSelect});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final catsAsync = ref.watch(level1CategoriesProvider);
+
+    return SizedBox(
+      height: 36,
+      child: catsAsync.when(
+        loading: () => const SizedBox(),
+        error: (_, __) => const SizedBox(),
+        data: (cats) => ListView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            _Chip(label: 'All', active: selected == null, onTap: () => onSelect(null)),
+            ...cats.map(
+              (c) => _Chip(
+                label: c.name,
+                active: selected == c.name,
+                onTap: () => onSelect(selected == c.name ? null : c.name),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _EnhancedGridCard extends StatelessWidget {
+class _Chip extends StatelessWidget {
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  const _Chip({required this.label, required this.active, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: active ? _T.accent : _T.surface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: active ? _T.accent : _T.hairline, width: 1),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.dmSans(
+            fontSize: 12,
+            fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+            color: active ? Colors.white : _T.stone,
+            letterSpacing: 0.1,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── TOGGLE VIEW ─────────────────────────────────────────────────────────────
+
+class _ToggleView extends StatelessWidget {
+  final bool isGrid;
+  final VoidCallback onToggle;
+
+  const _ToggleView({required this.isGrid, required this.onToggle});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onToggle,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: _T.surface,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: _T.hairline, width: 1),
+        ),
+        child: Icon(isGrid ? Icons.format_list_bulleted_rounded : Icons.grid_view_rounded, color: _T.accent, size: 16),
+      ),
+    );
+  }
+}
+
+// ─── GRID CARD ───────────────────────────────────────────────────────────────
+
+class _GridCard extends StatelessWidget {
   final ListingModel listing;
   final VoidCallback onTap;
 
-  const _EnhancedGridCard({required this.listing, required this.onTap});
+  const _GridCard({required this.listing, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          color: _T.surface,
-          borderRadius: BorderRadius.circular(_T.radius),
-          boxShadow: _T.shadow,
-        ),
+        decoration: BoxDecoration(color: _T.surface, borderRadius: BorderRadius.circular(_T.r), boxShadow: _T.shadow),
+        clipBehavior: Clip.hardEdge,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // IMAGE SECTION
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(_T.radius)),
-              child: AspectRatio(
-                aspectRatio: 1.1, // Adjusted for better fit
-                child: listing.photoUrls.isNotEmpty
-                    ? Image.network(listing.photoUrls.first, fit: BoxFit.cover)
-                    : Container(color: Colors.grey[200]),
+            // Image
+            Expanded(
+              flex: 5,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  listing.photoUrls.isNotEmpty
+                      ? Image.network(listing.photoUrls.first, fit: BoxFit.cover)
+                      : Container(color: const Color(0xFFE8E5E0)),
+                  // Category badge
+                  if (listing.categoryL1Name != null)
+                    Positioned(
+                      top: 10,
+                      left: 10,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.92),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          listing.categoryL1Name!.toUpperCase(),
+                          style: GoogleFonts.dmSans(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: _T.accentMuted,
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
 
-            // TEXT SECTION
+            // Info
             Expanded(
-              // <--- This prevents the column from overflowing the bottom
+              flex: 4,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distributes space
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Rs. ${listing.rentPerMonth}",
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: _T.primaryDark, fontSize: 15),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          listing.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+                        Text(listing.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: _T.titleMd),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.place_outlined, size: 11, color: _T.stone),
+                            const SizedBox(width: 3),
+                            Expanded(
+                              child: Text(
+                                listing.address ?? 'Nepal',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.dmSans(fontSize: 11, color: _T.stone),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Icon(Icons.location_on_outlined, size: 12, color: _T.textSub),
-                        const SizedBox(width: 2),
-                        Expanded(
-                          child: Text(
-                            listing.address ?? 'Nepal',
-                            style: const TextStyle(fontSize: 11, color: _T.textSub),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Rs. ${listing.rentPerMonth}', style: _T.priceLg),
+                            Text('/month', style: GoogleFonts.dmSans(fontSize: 10, color: _T.stone)),
+                          ],
+                        ),
+                        Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(color: _T.accent, borderRadius: BorderRadius.circular(7)),
+                          child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 14),
                         ),
                       ],
                     ),
@@ -264,7 +507,77 @@ class _EnhancedGridCard extends StatelessWidget {
   }
 }
 
-// ─── LOGIN SHEET (MODERN) ─────────────────────────────────────────────
+// ─── LIST CARD ───────────────────────────────────────────────────────────────
+
+class _ListCard extends StatelessWidget {
+  final ListingModel listing;
+  final VoidCallback onTap;
+
+  const _ListCard({required this.listing, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(color: _T.surface, borderRadius: BorderRadius.circular(_T.r), boxShadow: _T.shadow),
+        clipBehavior: Clip.hardEdge,
+        child: Row(
+          children: [
+            // Thumbnail
+            SizedBox(
+              width: 110,
+              height: 110,
+              child: listing.photoUrls.isNotEmpty
+                  ? Image.network(listing.photoUrls.first, fit: BoxFit.cover)
+                  : Container(color: const Color(0xFFE8E5E0)),
+            ),
+            const SizedBox(width: 14),
+            // Info
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (listing.categoryL1Name != null)
+                      Text(listing.categoryL1Name!.toUpperCase(), style: _T.labelSm.copyWith(fontSize: 9)),
+                    const SizedBox(height: 4),
+                    Text(listing.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: _T.titleMd),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.place_outlined, size: 11, color: _T.stone),
+                        const SizedBox(width: 3),
+                        Expanded(
+                          child: Text(
+                            listing.address ?? 'Kathmandu',
+                            style: GoogleFonts.dmSans(fontSize: 11, color: _T.stone),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Rs. ${listing.rentPerMonth}', style: _T.priceLg),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Icon(Icons.chevron_right_rounded, color: _T.hairline, size: 20),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── LOGIN SHEET ─────────────────────────────────────────────────────────────
 
 class _LoginSheet extends StatelessWidget {
   const _LoginSheet();
@@ -272,192 +585,62 @@ class _LoginSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      margin: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: _T.surface, borderRadius: BorderRadius.circular(20)),
+      padding: const EdgeInsets.fromLTRB(28, 28, 28, 36),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Handle
+          Center(
+            child: Container(
+              width: 32,
+              height: 3,
+              decoration: BoxDecoration(color: _T.hairline, borderRadius: BorderRadius.circular(2)),
+            ),
+          ),
+          const SizedBox(height: 28),
           Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(2)),
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(color: _T.accent.withOpacity(0.08), borderRadius: BorderRadius.circular(10)),
+            child: const Icon(Icons.key_outlined, color: _T.accent, size: 20),
           ),
           const SizedBox(height: 20),
-          const Icon(Icons.lock_person_outlined, size: 48, color: _T.primary),
-          const SizedBox(height: 16),
-          const Text("Ready to Move In?", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const Text(
-            "Sign in to contact the owner directly.",
-            textAlign: TextAlign.center,
-            style: TextStyle(color: _T.textSub),
-          ),
-          const SizedBox(height: 24),
+          Text('Ready to Move In?', style: _T.titleMd.copyWith(fontSize: 22)),
+          const SizedBox(height: 6),
+          Text('Sign in to contact owners, save listings, and schedule viewings.', style: _T.bodyMd),
+          const SizedBox(height: 28),
           SizedBox(
             width: double.infinity,
-            height: 50,
+            height: 52,
             child: ElevatedButton(
               onPressed: () => context.go(AppRoutes.login),
               style: ElevatedButton.styleFrom(
-                backgroundColor: _T.primary,
+                backgroundColor: _T.accent,
+                elevation: 0,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text(
-                "Get Started",
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              child: Text(
+                'Get Started',
+                style: GoogleFonts.dmSans(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                ),
               ),
             ),
           ),
           const SizedBox(height: 12),
-        ],
-      ),
-    );
-  }
-}
-
-class _FilterRow extends StatelessWidget {
-  final AsyncValue listingsAsync;
-  final String? selected;
-  final ValueChanged<String?> onSelect;
-
-  const _FilterRow({required this.listingsAsync, required this.selected, required this.onSelect});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: listingsAsync.maybeWhen(
-        data: (list) {
-          final categories = list.map((l) => (l as ListingModel).categoryL1Name).whereType<String>().toSet().toList();
-
-          return ListView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: [
-              _chip("All", selected == null, () => onSelect(null)),
-              ...categories.map((c) => _chip(c, selected == c, () => onSelect(c))),
-            ],
-          );
-        },
-        orElse: () => const SizedBox(),
-      ),
-    );
-  }
-
-  Widget _chip(String label, bool active, VoidCallback onTap) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: ChoiceChip(
-        label: Text(label),
-        selected: active,
-        onSelected: (_) => onTap(),
-        selectedColor: _T.primary,
-        labelStyle: TextStyle(
-          color: active ? _T.primaryDark : _T.textSub,
-          fontWeight: active ? FontWeight.bold : FontWeight.normal,
-        ),
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: active ? _T.primary : _T.border),
-        ),
-      ),
-    );
-  }
-}
-
-class _Header extends StatelessWidget {
-  final bool isGrid;
-  final VoidCallback onToggle;
-
-  const _Header({required this.isGrid, required this.onToggle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Row(
-        children: [
-          const Text(
-            "Available Rooms",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: _T.textMain),
-          ),
-          const Spacer(),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: _T.border),
-            ),
-            child: IconButton(
-              visualDensity: VisualDensity.compact,
-              icon: Icon(isGrid ? Icons.format_list_bulleted : Icons.grid_view_rounded, color: _T.primary),
-              onPressed: onToggle,
+          Center(
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Text('Maybe later', style: _T.bodyMd.copyWith(fontSize: 13)),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _EnhancedListCard extends StatelessWidget {
-  final ListingModel listing;
-  final VoidCallback onTap;
-
-  const _EnhancedListCard({required this.listing, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: _T.surface,
-          borderRadius: BorderRadius.circular(_T.radius),
-          boxShadow: _T.shadow,
-        ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: SizedBox(
-                width: 100,
-                height: 100,
-                child: listing.photoUrls.isNotEmpty
-                    ? Image.network(listing.photoUrls.first, fit: BoxFit.cover)
-                    : Container(color: _T.primary),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    listing.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on, size: 14, color: _T.primary),
-                      const SizedBox(width: 4),
-                      Text(listing.address ?? 'Kathmandu', style: const TextStyle(color: _T.textSub, fontSize: 13)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Rs. ${listing.rentPerMonth}",
-                    style: const TextStyle(color: _T.primaryDark, fontWeight: FontWeight.w800, fontSize: 15),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.arrow_forward_ios, size: 14, color: _T.border),
-          ],
-        ),
       ),
     );
   }
