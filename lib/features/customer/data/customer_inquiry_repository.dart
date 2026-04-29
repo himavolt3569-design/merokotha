@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:merokotha/features/notification/notification_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../shared/models/inquiry_model.dart';
-import '../../../shared/providers/firebase_providers.dart';
+import 'package:merokotha/shared/models/inquiry_model.dart';
+import 'package:merokotha/shared/providers/firebase_providers.dart';
 
 part 'customer_inquiry_repository.g.dart';
 
