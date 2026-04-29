@@ -15,18 +15,14 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnim;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
     _fadeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
     _navigate();
@@ -43,18 +39,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       return;
     }
 
-    final userExists = await ref
-        .read(userRepositoryProvider)
-        .userExists(firebaseUser.uid);
+    final userExists = await ref.read(userRepositoryProvider).userExists(firebaseUser.uid);
 
     if (!mounted) return;
 
     if (!userExists) {
       context.go(AppRoutes.roleSelect);
     } else {
-      final user = await ref
-          .read(userRepositoryProvider)
-          .getUser(firebaseUser.uid);
+      final user = await ref.read(userRepositoryProvider).getUser(firebaseUser.uid);
 
       if (!mounted) return;
 
@@ -87,38 +79,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               Container(
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Image.asset('assets/merokotha.png'),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                clipBehavior: Clip.hardEdge,
+                padding: const EdgeInsets.all(12),
+                child: Image.asset('assets/merokotha.png', fit: BoxFit.contain),
               ),
               const SizedBox(height: 20),
               const Text(
                 AppStrings.appName,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 1,
-                ),
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 1),
               ),
               const SizedBox(height: 8),
-              Text(
-                AppStrings.tagline,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withOpacity(0.8),
-                ),
-              ),
+              Text(AppStrings.tagline, style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.8))),
               const SizedBox(height: 60),
               const SizedBox(
                 width: 24,
                 height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
               ),
             ],
           ),

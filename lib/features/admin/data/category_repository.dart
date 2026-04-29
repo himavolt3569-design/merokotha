@@ -10,8 +10,7 @@ class CategoryRepository {
   final FirebaseFirestore _db;
   CategoryRepository(this._db);
 
-  CollectionReference<Map<String, dynamic>> get _col =>
-      _db.collection('categories');
+  CollectionReference<Map<String, dynamic>> get _col => _db.collection('categories');
 
   // ── Watch all active categories ──
   Stream<List<CategoryModel>> watchAll() {
@@ -33,10 +32,7 @@ class CategoryRepository {
 
   // ── Get all once ──
   Future<List<CategoryModel>> getAll() async {
-    final snap = await _col
-        .where('isActive', isEqualTo: true)
-        .orderBy('sortOrder')
-        .get();
+    final snap = await _col.where('isActive', isEqualTo: true).orderBy('sortOrder').get();
     return snap.docs.map((d) => CategoryModel.fromSnapshot(d)).toList();
   }
 
@@ -71,6 +67,32 @@ class CategoryRepository {
         .get();
     return snap.docs.map((d) => CategoryModel.fromSnapshot(d)).toList();
   }
+
+  Stream<List<CategoryModel>> watchLevel1() => _db
+      .collection('categories')
+      .where('level', isEqualTo: 'level1')
+      .where('isActive', isEqualTo: true)
+      .orderBy('sortOrder')
+      .snapshots()
+      .map((s) => s.docs.map(CategoryModel.fromSnapshot).toList());
+
+  Stream<List<CategoryModel>> watchLevel2(String parentId) => _db
+      .collection('categories')
+      .where('level', isEqualTo: 'level2')
+      .where('parentId', isEqualTo: parentId)
+      .where('isActive', isEqualTo: true)
+      .orderBy('sortOrder')
+      .snapshots()
+      .map((s) => s.docs.map(CategoryModel.fromSnapshot).toList());
+
+  Stream<List<CategoryModel>> watchLevel3(String parentId) => _db
+      .collection('categories')
+      .where('level', isEqualTo: 'level3')
+      .where('parentId', isEqualTo: parentId)
+      .where('isActive', isEqualTo: true)
+      .orderBy('sortOrder')
+      .snapshots()
+      .map((s) => s.docs.map(CategoryModel.fromSnapshot).toList());
 
   // ── Get category by ID ──
   Future<CategoryModel?> getById(String id) async {
@@ -107,11 +129,7 @@ class CategoryRepository {
     int order = 0;
 
     // Level 1
-    final l1Data = [
-      ('Residential', 'आवासीय'),
-      ('Commercial', 'व्यापारिक'),
-      ('Land', 'जग्गा'),
-    ];
+    final l1Data = [('Residential', 'आवासीय'), ('Commercial', 'व्यापारिक'), ('Land', 'जग्गा')];
 
     for (final (name, nameNp) in l1Data) {
       final ref = _col.doc();
@@ -133,5 +151,4 @@ class CategoryRepository {
 }
 
 @riverpod
-CategoryRepository categoryRepository(Ref ref) =>
-    CategoryRepository(ref.watch(firebaseFirestoreProvider));
+CategoryRepository categoryRepository(Ref ref) => CategoryRepository(ref.watch(firebaseFirestoreProvider));

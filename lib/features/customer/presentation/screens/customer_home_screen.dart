@@ -27,7 +27,10 @@ class CustomerHomeScreen extends ConsumerWidget {
       body: SafeArea(
         child: RefreshIndicator(
           color: AppColors.customerPrimary,
-          onRefresh: () async => ref.invalidate(activeListingsProvider),
+          onRefresh: () async {
+            ref.invalidate(activeListingsProvider);
+            ref.invalidate(level1CategoriesProvider);
+          },
           child: CustomScrollView(
             slivers: [
               // ── App bar ──
@@ -219,7 +222,7 @@ class _CategoryChipRow extends ConsumerWidget {
       height: 36,
       child: catsAsync.when(
         loading: () => const SizedBox(),
-        error: (_, __) => const SizedBox(),
+        error: (_, _) => const SizedBox(),
         data: (cats) => ListView(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: AppSizes.pagePadding),

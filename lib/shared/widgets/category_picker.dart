@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:merokotha/features/admin/providers/category_providers.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../shared/models/category_model.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/shared/models/category_model.dart';
 
 class CategoryPicker extends ConsumerWidget {
   final CategorySelection selection;

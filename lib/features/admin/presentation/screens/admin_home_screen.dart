@@ -66,11 +66,7 @@ class AdminHomeScreen extends ConsumerWidget {
                         color: AdminColors.accent,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       ),
-                      child: const Icon(
-                        Icons.shield_rounded,
-                        color: Colors.white,
-                        size: 24,
-                      ),
+                      child: const Icon(Icons.shield_rounded, color: Colors.white, size: 24),
                     ),
                     const SizedBox(width: 12),
                     ref
@@ -81,18 +77,11 @@ class AdminHomeScreen extends ConsumerWidget {
                             children: [
                               Text(
                                 'Welcome, ${u?.name ?? 'Admin'}',
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
+                                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white),
                               ),
                               const Text(
                                 'Super Administrator',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.grey400,
-                                ),
+                                style: TextStyle(fontSize: 12, color: AppColors.grey400),
                               ),
                             ],
                           ),
@@ -190,45 +179,46 @@ class AdminHomeScreen extends ConsumerWidget {
               ),
 
               const SizedBox(height: 24),
-
               // ── Quick actions ──
               const _SectionHeader('Quick actions'),
               const SizedBox(height: 12),
-              Row(
+              GridView.count(
+                crossAxisCount: 3,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 1.2,
                 children: [
                   _QuickAction(
                     label: 'All users',
                     icon: Icons.people_rounded,
                     color: AppColors.customerPrimary,
-                    onTap: () => context.go(AppRoutes.adminUsers),
+                    onTap: () => context.push(AppRoutes.adminUsers),
                   ),
-                  const SizedBox(width: 10),
                   _QuickAction(
                     label: 'Listings',
                     icon: Icons.home_work_rounded,
                     color: AppColors.ownerPrimary,
-                    onTap: () => context.go(AppRoutes.adminListings),
+                    onTap: () => context.push(AppRoutes.adminListings),
                   ),
-                  const SizedBox(width: 10),
                   _QuickAction(
                     label: 'Inquiries',
                     icon: Icons.inbox_rounded,
                     color: AppColors.warning,
-                    onTap: () => context.go(AppRoutes.adminInquiries),
+                    onTap: () => context.push(AppRoutes.adminInquiries),
                   ),
-                  const SizedBox(width: 10),
                   _QuickAction(
                     label: 'Categories',
                     icon: Icons.category_rounded,
-                    color: AppColors.customerPrimary,
-                    onTap: () => context.go(AppRoutes.adminCategories),
+                    color: AppColors.info,
+                    onTap: () => context.push(AppRoutes.adminCategories),
                   ),
-                  const SizedBox(width: 10),
                   _QuickAction(
                     label: 'Ads',
                     icon: Icons.campaign_rounded,
                     color: AppColors.secondary,
-                    onTap: () => context.go(AppRoutes.adminAds),
+                    onTap: () => context.push(AppRoutes.adminAds),
                   ),
                 ],
               ),
@@ -236,10 +226,7 @@ class AdminHomeScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // ── Recent users ──
-              _SectionHeader(
-                'Recent signups',
-                onSeeAll: () => context.go(AppRoutes.adminUsers),
-              ),
+              _SectionHeader('Recent signups', onSeeAll: () => context.go(AppRoutes.adminUsers)),
               const SizedBox(height: 12),
               recentUsersAsync.when(
                 loading: () => const MkLoading(fullScreen: false),
@@ -251,12 +238,7 @@ class AdminHomeScreen extends ConsumerWidget {
                           padding: const EdgeInsets.only(bottom: 8),
                           child: AdminUserTile(
                             user: u,
-                            onTap: () => context.push(
-                              AppRoutes.adminUserDetail.replaceAll(
-                                ':uid',
-                                u.id,
-                              ),
-                            ),
+                            onTap: () => context.push(AppRoutes.adminUserDetail.replaceAll(':uid', u.id)),
                           ),
                         ),
                       )
@@ -267,10 +249,7 @@ class AdminHomeScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // ── Recent listings ──
-              _SectionHeader(
-                'Recent listings',
-                onSeeAll: () => context.go(AppRoutes.adminListings),
-              ),
+              _SectionHeader('Recent listings', onSeeAll: () => context.go(AppRoutes.adminListings)),
               const SizedBox(height: 12),
               recentListingsAsync.when(
                 loading: () => const MkLoading(fullScreen: false),
@@ -282,16 +261,10 @@ class AdminHomeScreen extends ConsumerWidget {
                           padding: const EdgeInsets.only(bottom: 8),
                           child: AdminListingTile(
                             listing: l,
-                            onDelete: () =>
-                                _confirmDelete(context, ref, l.id, l.title),
+                            onDelete: () => _confirmDelete(context, ref, l.id, l.title),
                             onToggleStatus: () => ref
                                 .read(adminActionProvider.notifier)
-                                .setListingStatus(
-                                  l.id,
-                                  l.isActive
-                                      ? ListingStatus.paused
-                                      : ListingStatus.active,
-                                ),
+                                .setListingStatus(l.id, l.isActive ? ListingStatus.paused : ListingStatus.active),
                           ),
                         ),
                       )
@@ -308,34 +281,21 @@ class AdminHomeScreen extends ConsumerWidget {
     );
   }
 
-  void _confirmDelete(
-    BuildContext context,
-    WidgetRef ref,
-    String id,
-    String title,
-  ) {
+  void _confirmDelete(BuildContext context, WidgetRef ref, String id, String title) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Delete listing?'),
         content: Text('Delete "$title"? This cannot be undone.'),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.radiusLg)),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               ref.read(adminActionProvider.notifier).deleteListing(id);
             },
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: AppColors.error),
-            ),
+            child: const Text('Delete', style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),
@@ -355,22 +315,14 @@ class _SectionHeader extends StatelessWidget {
     children: [
       Text(
         title,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-          color: AppColors.grey900,
-        ),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.grey900),
       ),
       if (onSeeAll != null)
         GestureDetector(
           onTap: onSeeAll,
           child: const Text(
             'See all',
-            style: TextStyle(
-              fontSize: 13,
-              color: AppColors.error,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontSize: 13, color: AppColors.error, fontWeight: FontWeight.w600),
           ),
         ),
     ],
@@ -383,38 +335,39 @@ class _QuickAction extends StatelessWidget {
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
-  const _QuickAction({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
+
+  const _QuickAction({required this.label, required this.icon, required this.color, required this.onTap});
 
   @override
-  Widget build(BuildContext context) => Expanded(
-    child: GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-          border: Border.all(color: AppColors.grey50),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 24, color: color),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                color: color,
-                fontWeight: FontWeight.w600,
-              ),
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap,
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8), // reduced from 16/12
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+        border: Border.all(color: AppColors.grey50),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min, // ← add this
+        children: [
+          Container(
+            width: 36, // reduced from 44
+            height: 36, // reduced from 44
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
             ),
-          ],
-        ),
+            child: Icon(icon, size: 18, color: color), // reduced from 22
+          ),
+          const SizedBox(height: 6),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 11, color: AppColors.grey700, fontWeight: FontWeight.w600),
+          ),
+        ],
       ),
     ),
   );

@@ -267,7 +267,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                                 CategoryPicker(
                                   selection: _categorySelection,
                                   onChanged: (updated) {
-                                    setState(() => _categorySelection = updated); // rebuilds parent trigger
+                                    setState(() => _categorySelection = updated); // rebuilds *parent trigger
                                     setSheetState(() {}); // rebuilds sheet so picker sees new selection
                                     if (updated.level3 != null) {
                                       Navigator.pop(sheetCtx);

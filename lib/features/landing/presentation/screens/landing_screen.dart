@@ -86,10 +86,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                   height: 28,
                   decoration: BoxDecoration(color: _T.accent, borderRadius: BorderRadius.circular(6)),
                   child: const Center(
-                    child: Text(
-                      'M',
-                      style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
+                    child: Image(image: AssetImage('assets/merokotha.png'), width: 16, height: 16, color: Colors.white),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -217,7 +214,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                           crossAxisCount: 2,
                           mainAxisSpacing: 14,
                           crossAxisSpacing: 14,
-                          childAspectRatio: 0.70,
+                          childAspectRatio: 0.62,
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (ctx, i) => _GridCard(listing: listings[i], onTap: () => _showLoginSheet(context)),
@@ -315,7 +312,7 @@ class _CategoryRow extends ConsumerWidget {
       height: 36,
       child: catsAsync.when(
         loading: () => const SizedBox(),
-        error: (_, __) => const SizedBox(),
+        error: (_, _) => const SizedBox(),
         data: (cats) => ListView(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -414,44 +411,9 @@ class _GridCard extends StatelessWidget {
           children: [
             // Image
             Expanded(
-              flex: 5,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  listing.photoUrls.isNotEmpty
-                      ? Image.network(listing.photoUrls.first, fit: BoxFit.cover)
-                      : Container(color: const Color(0xFFE8E5E0)),
-                  // Category badge
-                  if (listing.categoryL1Name != null)
-                    Positioned(
-                      top: 10,
-                      left: 10,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.92),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Text(
-                          listing.categoryL1Name!.toUpperCase(),
-                          style: GoogleFonts.dmSans(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            color: _T.accentMuted,
-                            letterSpacing: 0.8,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-
-            // Info
-            Expanded(
               flex: 4,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 10), // ← reduce from 12 all sides
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -459,8 +421,13 @@ class _GridCard extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(listing.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: _T.titleMd),
-                        const SizedBox(height: 4),
+                        Text(
+                          listing.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: _T.titleMd,
+                        ), // ← maxLines 2→1
+                        const SizedBox(height: 3), // ← reduce from 4
                         Row(
                           children: [
                             Icon(Icons.place_outlined, size: 11, color: _T.stone),

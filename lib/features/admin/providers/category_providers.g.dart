@@ -100,11 +100,11 @@ final class Level1CategoriesProvider
         $FunctionalProvider<
           AsyncValue<List<CategoryModel>>,
           List<CategoryModel>,
-          FutureOr<List<CategoryModel>>
+          Stream<List<CategoryModel>>
         >
     with
         $FutureModifier<List<CategoryModel>>,
-        $FutureProvider<List<CategoryModel>> {
+        $StreamProvider<List<CategoryModel>> {
   Level1CategoriesProvider._()
     : super(
         from: null,
@@ -121,17 +121,17 @@ final class Level1CategoriesProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<CategoryModel>> $createElement(
+  $StreamProviderElement<List<CategoryModel>> $createElement(
     $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  ) => $StreamProviderElement(pointer);
 
   @override
-  FutureOr<List<CategoryModel>> create(Ref ref) {
+  Stream<List<CategoryModel>> create(Ref ref) {
     return level1Categories(ref);
   }
 }
 
-String _$level1CategoriesHash() => r'4164c5b2f235bcb5430295ca7c5d136f8ca97e47';
+String _$level1CategoriesHash() => r'fc0bb50707783915d9cdeeddbefd79fb41c7ebb9';
 
 @ProviderFor(level2Categories)
 final level2CategoriesProvider = Level2CategoriesFamily._();
@@ -141,11 +141,11 @@ final class Level2CategoriesProvider
         $FunctionalProvider<
           AsyncValue<List<CategoryModel>>,
           List<CategoryModel>,
-          FutureOr<List<CategoryModel>>
+          Stream<List<CategoryModel>>
         >
     with
         $FutureModifier<List<CategoryModel>>,
-        $FutureProvider<List<CategoryModel>> {
+        $StreamProvider<List<CategoryModel>> {
   Level2CategoriesProvider._({
     required Level2CategoriesFamily super.from,
     required String super.argument,
@@ -169,12 +169,12 @@ final class Level2CategoriesProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<CategoryModel>> $createElement(
+  $StreamProviderElement<List<CategoryModel>> $createElement(
     $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  ) => $StreamProviderElement(pointer);
 
   @override
-  FutureOr<List<CategoryModel>> create(Ref ref) {
+  Stream<List<CategoryModel>> create(Ref ref) {
     final argument = this.argument as String;
     return level2Categories(ref, argument);
   }
@@ -190,10 +190,10 @@ final class Level2CategoriesProvider
   }
 }
 
-String _$level2CategoriesHash() => r'157e9dc51acc467b5d3d30dbc8df7e99e30ace9b';
+String _$level2CategoriesHash() => r'774fc77e4546fb07fa9c17c5a228c791773a8b1b';
 
 final class Level2CategoriesFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<CategoryModel>>, String> {
+    with $FunctionalFamilyOverride<Stream<List<CategoryModel>>, String> {
   Level2CategoriesFamily._()
     : super(
         retry: null,
@@ -218,11 +218,11 @@ final class Level3CategoriesProvider
         $FunctionalProvider<
           AsyncValue<List<CategoryModel>>,
           List<CategoryModel>,
-          FutureOr<List<CategoryModel>>
+          Stream<List<CategoryModel>>
         >
     with
         $FutureModifier<List<CategoryModel>>,
-        $FutureProvider<List<CategoryModel>> {
+        $StreamProvider<List<CategoryModel>> {
   Level3CategoriesProvider._({
     required Level3CategoriesFamily super.from,
     required String super.argument,
@@ -246,12 +246,12 @@ final class Level3CategoriesProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<CategoryModel>> $createElement(
+  $StreamProviderElement<List<CategoryModel>> $createElement(
     $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  ) => $StreamProviderElement(pointer);
 
   @override
-  FutureOr<List<CategoryModel>> create(Ref ref) {
+  Stream<List<CategoryModel>> create(Ref ref) {
     final argument = this.argument as String;
     return level3Categories(ref, argument);
   }
@@ -267,10 +267,10 @@ final class Level3CategoriesProvider
   }
 }
 
-String _$level3CategoriesHash() => r'344929eef196ec88b3d2a2f73931533c594f0f4b';
+String _$level3CategoriesHash() => r'7eb11b6314cb95c59d1816425d097c70ef9ba30e';
 
 final class Level3CategoriesFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<List<CategoryModel>>, String> {
+    with $FunctionalFamilyOverride<Stream<List<CategoryModel>>, String> {
   Level3CategoriesFamily._()
     : super(
         retry: null,

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:merokotha/features/notification/notification_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../shared/models/inquiry_model.dart';
@@ -12,8 +13,7 @@ class InquiryRepository {
 
   InquiryRepository(this._db);
 
-  CollectionReference<Map<String, dynamic>> get _inquiries =>
-      _db.collection('inquiries');
+  CollectionReference<Map<String, dynamic>> get _inquiries => _db.collection('inquiries');
 
   // ── Watch all inquiries for owner ──
   Stream<List<InquiryModel>> watchOwnerInquiries(String ownerId) {
@@ -25,10 +25,7 @@ class InquiryRepository {
   }
 
   // ── Watch inquiries by status ──
-  Stream<List<InquiryModel>> watchByStatus(
-    String ownerId,
-    InquiryStatus status,
-  ) {
+  Stream<List<InquiryModel>> watchByStatus(String ownerId, InquiryStatus status) {
     return _inquiries
         .where('ownerId', isEqualTo: ownerId)
         .where('status', isEqualTo: status.name)
@@ -77,6 +74,9 @@ class InquiryRepository {
       listingId: inquiry.listingId,
       listingTitle: inquiry.listingTitle,
     );
+
+    // 3. Show local notification confirming acceptance
+    await NotificationService().showInquiryAccepted(listingTitle: inquiry.listingTitle);
 
     return chatId;
   }

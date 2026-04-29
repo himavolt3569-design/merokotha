@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../shared/models/category_model.dart';
-import '../data/category_repository.dart';
+import 'package:merokotha/shared/models/category_model.dart';
+import 'package:merokotha/features/admin/data/category_repository.dart';
 
 part 'category_providers.g.dart';
 
@@ -19,21 +19,15 @@ Stream<List<CategoryModel>> allCategoriesAdmin(Ref ref) {
 
 // ── Level 1 categories only ──
 @riverpod
-Future<List<CategoryModel>> level1Categories(Ref ref) {
-  return ref.watch(categoryRepositoryProvider).getLevel1();
-}
+Stream<List<CategoryModel>> level1Categories(Ref ref) => ref.read(categoryRepositoryProvider).watchLevel1();
 
-// ── Level 2 under a given parent ──
 @riverpod
-Future<List<CategoryModel>> level2Categories(Ref ref, String parentId) {
-  return ref.watch(categoryRepositoryProvider).getLevel2(parentId);
-}
+Stream<List<CategoryModel>> level2Categories(Ref ref, String parentId) =>
+    ref.read(categoryRepositoryProvider).watchLevel2(parentId);
 
-// ── Level 3 under a given parent ──
 @riverpod
-Future<List<CategoryModel>> level3Categories(Ref ref, String parentId) {
-  return ref.watch(categoryRepositoryProvider).getLevel3(parentId);
-}
+Stream<List<CategoryModel>> level3Categories(Ref ref, String parentId) =>
+    ref.read(categoryRepositoryProvider).watchLevel3(parentId);
 
 // ── Category by ID ──
 @riverpod
@@ -82,22 +76,14 @@ class CategoryActionState {
   final String? error;
   final bool success;
 
-  const CategoryActionState({
-    this.isLoading = false,
-    this.error,
-    this.success = false,
-  });
+  const CategoryActionState({this.isLoading = false, this.error, this.success = false});
 
-  CategoryActionState copyWith({
-    bool? isLoading,
-    String? error,
-    bool? success,
-    bool clearError = false,
-  }) => CategoryActionState(
-    isLoading: isLoading ?? this.isLoading,
-    error: clearError ? null : (error ?? this.error),
-    success: success ?? this.success,
-  );
+  CategoryActionState copyWith({bool? isLoading, String? error, bool? success, bool clearError = false}) =>
+      CategoryActionState(
+        isLoading: isLoading ?? this.isLoading,
+        error: clearError ? null : (error ?? this.error),
+        success: success ?? this.success,
+      );
 }
 
 @riverpod
@@ -135,10 +121,7 @@ class CategoryActionNotifier extends _$CategoryActionNotifier {
   Future<void> update(String id, String name, String nameNp) async {
     state = state.copyWith(isLoading: true, clearError: true);
     try {
-      await ref.read(categoryRepositoryProvider).update(id, {
-        'name': name,
-        'nameNp': nameNp,
-      });
+      await ref.read(categoryRepositoryProvider).update(id, {'name': name, 'nameNp': nameNp});
       state = state.copyWith(isLoading: false, success: true);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: 'Failed to update: $e');
