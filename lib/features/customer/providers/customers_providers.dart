@@ -1,11 +1,11 @@
 import 'package:merokotha/features/owner/data/inquiry_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../shared/models/inquiry_model.dart';
-import '../../../shared/models/listing_model.dart';
-import '../../auth/providers/auth_provider.dart';
-import '../data/favourites_repository.dart';
-import '../data/listings_repository.dart';
+import 'package:merokotha/shared/models/inquiry_model.dart';
+import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/features/customer/data/favourites_repository.dart';
+import 'package:merokotha/features/customer/data/listings_repository.dart';
 
 part 'customers_providers.g.dart';
 

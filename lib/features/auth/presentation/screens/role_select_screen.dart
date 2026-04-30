@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../shared/models/user_model.dart';
-import '../widgets/role_card.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/constants/app_strings.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/features/auth/presentation/widgets/role_card.dart';
+import 'package:merokotha/shared/models/user_model.dart';
 
 // Temporary provider to hold selected role before saving
 final _selectedRoleProvider = StateProvider<UserRole?>((ref) => null);

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/app_colors.dart';
-import '../../core/router/app_routes.dart';
-import '../../features/chat/providers/chat_providers.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/features/chat/providers/chat_providers.dart';
 
 // Index map:
 // 0 = Home, 1 = Listings, 2 = Add, 3 = Messages, 4 = Profile

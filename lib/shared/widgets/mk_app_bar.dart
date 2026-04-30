@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
 
 class MkAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;

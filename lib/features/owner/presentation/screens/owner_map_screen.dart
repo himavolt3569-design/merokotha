@@ -9,10 +9,10 @@ import 'package:merokotha/shared/widgets/owner_botton_nav.dart';
 
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../shared/models/listing_model.dart';
-import '../../../../shared/widgets/mk_widgets.dart';
-import '../../providers/owner_providers.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/features/owner/providers/owner_providers.dart';
 
 class OwnerMapScreen extends ConsumerStatefulWidget {
   const OwnerMapScreen({super.key});

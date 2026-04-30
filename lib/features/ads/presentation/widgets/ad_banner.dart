@@ -4,8 +4,8 @@ import 'package:merokotha/features/ads/data/ad_model.dart';
 import 'package:merokotha/features/ads/providers/ad_providers.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
 
 // ── Main AdBanner widget ──────────────────────────────────────────
 // Drop this anywhere in a screen to show an ad for that placement

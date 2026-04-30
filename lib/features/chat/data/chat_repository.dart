@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../shared/providers/firebase_providers.dart';
-import 'chat_model.dart';
+import 'package:merokotha/shared/providers/firebase_providers.dart';
+import 'package:merokotha/features/chat/data/chat_model.dart';
 
 part 'chat_repository.g.dart';
 

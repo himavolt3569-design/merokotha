@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/features/ads/data/ad_model.dart';
+import 'package:merokotha/features/ads/presentation/widgets/ad_banner.dart';
 import 'package:merokotha/features/customer/data/listings_repository.dart';
+import 'package:merokotha/features/customer/presentation/widgets/customer_widgets.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
-
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../shared/widgets/mk_widgets.dart';
-import '../../../ads/data/ad_model.dart';
-import '../../../ads/presentation/widgets/ad_banner.dart';
-import '../widgets/customer_widgets.dart';
+import 'package:merokotha/shared/widgets/mk_widgets.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});

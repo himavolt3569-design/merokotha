@@ -1,8 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../features/auth/providers/auth_provider.dart';
-import '../data/chat_model.dart';
-import '../data/chat_repository.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/features/chat/data/chat_model.dart';
+import 'package:merokotha/features/chat/data/chat_repository.dart';
 
 part 'chat_providers.g.dart';
 

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../core/utils/formatters.dart';
-import '../../../../shared/models/listing_model.dart';
-import '../../../../shared/models/user_model.dart';
-import '../../../../shared/widgets/mk_widgets.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/core/utils/formatters.dart';
+import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/shared/models/user_model.dart';
+import 'package:merokotha/shared/widgets/mk_widgets.dart';
 
 // ── Admin color constants ──────────────────────────────────────────
 class AdminColors {
@@ -38,7 +38,10 @@ class AdminBottomNav extends StatelessWidget {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AdminColors.accent,
         unselectedItemColor: AppColors.grey400,
-        selectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+        selectedLabelStyle: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
         unselectedLabelStyle: const TextStyle(fontSize: 11),
         onTap: (i) {
           switch (i) {
@@ -90,7 +93,12 @@ class AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final bool showBack;
 
-  const AdminAppBar({super.key, required this.title, this.actions, this.showBack = false});
+  const AdminAppBar({
+    super.key,
+    required this.title,
+    this.actions,
+    this.showBack = false,
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(56);
@@ -104,7 +112,11 @@ class AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: false,
       leading: showBack
           ? IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.white),
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 20,
+                color: Colors.white,
+              ),
               onPressed: () => context.pop(),
             )
           : null,
@@ -113,13 +125,24 @@ class AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
           Container(
             width: 28,
             height: 28,
-            decoration: BoxDecoration(color: AdminColors.accent, borderRadius: BorderRadius.circular(6)),
-            child: const Icon(Icons.shield_rounded, size: 16, color: Colors.white),
+            decoration: BoxDecoration(
+              color: AdminColors.accent,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Icon(
+              Icons.shield_rounded,
+              size: 16,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(width: 10),
           Text(
             title,
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: Colors.white),
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -176,10 +199,17 @@ class AdminStatCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               value,
-              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700, color: AppColors.grey900),
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w700,
+                color: AppColors.grey900,
+              ),
             ),
             const SizedBox(height: 2),
-            Text(label, style: const TextStyle(fontSize: 12, color: AppColors.grey400)),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 12, color: AppColors.grey400),
+            ),
           ],
         ),
       ),
@@ -195,7 +225,13 @@ class AdminUserTile extends StatelessWidget {
   final VoidCallback? onBan;
   final VoidCallback? onUnban;
 
-  const AdminUserTile({super.key, required this.user, this.onTap, this.onBan, this.onUnban});
+  const AdminUserTile({
+    super.key,
+    required this.user,
+    this.onTap,
+    this.onBan,
+    this.onUnban,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +242,11 @@ class AdminUserTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: user.isBanned ? AppColors.errorLight : Colors.white,
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-          border: Border.all(color: user.isBanned ? AppColors.error.withOpacity(0.3) : AppColors.grey50),
+          border: Border.all(
+            color: user.isBanned
+                ? AppColors.error.withOpacity(0.3)
+                : AppColors.grey50,
+          ),
         ),
         child: Row(
           children: [
@@ -232,23 +272,43 @@ class AdminUserTile extends StatelessWidget {
                     children: [
                       Text(
                         user.name,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.grey900),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.grey900,
+                        ),
                       ),
                       if (user.isBanned) ...[
                         const SizedBox(width: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(color: AppColors.error, borderRadius: BorderRadius.circular(4)),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.error,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                           child: const Text(
                             'BANNED',
-                            style: TextStyle(fontSize: 9, color: Colors.white, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                              fontSize: 9,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ],
                     ],
                   ),
                   const SizedBox(height: 2),
-                  Text(user.phone, style: const TextStyle(fontSize: 12, color: AppColors.grey400)),
+                  Text(
+                    user.phone,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.grey400,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
@@ -256,7 +316,10 @@ class AdminUserTile extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         Formatters.timeAgo(user.createdAt),
-                        style: const TextStyle(fontSize: 11, color: AppColors.grey400),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.grey400,
+                        ),
                       ),
                     ],
                   ),
@@ -266,12 +329,20 @@ class AdminUserTile extends StatelessWidget {
 
             // Action button
             if (user.isBanned && onUnban != null)
-              _SmallAction(label: 'Unban', color: AppColors.success, onTap: onUnban!)
+              _SmallAction(
+                label: 'Unban',
+                color: AppColors.success,
+                onTap: onUnban!,
+              )
             else if (!user.isBanned && !user.isAdmin && onBan != null)
               _SmallAction(label: 'Ban', color: AppColors.error, onTap: onBan!),
 
             const SizedBox(width: 4),
-            const Icon(Icons.chevron_right_rounded, size: 18, color: AppColors.grey400),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: AppColors.grey400,
+            ),
           ],
         ),
       ),
@@ -307,7 +378,10 @@ class _RoleBadge extends StatelessWidget {
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(AppSizes.radiusFull)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+      ),
       child: Text(
         label,
         style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: fg),
@@ -320,7 +394,11 @@ class _SmallAction extends StatelessWidget {
   final String label;
   final Color color;
   final VoidCallback onTap;
-  const _SmallAction({required this.label, required this.color, required this.onTap});
+  const _SmallAction({
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -334,7 +412,11 @@ class _SmallAction extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color),
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
         ),
       ),
     );
@@ -349,7 +431,13 @@ class AdminListingTile extends StatelessWidget {
   final VoidCallback? onToggleStatus;
   final VoidCallback? onTap;
 
-  const AdminListingTile({super.key, required this.listing, this.onDelete, this.onToggleStatus, this.onTap});
+  const AdminListingTile({
+    super.key,
+    required this.listing,
+    this.onDelete,
+    this.onToggleStatus,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -386,12 +474,22 @@ class AdminListingTile extends StatelessWidget {
                 children: [
                   Text(
                     listing.title,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.grey900),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.grey900,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 3),
-                  Text(listing.ownerName, style: const TextStyle(fontSize: 11, color: AppColors.grey400)),
+                  Text(
+                    listing.ownerName,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.grey400,
+                    ),
+                  ),
                   const SizedBox(height: 5),
                   Row(
                     children: [
@@ -415,7 +513,11 @@ class AdminListingTile extends StatelessWidget {
                   ),
                 if (onDelete != null) ...[
                   const SizedBox(height: 4),
-                  _SmallAction(label: 'Delete', color: AppColors.error, onTap: onDelete!),
+                  _SmallAction(
+                    label: 'Delete',
+                    color: AppColors.error,
+                    onTap: onDelete!,
+                  ),
                 ],
               ],
             ),

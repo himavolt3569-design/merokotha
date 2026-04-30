@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../core/utils/validators.dart';
-import '../../../../shared/models/user_model.dart';
-import '../../data/user_repository.dart';
-import '../../providers/auth_provider.dart';
-import '../../../admin/presentation/widgets/admin_widgets.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/constants/app_strings.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/core/utils/validators.dart';
+import 'package:merokotha/features/admin/presentation/widgets/admin_widgets.dart';
+import 'package:merokotha/features/auth/data/user_repository.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/shared/models/user_model.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});

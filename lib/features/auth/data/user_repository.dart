@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../shared/models/user_model.dart';
-import '../../../shared/providers/firebase_providers.dart';
+import 'package:merokotha/shared/models/user_model.dart';
+import 'package:merokotha/shared/providers/firebase_providers.dart';
 
 part 'user_repository.g.dart';
 

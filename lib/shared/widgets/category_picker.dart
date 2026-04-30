@@ -11,7 +11,12 @@ class CategoryPicker extends ConsumerWidget {
   final void Function(CategorySelection) onChanged;
   final bool required;
 
-  const CategoryPicker({super.key, required this.selection, required this.onChanged, this.required = false});
+  const CategoryPicker({
+    super.key,
+    required this.selection,
+    required this.onChanged,
+    this.required = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,9 +46,13 @@ class CategoryPicker extends ConsumerWidget {
                     label: 'Sub-type',
                     hint: 'Select sub-type (e.g. Apartment)',
                     selectedId: selection.level2?.id,
-                    itemsAsync: ref.watch(level2CategoriesProvider(selection.level1!.id)),
+                    itemsAsync: ref.watch(
+                      level2CategoriesProvider(selection.level1!.id),
+                    ),
                     onSelected: (cat) {
-                      onChanged(selection.copyWith(level2: cat, clearLevel3: true));
+                      onChanged(
+                        selection.copyWith(level2: cat, clearLevel3: true),
+                      );
                     },
                     color: AppColors.info,
                     lightColor: AppColors.infoLight,
@@ -62,7 +71,9 @@ class CategoryPicker extends ConsumerWidget {
                     label: 'Specific type',
                     hint: 'Select specific type (e.g. 2BHK)',
                     selectedId: selection.level3?.id,
-                    itemsAsync: ref.watch(level3CategoriesProvider(selection.level2!.id)),
+                    itemsAsync: ref.watch(
+                      level3CategoriesProvider(selection.level2!.id),
+                    ),
                     onSelected: (cat) {
                       onChanged(selection.copyWith(level3: cat));
                     },
@@ -85,16 +96,28 @@ class CategoryPicker extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.category_rounded, size: 14, color: AppColors.primary),
+                const Icon(
+                  Icons.category_rounded,
+                  size: 14,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   selection.displayPath,
-                  style: const TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: () => onChanged(const CategorySelection()),
-                  child: const Icon(Icons.close_rounded, size: 14, color: AppColors.primary),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    size: 14,
+                    color: AppColors.primary,
+                  ),
                 ),
               ],
             ),
@@ -133,7 +156,11 @@ class _LevelSelector extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.grey800),
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: AppColors.grey800,
+          ),
         ),
         const SizedBox(height: 6),
         itemsAsync.when(
@@ -148,7 +175,10 @@ class _LevelSelector extends StatelessWidget {
               child: SizedBox(
                 width: 18,
                 height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.primary,
+                ),
               ),
             ),
           ),
@@ -162,9 +192,16 @@ class _LevelSelector extends StatelessWidget {
             ),
             child: const Row(
               children: [
-                Icon(Icons.error_outline_rounded, size: 16, color: AppColors.error),
+                Icon(
+                  Icons.error_outline_rounded,
+                  size: 16,
+                  color: AppColors.error,
+                ),
                 SizedBox(width: 8),
-                Text('Failed to load categories', style: TextStyle(fontSize: 13, color: AppColors.error)),
+                Text(
+                  'Failed to load categories',
+                  style: TextStyle(fontSize: 13, color: AppColors.error),
+                ),
               ],
             ),
           ),
@@ -180,7 +217,11 @@ class _LevelSelector extends StatelessWidget {
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.info_outline_rounded, size: 16, color: AppColors.grey400),
+                    Icon(
+                      Icons.info_outline_rounded,
+                      size: 16,
+                      color: AppColors.grey400,
+                    ),
                     SizedBox(width: 8),
                     Text(
                       'No categories yet — add from admin panel',
@@ -192,23 +233,36 @@ class _LevelSelector extends StatelessWidget {
             }
 
             final selected = selectedId != null
-                ? items.firstWhere((c) => c.id == selectedId, orElse: () => items.first)
+                ? items.firstWhere(
+                    (c) => c.id == selectedId,
+                    orElse: () => items.first,
+                  )
                 : null;
 
             return DropdownButtonFormField<String>(
               value: selectedId,
-              hint: Text(hint, style: const TextStyle(fontSize: 14, color: AppColors.grey400)),
+              hint: Text(
+                hint,
+                style: const TextStyle(fontSize: 14, color: AppColors.grey400),
+              ),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: selected != null ? lightColor : Colors.white,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 14,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                  borderSide: BorderSide(color: selected != null ? color : AppColors.grey100),
+                  borderSide: BorderSide(
+                    color: selected != null ? color : AppColors.grey100,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                  borderSide: BorderSide(color: selected != null ? color : AppColors.grey100),
+                  borderSide: BorderSide(
+                    color: selected != null ? color : AppColors.grey100,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
@@ -219,7 +273,13 @@ class _LevelSelector extends StatelessWidget {
                   .map(
                     (c) => DropdownMenuItem(
                       value: c.id,
-                      child: Text(c.name, style: const TextStyle(fontSize: 14, color: AppColors.grey900)),
+                      child: Text(
+                        c.name,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.grey900,
+                        ),
+                      ),
                     ),
                   )
                   .toList(),

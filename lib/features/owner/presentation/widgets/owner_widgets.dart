@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../shared/models/listing_model.dart';
-import '../../../../shared/models/inquiry_model.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/shared/models/inquiry_model.dart';
 
 // ── UserAvatar ────────────────────────────────────────────────────────────────
 class UserAvatar extends StatelessWidget {

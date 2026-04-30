@@ -4,14 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:merokotha/features/owner/presentation/widgets/owner_widgets.dart';
 import 'package:merokotha/shared/widgets/owner_botton_nav.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../shared/models/inquiry_model.dart';
-import '../../../../shared/widgets/mk_app_bar.dart';
-import '../../../../shared/widgets/mk_widgets.dart';
-import '../../../auth/providers/auth_provider.dart';
-import '../../data/inquiry_repository.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/shared/models/inquiry_model.dart';
+import 'package:merokotha/shared/widgets/mk_app_bar.dart';
+import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/features/owner/data/inquiry_repository.dart';
 
 class OwnerInquiriesScreen extends ConsumerStatefulWidget {
   const OwnerInquiriesScreen({super.key});

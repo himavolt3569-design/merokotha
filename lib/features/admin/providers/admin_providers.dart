@@ -1,9 +1,9 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../shared/models/inquiry_model.dart';
-import '../../../shared/models/listing_model.dart';
-import '../../../shared/models/user_model.dart';
-import '../data/admin_repository.dart';
+import 'package:merokotha/shared/models/inquiry_model.dart';
+import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/shared/models/user_model.dart';
+import 'package:merokotha/features/admin/data/admin_repository.dart';
 
 part 'admin_providers.g.dart';
 

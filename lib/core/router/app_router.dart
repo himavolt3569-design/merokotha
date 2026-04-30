@@ -4,44 +4,44 @@ import 'package:merokotha/features/ads/presentation/screen/admin_ads_screen.dart
 import 'package:merokotha/features/owner/presentation/screens/my_listing_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../features/auth/presentation/screens/splash_screen.dart';
-import '../../features/auth/presentation/screens/otp_login_screen.dart';
-import '../../features/auth/presentation/screens/role_select_screen.dart';
-import '../../features/auth/presentation/screens/onboarding_screen.dart';
-import '../../features/auth/providers/auth_provider.dart';
-import '../../shared/models/listing_model.dart';
-import 'app_routes.dart';
+import 'package:merokotha/features/auth/presentation/screens/splash_screen.dart';
+import 'package:merokotha/features/auth/presentation/screens/otp_login_screen.dart';
+import 'package:merokotha/features/auth/presentation/screens/role_select_screen.dart';
+import 'package:merokotha/features/auth/presentation/screens/onboarding_screen.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/core/router/app_routes.dart';
 
 // Landing
-import '../../features/landing/presentation/screens/landing_screen.dart';
+import 'package:merokotha/features/landing/presentation/screens/landing_screen.dart';
 
 // Owner screens
-import '../../features/owner/presentation/screens/owner_home_screen.dart';
-import '../../features/owner/presentation/screens/upload_listing_screen.dart';
-import '../../features/owner/presentation/screens/owner_inquiries_screen.dart';
-import '../../features/owner/presentation/screens/owner_map_screen.dart';
-import '../../features/owner/presentation/screens/owner_profile_screen.dart';
+import 'package:merokotha/features/owner/presentation/screens/owner_home_screen.dart';
+import 'package:merokotha/features/owner/presentation/screens/upload_listing_screen.dart';
+import 'package:merokotha/features/owner/presentation/screens/owner_inquiries_screen.dart';
+import 'package:merokotha/features/owner/presentation/screens/owner_map_screen.dart';
+import 'package:merokotha/features/owner/presentation/screens/owner_profile_screen.dart';
 
 // Customer screens
-import '../../features/customer/presentation/screens/customer_home_screen.dart';
-import '../../features/customer/presentation/screens/search_screen.dart';
-import '../../features/customer/presentation/screens/customer_map_screen.dart';
-import '../../features/customer/presentation/screens/room_detail_screen.dart';
-import '../../features/customer/presentation/screens/favourites_screen.dart';
-import '../../features/customer/presentation/screens/inquire_screen.dart';
-import '../../features/customer/presentation/screens/customer_profile_screen.dart';
+import 'package:merokotha/features/customer/presentation/screens/customer_home_screen.dart';
+import 'package:merokotha/features/customer/presentation/screens/search_screen.dart';
+import 'package:merokotha/features/customer/presentation/screens/customer_map_screen.dart';
+import 'package:merokotha/features/customer/presentation/screens/room_detail_screen.dart';
+import 'package:merokotha/features/customer/presentation/screens/favourites_screen.dart';
+import 'package:merokotha/features/customer/presentation/screens/inquire_screen.dart';
+import 'package:merokotha/features/customer/presentation/screens/customer_profile_screen.dart';
 
 // Chat screens
-import '../../features/chat/presentation/screens/chat_list_screen.dart';
-import '../../features/chat/presentation/screens/chat_thread_screen.dart';
+import 'package:merokotha/features/chat/presentation/screens/chat_list_screen.dart';
+import 'package:merokotha/features/chat/presentation/screens/chat_thread_screen.dart';
 
 // Admin screens
-import '../../features/admin/presentation/screens/admin_home_screen.dart';
-import '../../features/admin/presentation/screens/admin_users_screen.dart';
-import '../../features/admin/presentation/screens/admin_user_detail_screen.dart';
-import '../../features/admin/presentation/screens/admin_listings_screen.dart';
-import '../../features/admin/presentation/screens/admin_inquiries_screen.dart';
-import '../../features/admin/presentation/screens/admin_categories_screen.dart';
+import 'package:merokotha/features/admin/presentation/screens/admin_home_screen.dart';
+import 'package:merokotha/features/admin/presentation/screens/admin_users_screen.dart';
+import 'package:merokotha/features/admin/presentation/screens/admin_user_detail_screen.dart';
+import 'package:merokotha/features/admin/presentation/screens/admin_listings_screen.dart';
+import 'package:merokotha/features/admin/presentation/screens/admin_inquiries_screen.dart';
+import 'package:merokotha/features/admin/presentation/screens/admin_categories_screen.dart';
 
 part 'app_router.g.dart';
 

@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../shared/models/listing_model.dart';
-import '../../../features/auth/providers/auth_provider.dart';
-import '../data/owner_repository.dart';
-import '../data/inquiry_repository.dart';
+import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/features/owner/data/owner_repository.dart';
+import 'package:merokotha/features/owner/data/inquiry_repository.dart';
 
 part 'owner_providers.g.dart';
 

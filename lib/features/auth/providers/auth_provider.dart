@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:merokotha/features/auth/data/auth_repository.dart';
+import 'package:merokotha/features/auth/data/user_repository.dart';
+import 'package:merokotha/shared/models/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../data/auth_repository.dart';
-import '../data/user_repository.dart';
-import '../../../shared/models/user_model.dart';
 
 part 'auth_provider.g.dart';
 

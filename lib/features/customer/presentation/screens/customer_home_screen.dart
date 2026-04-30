@@ -36,7 +36,12 @@ class CustomerHomeScreen extends ConsumerWidget {
               // ── App bar ──
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSizes.pagePadding, 16, AppSizes.pagePadding, 0),
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSizes.pagePadding,
+                    16,
+                    AppSizes.pagePadding,
+                    0,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -45,16 +50,27 @@ class CustomerHomeScreen extends ConsumerWidget {
                           children: [
                             const Text(
                               'MeroKotha',
-                              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.grey900),
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.grey900,
+                              ),
                             ),
                             userAsync.when(
                               data: (u) => Row(
                                 children: [
-                                  const Icon(Icons.location_on_rounded, size: 13, color: AppColors.customerPrimary),
+                                  const Icon(
+                                    Icons.location_on_rounded,
+                                    size: 13,
+                                    color: AppColors.customerPrimary,
+                                  ),
                                   const SizedBox(width: 3),
                                   Text(
                                     u?.location ?? 'Kathmandu',
-                                    style: const TextStyle(fontSize: 12, color: AppColors.grey400),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.grey400,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -89,7 +105,10 @@ class CustomerHomeScreen extends ConsumerWidget {
                   child: GestureDetector(
                     onTap: () => context.push(AppRoutes.search),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 13,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
@@ -97,11 +116,18 @@ class CustomerHomeScreen extends ConsumerWidget {
                       ),
                       child: const Row(
                         children: [
-                          Icon(Icons.search_rounded, size: 20, color: AppColors.grey400),
+                          Icon(
+                            Icons.search_rounded,
+                            size: 20,
+                            color: AppColors.grey400,
+                          ),
                           SizedBox(width: 10),
                           Text(
                             'Search rooms, area, landmarks...',
-                            style: TextStyle(fontSize: 14, color: AppColors.grey400),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.grey400,
+                            ),
                           ),
                         ],
                       ),
@@ -116,7 +142,9 @@ class CustomerHomeScreen extends ConsumerWidget {
                   children: [
                     _CategoryChipRow(
                       selected: ref.watch(searchFilterProvider).categoryL1Id,
-                      onSelect: (id) => ref.read(searchFilterProvider.notifier).setCategory(categoryL1Id: id),
+                      onSelect: (id) => ref
+                          .read(searchFilterProvider.notifier)
+                          .setCategory(categoryL1Id: id),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -126,10 +154,16 @@ class CustomerHomeScreen extends ConsumerWidget {
               // ── Section header ──
               const SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSizes.pagePadding),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppSizes.pagePadding,
+                  ),
                   child: Text(
                     'Rooms near you',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.grey900),
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.grey900,
+                    ),
                   ),
                 ),
               ),
@@ -138,16 +172,25 @@ class CustomerHomeScreen extends ConsumerWidget {
 
               // ── Listings with injected ads ──
               listingsAsync.when(
-                loading: () => const SliverToBoxAdapter(child: MkLoading(fullScreen: false)),
+                loading: () => const SliverToBoxAdapter(
+                  child: MkLoading(fullScreen: false),
+                ),
                 error: (e, _) => SliverToBoxAdapter(
-                  child: MkErrorWidget(message: e.toString(), onRetry: () => ref.invalidate(activeListingsProvider)),
+                  child: MkErrorWidget(
+                    message: e.toString(),
+                    onRetry: () => ref.invalidate(activeListingsProvider),
+                  ),
                 ),
                 data: (allListings) {
                   // Apply category chip filter client-side
-                  final selectedL1 = ref.watch(searchFilterProvider).categoryL1Id;
+                  final selectedL1 = ref
+                      .watch(searchFilterProvider)
+                      .categoryL1Id;
                   final listings = selectedL1 == null
                       ? allListings
-                      : allListings.where((l) => l.categoryL1Id == selectedL1).toList();
+                      : allListings
+                            .where((l) => l.categoryL1Id == selectedL1)
+                            .toList();
 
                   if (listings.isEmpty) {
                     return SliverToBoxAdapter(
@@ -171,15 +214,27 @@ class CustomerHomeScreen extends ConsumerWidget {
                           if (showAdBefore)
                             AdBanner(
                               placement: AdPlacement.homeFeed,
-                              padding: const EdgeInsets.fromLTRB(AppSizes.pagePadding, 4, AppSizes.pagePadding, 4),
+                              padding: const EdgeInsets.fromLTRB(
+                                AppSizes.pagePadding,
+                                4,
+                                AppSizes.pagePadding,
+                                4,
+                              ),
                             ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: AppSizes.pagePadding, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSizes.pagePadding,
+                              vertical: 6,
+                            ),
                             child: ListingCard(
                               listing: l,
                               isFavourited: favIds.contains(l.id),
-                              onFavourite: () => ref.read(favouriteProvider.notifier).toggle(l),
-                              onTap: () => context.push(AppRoutes.roomDetail.replaceAll(':id', l.id)),
+                              onFavourite: () => ref
+                                  .read(favouriteProvider.notifier)
+                                  .toggle(l),
+                              onTap: () => context.push(
+                                AppRoutes.roomDetail.replaceAll(':id', l.id),
+                              ),
                             ),
                           ),
                         ],
@@ -227,7 +282,11 @@ class _CategoryChipRow extends ConsumerWidget {
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: AppSizes.pagePadding),
           children: [
-            _CatChip(label: 'All', active: selected == null, onTap: () => onSelect(null)),
+            _CatChip(
+              label: 'All',
+              active: selected == null,
+              onTap: () => onSelect(null),
+            ),
             ...cats.map(
               (c) => _CatChip(
                 label: c.name,
@@ -247,7 +306,11 @@ class _CatChip extends StatelessWidget {
   final bool active;
   final VoidCallback onTap;
 
-  const _CatChip({required this.label, required this.active, required this.onTap});
+  const _CatChip({
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -260,7 +323,9 @@ class _CatChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: active ? AppColors.customerPrimary : Colors.white,
           borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          border: Border.all(color: active ? AppColors.customerPrimary : AppColors.grey100),
+          border: Border.all(
+            color: active ? AppColors.customerPrimary : AppColors.grey100,
+          ),
         ),
         child: Text(
           label,

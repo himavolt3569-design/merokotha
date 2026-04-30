@@ -19,7 +19,8 @@ Stream<List<CategoryModel>> allCategoriesAdmin(Ref ref) {
 
 // ── Level 1 categories only ──
 @riverpod
-Stream<List<CategoryModel>> level1Categories(Ref ref) => ref.read(categoryRepositoryProvider).watchLevel1();
+Stream<List<CategoryModel>> level1Categories(Ref ref) =>
+    ref.read(categoryRepositoryProvider).watchLevel1();
 
 @riverpod
 Stream<List<CategoryModel>> level2Categories(Ref ref, String parentId) =>
@@ -76,14 +77,22 @@ class CategoryActionState {
   final String? error;
   final bool success;
 
-  const CategoryActionState({this.isLoading = false, this.error, this.success = false});
+  const CategoryActionState({
+    this.isLoading = false,
+    this.error,
+    this.success = false,
+  });
 
-  CategoryActionState copyWith({bool? isLoading, String? error, bool? success, bool clearError = false}) =>
-      CategoryActionState(
-        isLoading: isLoading ?? this.isLoading,
-        error: clearError ? null : (error ?? this.error),
-        success: success ?? this.success,
-      );
+  CategoryActionState copyWith({
+    bool? isLoading,
+    String? error,
+    bool? success,
+    bool clearError = false,
+  }) => CategoryActionState(
+    isLoading: isLoading ?? this.isLoading,
+    error: clearError ? null : (error ?? this.error),
+    success: success ?? this.success,
+  );
 }
 
 @riverpod
@@ -121,7 +130,10 @@ class CategoryActionNotifier extends _$CategoryActionNotifier {
   Future<void> update(String id, String name, String nameNp) async {
     state = state.copyWith(isLoading: true, clearError: true);
     try {
-      await ref.read(categoryRepositoryProvider).update(id, {'name': name, 'nameNp': nameNp});
+      await ref.read(categoryRepositoryProvider).update(id, {
+        'name': name,
+        'nameNp': nameNp,
+      });
       state = state.copyWith(isLoading: false, success: true);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: 'Failed to update: $e');

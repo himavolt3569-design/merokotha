@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/utils/formatters.dart';
-import '../../../../shared/widgets/mk_button.dart';
-import '../../../../shared/widgets/mk_text_field.dart';
-import '../../../../shared/widgets/mk_widgets.dart';
-import '../../../admin/presentation/widgets/admin_widgets.dart';
-import '../../data/ad_model.dart';
-import '../../providers/ad_providers.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/utils/formatters.dart';
+import 'package:merokotha/shared/widgets/mk_button.dart';
+import 'package:merokotha/shared/widgets/mk_text_field.dart';
+import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/features/admin/presentation/widgets/admin_widgets.dart';
+import 'package:merokotha/features/ads/data/ad_model.dart';
+import 'package:merokotha/features/ads/providers/ad_providers.dart';
 
 class AdminAdsScreen extends ConsumerWidget {
   const AdminAdsScreen({super.key});

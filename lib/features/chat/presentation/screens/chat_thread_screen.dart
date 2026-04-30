@@ -5,14 +5,14 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/utils/formatters.dart';
-import '../../../../shared/widgets/mk_widgets.dart';
-import '../../../auth/providers/auth_provider.dart';
-import '../../data/chat_model.dart';
-import '../../data/chat_repository.dart';
-import '../../providers/chat_providers.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/utils/formatters.dart';
+import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/features/chat/data/chat_model.dart';
+import 'package:merokotha/features/chat/data/chat_repository.dart';
+import 'package:merokotha/features/chat/providers/chat_providers.dart';
 
 class ChatThreadScreen extends ConsumerStatefulWidget {
   final String chatId;

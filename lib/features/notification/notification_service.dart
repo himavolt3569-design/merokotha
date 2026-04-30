@@ -5,7 +5,8 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
 
   // ── Notification channel IDs ──
   static const String _inquiryChannelId = 'inquiries';
@@ -14,7 +15,9 @@ class NotificationService {
 
   // ── Initialize ──
   Future<void> init() async {
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
 
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -22,7 +25,10 @@ class NotificationService {
       requestSoundPermission: true,
     );
 
-    const initSettings = InitializationSettings(android: androidSettings, iOS: iosSettings);
+    const initSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
+    );
 
     await _plugin.initialize(initSettings);
 
@@ -53,7 +59,10 @@ class NotificationService {
       importance: Importance.defaultImportance,
     );
 
-    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
     await androidPlugin?.createNotificationChannel(inquiryChannel);
     await androidPlugin?.createNotificationChannel(chatChannel);
@@ -63,12 +72,22 @@ class NotificationService {
   // ── Request permissions ──
   Future<bool> requestPermission() async {
     // Android 13+
-    final androidPlugin = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     final androidResult = await androidPlugin?.requestNotificationsPermission();
 
     // iOS
-    final iosPlugin = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
-    final iosResult = await iosPlugin?.requestPermissions(alert: true, badge: true, sound: true);
+    final iosPlugin = _plugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
+    final iosResult = await iosPlugin?.requestPermissions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
 
     return androidResult ?? iosResult ?? true;
   }
@@ -89,9 +108,16 @@ class NotificationService {
       icon: '@mipmap/ic_launcher',
     );
 
-    const iosDetails = DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true);
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
 
-    final details = NotificationDetails(android: androidDetails, iOS: iosDetails);
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
     await _plugin.show(id, title, body, details);
   }
@@ -101,7 +127,10 @@ class NotificationService {
   // ────────────────────────────────────────────────────────────────
 
   // ── New inquiry received (shown to owner) ──
-  Future<void> showNewInquiry({required String customerName, required String listingTitle}) async {
+  Future<void> showNewInquiry({
+    required String customerName,
+    required String listingTitle,
+  }) async {
     await _show(
       id: 1001,
       title: 'New inquiry received',
@@ -116,14 +145,18 @@ class NotificationService {
     await _show(
       id: 1002,
       title: 'Inquiry accepted! 🎉',
-      body: 'Your inquiry for "$listingTitle" was accepted. Open the app to chat with the owner.',
+      body:
+          'Your inquiry for "$listingTitle" was accepted. Open the app to chat with the owner.',
       channelId: _inquiryChannelId,
       channelName: 'Inquiries',
     );
   }
 
   // ── Inquiry declined (shown to customer) ──
-  Future<void> showInquiryDeclined({required String listingTitle, String? reason}) async {
+  Future<void> showInquiryDeclined({
+    required String listingTitle,
+    String? reason,
+  }) async {
     await _show(
       id: 1003,
       title: 'Inquiry update',

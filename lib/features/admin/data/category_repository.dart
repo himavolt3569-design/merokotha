@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../shared/models/category_model.dart';
-import '../../../shared/providers/firebase_providers.dart';
+import 'package:merokotha/shared/models/category_model.dart';
+import 'package:merokotha/shared/providers/firebase_providers.dart';
 
 part 'category_repository.g.dart';
 
@@ -10,7 +10,8 @@ class CategoryRepository {
   final FirebaseFirestore _db;
   CategoryRepository(this._db);
 
-  CollectionReference<Map<String, dynamic>> get _col => _db.collection('categories');
+  CollectionReference<Map<String, dynamic>> get _col =>
+      _db.collection('categories');
 
   // ── Watch all active categories ──
   Stream<List<CategoryModel>> watchAll() {
@@ -32,7 +33,10 @@ class CategoryRepository {
 
   // ── Get all once ──
   Future<List<CategoryModel>> getAll() async {
-    final snap = await _col.where('isActive', isEqualTo: true).orderBy('sortOrder').get();
+    final snap = await _col
+        .where('isActive', isEqualTo: true)
+        .orderBy('sortOrder')
+        .get();
     return snap.docs.map((d) => CategoryModel.fromSnapshot(d)).toList();
   }
 
@@ -129,7 +133,11 @@ class CategoryRepository {
     int order = 0;
 
     // Level 1
-    final l1Data = [('Residential', 'आवासीय'), ('Commercial', 'व्यापारिक'), ('Land', 'जग्गा')];
+    final l1Data = [
+      ('Residential', 'आवासीय'),
+      ('Commercial', 'व्यापारिक'),
+      ('Land', 'जग्गा'),
+    ];
 
     for (final (name, nameNp) in l1Data) {
       final ref = _col.doc();
@@ -151,4 +159,5 @@ class CategoryRepository {
 }
 
 @riverpod
-CategoryRepository categoryRepository(Ref ref) => CategoryRepository(ref.watch(firebaseFirestoreProvider));
+CategoryRepository categoryRepository(Ref ref) =>
+    CategoryRepository(ref.watch(firebaseFirestoreProvider));

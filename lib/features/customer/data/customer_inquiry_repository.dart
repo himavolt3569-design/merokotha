@@ -11,7 +11,8 @@ class CustomerInquiryRepository {
   final FirebaseFirestore _db;
   CustomerInquiryRepository(this._db);
 
-  CollectionReference<Map<String, dynamic>> get _col => _db.collection('inquiries');
+  CollectionReference<Map<String, dynamic>> get _col =>
+      _db.collection('inquiries');
 
   // Send a new inquiry + notify the owner (local notification)
   Future<String> sendInquiry(InquiryModel inquiry) async {
@@ -19,7 +20,10 @@ class CustomerInquiryRepository {
 
     // Show local notification to the current user (customer)
     // confirming their inquiry was sent
-    await NotificationService().showNewInquiry(customerName: 'You', listingTitle: inquiry.listingTitle);
+    await NotificationService().showNewInquiry(
+      customerName: 'You',
+      listingTitle: inquiry.listingTitle,
+    );
 
     return ref.id;
   }
@@ -44,7 +48,10 @@ class CustomerInquiryRepository {
   }
 
   // Get inquiry for a specific listing (to show status)
-  Future<InquiryModel?> getInquiryForListing(String customerId, String listingId) async {
+  Future<InquiryModel?> getInquiryForListing(
+    String customerId,
+    String listingId,
+  ) async {
     final snap = await _col
         .where('customerId', isEqualTo: customerId)
         .where('listingId', isEqualTo: listingId)

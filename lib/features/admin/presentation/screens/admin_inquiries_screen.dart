@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/utils/formatters.dart';
-import '../../../../shared/models/inquiry_model.dart';
-import '../../../../shared/widgets/mk_widgets.dart';
-import '../../providers/admin_providers.dart';
-import '../widgets/admin_widgets.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/utils/formatters.dart';
+import 'package:merokotha/shared/models/inquiry_model.dart';
+import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/features/admin/providers/admin_providers.dart';
+import 'package:merokotha/features/admin/presentation/widgets/admin_widgets.dart';
 
 class AdminInquiriesScreen extends ConsumerStatefulWidget {
   const AdminInquiriesScreen({super.key});

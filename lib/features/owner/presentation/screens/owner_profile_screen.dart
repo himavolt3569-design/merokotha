@@ -4,17 +4,17 @@ import 'package:go_router/go_router.dart';
 import 'package:merokotha/shared/widgets/owner_botton_nav.dart';
 
 import 'package:merokotha/core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../shared/models/user_model.dart';
-import '../../../../shared/widgets/mk_app_bar.dart';
-import '../../../../shared/widgets/mk_button.dart';
-import '../../../../shared/widgets/mk_text_field.dart';
-import '../../../../shared/widgets/mk_widgets.dart';
-import '../../../auth/data/user_repository.dart';
-import '../../../auth/providers/auth_provider.dart';
-import '../../../auth/data/auth_repository.dart';
-import '../../../../core/utils/validators.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/shared/models/user_model.dart';
+import 'package:merokotha/shared/widgets/mk_app_bar.dart';
+import 'package:merokotha/shared/widgets/mk_button.dart';
+import 'package:merokotha/shared/widgets/mk_text_field.dart';
+import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/features/auth/data/user_repository.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/features/auth/data/auth_repository.dart';
+import 'package:merokotha/core/utils/validators.dart';
 
 class OwnerProfileScreen extends ConsumerStatefulWidget {
   const OwnerProfileScreen({super.key});

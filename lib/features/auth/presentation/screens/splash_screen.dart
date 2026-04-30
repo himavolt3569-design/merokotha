@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../providers/auth_provider.dart';
-import '../../data/user_repository.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_strings.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/features/auth/data/user_repository.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -15,14 +14,18 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnim;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
     _fadeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
     _navigate();
@@ -39,14 +42,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
       return;
     }
 
-    final userExists = await ref.read(userRepositoryProvider).userExists(firebaseUser.uid);
+    final userExists = await ref
+        .read(userRepositoryProvider)
+        .userExists(firebaseUser.uid);
 
     if (!mounted) return;
 
     if (!userExists) {
       context.go(AppRoutes.roleSelect);
     } else {
-      final user = await ref.read(userRepositoryProvider).getUser(firebaseUser.uid);
+      final user = await ref
+          .read(userRepositoryProvider)
+          .getUser(firebaseUser.uid);
 
       if (!mounted) return;
 
@@ -79,7 +86,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
               Container(
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 clipBehavior: Clip.hardEdge,
                 padding: const EdgeInsets.all(12),
                 child: Image.asset('assets/merokotha.png', fit: BoxFit.contain),
@@ -87,15 +97,29 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
               const SizedBox(height: 20),
               const Text(
                 AppStrings.appName,
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 1),
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 1,
+                ),
               ),
               const SizedBox(height: 8),
-              Text(AppStrings.tagline, style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.8))),
+              Text(
+                AppStrings.tagline,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white.withOpacity(0.8),
+                ),
+              ),
               const SizedBox(height: 60),
               const SizedBox(
                 width: 24,
                 height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
