@@ -26,8 +26,6 @@ Stream<bool> isOnline(Ref ref) async* {
   }
 }
 
-// ── Offline Banner Widget ──
-
 class OfflineBanner extends ConsumerWidget {
   final Widget child;
   const OfflineBanner({super.key, required this.child});

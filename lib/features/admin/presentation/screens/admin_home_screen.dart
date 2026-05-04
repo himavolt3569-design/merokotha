@@ -49,7 +49,6 @@ class AdminHomeScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Welcome banner ──
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(AppSizes.md),
@@ -105,7 +104,6 @@ class AdminHomeScreen extends ConsumerWidget {
 
               const SizedBox(height: 20),
 
-              // ── Stats grid ──
               const _SectionHeader('Platform overview'),
               const SizedBox(height: 12),
 
@@ -190,7 +188,6 @@ class AdminHomeScreen extends ConsumerWidget {
               ),
 
               const SizedBox(height: 24),
-              // ── Quick actions ──
               const _SectionHeader('Quick actions'),
               const SizedBox(height: 12),
               GridView.count(
@@ -230,7 +227,6 @@ class AdminHomeScreen extends ConsumerWidget {
 
               const SizedBox(height: 24),
 
-              // ── Recent users ──
               _SectionHeader(
                 'Recent signups',
                 onSeeAll: () => context.go(AppRoutes.adminUsers),
@@ -261,7 +257,6 @@ class AdminHomeScreen extends ConsumerWidget {
 
               const SizedBox(height: 24),
 
-              // ── Recent listings ──
               _SectionHeader(
                 'Recent listings',
                 onSeeAll: () => context.go(AppRoutes.adminListings),
@@ -338,7 +333,6 @@ class AdminHomeScreen extends ConsumerWidget {
   }
 }
 
-// ── Section header ──
 class _SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback? onSeeAll;
@@ -372,7 +366,6 @@ class _SectionHeader extends StatelessWidget {
   );
 }
 
-// ── Quick action button ──
 class _QuickAction extends StatelessWidget {
   final String label;
   final IconData icon;
@@ -401,7 +394,7 @@ class _QuickAction extends StatelessWidget {
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min, // ← add this
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 36, // reduced from 44

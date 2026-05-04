@@ -4,7 +4,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'ad_providers.g.dart';
 
-// ── Live ads per placement ──
 @riverpod
 Stream<List<AdModel>> adsForPlacement(Ref ref, AdPlacement placement) {
   return ref.watch(adRepositoryProvider).watchAdsForPlacement(placement);
@@ -39,13 +38,11 @@ Stream<List<AdModel>> landingAds(Ref ref) {
       .watchAdsForPlacement(AdPlacement.landingPage);
 }
 
-// ── All ads for admin ──
 @riverpod
 Stream<List<AdModel>> allAds(Ref ref) {
   return ref.watch(adRepositoryProvider).watchAllAds();
 }
 
-// ── Admin action notifier ──
 class AdActionState {
   final bool isLoading;
   final String? error;

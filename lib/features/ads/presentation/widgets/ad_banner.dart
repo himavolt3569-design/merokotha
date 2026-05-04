@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
 
-// ── Main AdBanner widget ──────────────────────────────────────────
 // Drop this anywhere in a screen to show an ad for that placement
 //
 // Usage:
@@ -50,8 +49,6 @@ class AdBanner extends ConsumerWidget {
   }
 }
 
-// ── Ad card ───────────────────────────────────────────────────────
-
 class _AdCard extends StatelessWidget {
   final AdModel ad;
   const _AdCard({required this.ad});
@@ -93,7 +90,6 @@ class _AdCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Ad image ──
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(AppSizes.radiusLg),
@@ -152,7 +148,6 @@ class _AdCard extends StatelessWidget {
               ),
             ),
 
-            // ── Ad footer: business name + tap to visit ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(

@@ -6,13 +6,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_provider.g.dart';
 
-// ── Raw Firebase auth state stream ──
 @riverpod
 Stream<User?> authState(Ref ref) {
   return ref.watch(authRepositoryProvider).authStateChanges;
 }
 
-// ── Current AppUser from Firestore ──
 @riverpod
 Future<UserModel?> currentUser(Ref ref) async {
   final firebaseUser = ref
@@ -23,7 +21,6 @@ Future<UserModel?> currentUser(Ref ref) async {
   return ref.watch(userRepositoryProvider).getUser(firebaseUser.uid);
 }
 
-// ── OTP send/verify state ──
 class OtpState {
   final bool isSending;
   final bool isVerifying;
@@ -69,7 +66,7 @@ class OtpNotifier extends _$OtpNotifier {
   Future<void> sendOtp(String phoneNumber) async {
     state = state.copyWith(isSending: true, clearError: true);
 
-    // Format phone number for Firebase (must include country code)
+    // Firebase requires E.164 format (+977...). Strip leading 0 if present.
     final formatted = phoneNumber.startsWith('+')
         ? phoneNumber
         : '+977${phoneNumber.replaceAll(RegExp(r'^0'), '')}';
@@ -95,7 +92,6 @@ class OtpNotifier extends _$OtpNotifier {
           onAutoVerified: (credential) async {
             state = state.copyWith(isVerifying: true);
             try {
-              // ✅ Use repository, not FirebaseAuth.instance directly
               await FirebaseAuth.instance.signInWithCredential(credential);
             } catch (_) {}
             state = state.copyWith(isVerifying: false);

@@ -58,7 +58,6 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // ── Map ──
           listingsAsync.when(
             loading: () => const MkLoading(),
             error: (e, _) => MkErrorWidget(message: e.toString()),
@@ -84,7 +83,6 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
             ),
           ),
 
-          // ── Top bar ──
           Positioned(
             top: MediaQuery.of(context).padding.top + 8,
             left: 12,
@@ -143,7 +141,6 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
             ),
           ),
 
-          // ── Listing count pill ──
           listingsAsync.when(
             data: (listings) {
               final count = listings.where((l) => l.geoPoint != null).length;
@@ -183,7 +180,6 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
             error: (_, _) => const SizedBox.shrink(),
           ),
 
-          // ── Selected listing card ──
           if (_selectedListing != null)
             Positioned(
               bottom: 90,
@@ -206,8 +202,6 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
     );
   }
 }
-
-// ── Price marker widget ────────────────────────────────────────────
 
 class _PriceMarker extends StatelessWidget {
   final double price;
@@ -283,8 +277,6 @@ class _TrianglePainter extends CustomPainter {
   @override
   bool shouldRepaint(_TrianglePainter old) => old.color != color;
 }
-
-// ── Listing preview card ───────────────────────────────────────────
 
 class _ListingPreviewCard extends StatelessWidget {
   final ListingModel listing;

@@ -61,8 +61,6 @@ class ChatListScreen extends ConsumerWidget {
   }
 }
 
-// ── Chat tile ─────────────────────────────────────────────────────
-
 class _ChatTile extends StatelessWidget {
   final ChatModel chat;
   final String myUid;

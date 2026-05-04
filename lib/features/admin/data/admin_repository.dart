@@ -34,7 +34,6 @@ class AdminRepository {
   final FirebaseFirestore _db;
   AdminRepository(this._db);
 
-  // ── Collections ──
   CollectionReference<Map<String, dynamic>> get _users =>
       _db.collection('users');
   CollectionReference<Map<String, dynamic>> get _listings =>
@@ -42,7 +41,6 @@ class AdminRepository {
   CollectionReference<Map<String, dynamic>> get _inquiries =>
       _db.collection('inquiries');
 
-  // ── Dashboard stats ──
   Future<AdminStats> getDashboardStats() async {
     final results = await Future.wait([
       _users.get(),
@@ -67,7 +65,6 @@ class AdminRepository {
     );
   }
 
-  // ── Get all users ──
   Stream<List<UserModel>> watchAllUsers() {
     return _users
         .orderBy('createdAt', descending: true)
@@ -75,7 +72,6 @@ class AdminRepository {
         .map((s) => s.docs.map((d) => UserModel.fromSnapshot(d)).toList());
   }
 
-  // ── Search users by name or phone ──
   Future<List<UserModel>> searchUsers(String query) async {
     final snap = await _users.get();
     final all = snap.docs.map((d) => UserModel.fromSnapshot(d)).toList();
@@ -85,14 +81,12 @@ class AdminRepository {
         .toList();
   }
 
-  // ── Get single user ──
   Future<UserModel?> getUserById(String uid) async {
     final doc = await _users.doc(uid).get();
     if (!doc.exists) return null;
     return UserModel.fromSnapshot(doc);
   }
 
-  // ── Ban / unban user ──
   Future<void> banUser(String uid, {String? reason}) async {
     await _users.doc(uid).update({
       'isBanned': true,
@@ -111,7 +105,6 @@ class AdminRepository {
     });
   }
 
-  // ── Override user role ──
   Future<void> setUserRole(String uid, UserRole role) async {
     await _users.doc(uid).update({
       'role': role.name,
@@ -119,7 +112,6 @@ class AdminRepository {
     });
   }
 
-  // ── Get all listings ──
   Stream<List<ListingModel>> watchAllListings() {
     return _listings
         .orderBy('createdAt', descending: true)
@@ -127,12 +119,10 @@ class AdminRepository {
         .map((s) => s.docs.map((d) => ListingModel.fromSnapshot(d)).toList());
   }
 
-  // ── Delete any listing ──
   Future<void> deleteListing(String listingId) async {
     await _listings.doc(listingId).delete();
   }
 
-  // ── Force listing status ──
   Future<void> setListingStatus(String listingId, ListingStatus status) async {
     await _listings.doc(listingId).update({
       'status': status.name,
@@ -140,7 +130,6 @@ class AdminRepository {
     });
   }
 
-  // ── Get all inquiries ──
   Stream<List<InquiryModel>> watchAllInquiries() {
     return _inquiries
         .orderBy('createdAt', descending: true)
@@ -148,13 +137,11 @@ class AdminRepository {
         .map((s) => s.docs.map((d) => InquiryModel.fromSnapshot(d)).toList());
   }
 
-  // ── Get listings by owner (for user detail screen) ──
   Future<List<ListingModel>> getListingsByOwner(String ownerId) async {
     final snap = await _listings.where('ownerId', isEqualTo: ownerId).get();
     return snap.docs.map((d) => ListingModel.fromSnapshot(d)).toList();
   }
 
-  // ── Get inquiries by user ──
   Future<List<InquiryModel>> getInquiriesByUser(String userId) async {
     final snap = await _inquiries
         .where('customerId', isEqualTo: userId)
@@ -163,7 +150,6 @@ class AdminRepository {
     return snap.docs.map((d) => InquiryModel.fromSnapshot(d)).toList();
   }
 
-  // ── Recent activity (last 10 users + listings) ──
   Future<List<UserModel>> getRecentUsers({int limit = 5}) async {
     final snap = await _users
         .orderBy('createdAt', descending: true)

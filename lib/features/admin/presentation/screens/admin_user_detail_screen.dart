@@ -31,7 +31,6 @@ class AdminUserDetailScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(AppSizes.pagePadding),
             child: Column(
               children: [
-                // ── Profile card ──
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(AppSizes.md),
@@ -116,7 +115,6 @@ class AdminUserDetailScreen extends ConsumerWidget {
 
                 const SizedBox(height: 16),
 
-                // ── Actions ──
                 _Card(
                   title: 'Admin actions',
                   children: [
@@ -149,7 +147,6 @@ class AdminUserDetailScreen extends ConsumerWidget {
 
                 const SizedBox(height: 16),
 
-                // ── Stats ──
                 _Card(
                   title: 'Account info',
                   children: [
@@ -346,8 +343,6 @@ class _ActionTile extends StatelessWidget {
     ),
   );
 }
-
-// ── Sub-widgets ────────────────────────────────────────────────────
 
 class _Card extends StatelessWidget {
   final String title;

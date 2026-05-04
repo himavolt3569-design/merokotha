@@ -87,8 +87,6 @@ class ChatModel {
       myUid == ownerId ? unreadOwner : unreadCustomer;
 }
 
-// ── Message Model ─────────────────────────────────────────────────
-
 class MessageModel {
   final String id;
   final String senderId;

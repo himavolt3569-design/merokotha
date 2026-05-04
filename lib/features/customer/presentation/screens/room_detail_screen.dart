@@ -54,7 +54,9 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                         currentIndex: _photoIndex,
                         onPageChanged: (i) => setState(() => _photoIndex = i),
                         isFavourited: isFav,
-                        onFavourite: () => ref.read(favouriteProvider.notifier).toggle(listing),
+                        onFavourite: () => ref
+                            .read(favouriteProvider.notifier)
+                            .toggle(listing),
                         onBack: () => context.pop(),
                       ),
                     ),
@@ -80,10 +82,15 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: AppColors.customerLight,
-                                  borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                                  borderRadius: BorderRadius.circular(
+                                    AppSizes.radiusFull,
+                                  ),
                                 ),
                                 child: Text(
                                   listing.roomTypeLabel,
@@ -102,12 +109,19 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                           if (listing.address != null)
                             Row(
                               children: [
-                                const Icon(Icons.location_on_outlined, size: 14, color: AppColors.grey400),
+                                const Icon(
+                                  Icons.location_on_outlined,
+                                  size: 14,
+                                  color: AppColors.grey400,
+                                ),
                                 const SizedBox(width: 4),
                                 Expanded(
                                   child: Text(
                                     listing.address!,
-                                    style: const TextStyle(fontSize: 13, color: AppColors.grey400),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.grey400,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -121,11 +135,17 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  PriceBadge(amount: listing.rentPerMonth, fontSize: 20),
+                                  PriceBadge(
+                                    amount: listing.rentPerMonth,
+                                    fontSize: 20,
+                                  ),
                                   if (listing.depositAmount > 0)
                                     Text(
                                       'Deposit: ${Formatters.npr(listing.depositAmount)}',
-                                      style: const TextStyle(fontSize: 12, color: AppColors.grey400),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.grey400,
+                                      ),
                                     ),
                                 ],
                               ),
@@ -135,11 +155,17 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                                 children: [
                                   Text(
                                     'Floor ${listing.floor}/${listing.totalFloors}',
-                                    style: const TextStyle(fontSize: 13, color: AppColors.grey600),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.grey600,
+                                    ),
                                   ),
                                   Text(
                                     listing.furnishingLabel,
-                                    style: const TextStyle(fontSize: 13, color: AppColors.grey600),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.grey600,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -171,7 +197,11 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                           const SizedBox(height: 8),
                           Text(
                             listing.description,
-                            style: const TextStyle(fontSize: 14, color: AppColors.grey600, height: 1.6),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: AppColors.grey600,
+                              height: 1.6,
+                            ),
                           ),
 
                           const SizedBox(height: 20),
@@ -194,18 +224,28 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.near_me_outlined, size: 14, color: AppColors.grey400),
+                                    const Icon(
+                                      Icons.near_me_outlined,
+                                      size: 14,
+                                      color: AppColors.grey400,
+                                    ),
                                     const SizedBox(width: 4),
                                     Expanded(
                                       child: Text(
                                         listing.nearbyLandmarks!,
-                                        style: const TextStyle(fontSize: 13, color: AppColors.grey500),
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          color: AppColors.grey500,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            _StaticMapPreview(lat: listing.geoPoint!.latitude, lng: listing.geoPoint!.longitude),
+                            _StaticMapPreview(
+                              lat: listing.geoPoint!.latitude,
+                              lng: listing.geoPoint!.longitude,
+                            ),
                             const SizedBox(height: 20),
                             _Divider(),
                           ],
@@ -213,24 +253,40 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                           // Stats
                           Row(
                             children: [
-                              const Icon(Icons.visibility_outlined, size: 14, color: AppColors.grey400),
+                              const Icon(
+                                Icons.visibility_outlined,
+                                size: 14,
+                                color: AppColors.grey400,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 '${listing.viewCount} views',
-                                style: const TextStyle(fontSize: 12, color: AppColors.grey400),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.grey400,
+                                ),
                               ),
                               const SizedBox(width: 16),
-                              const Icon(Icons.access_time_rounded, size: 14, color: AppColors.grey400),
+                              const Icon(
+                                Icons.access_time_rounded,
+                                size: 14,
+                                color: AppColors.grey400,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 'Listed ${Formatters.timeAgo(listing.createdAt)}',
-                                style: const TextStyle(fontSize: 12, color: AppColors.grey400),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.grey400,
+                                ),
                               ),
                             ],
                           ),
 
-                          // ── Ad banner after stats ──
-                          const AdBanner(placement: AdPlacement.roomDetail, padding: EdgeInsets.symmetric(vertical: 8)),
+                          const AdBanner(
+                            placement: AdPlacement.roomDetail,
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                          ),
 
                           const SizedBox(height: 120),
                         ],
@@ -255,8 +311,6 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
   }
 }
 
-// ── Static map preview with flutter_map ───────────────────────────
-
 class _StaticMapPreview extends StatelessWidget {
   final double lat;
   final double lng;
@@ -273,7 +327,9 @@ class _StaticMapPreview extends StatelessWidget {
           options: MapOptions(
             initialCenter: point,
             initialZoom: 15,
-            interactionOptions: const InteractionOptions(flags: InteractiveFlag.none),
+            interactionOptions: const InteractionOptions(
+              flags: InteractiveFlag.none,
+            ),
           ),
           children: [
             TileLayer(
@@ -287,7 +343,11 @@ class _StaticMapPreview extends StatelessWidget {
                   point: point,
                   width: 40,
                   height: 40,
-                  child: const Icon(Icons.location_on_rounded, size: 40, color: AppColors.error),
+                  child: const Icon(
+                    Icons.location_on_rounded,
+                    size: 40,
+                    color: AppColors.error,
+                  ),
                 ),
               ],
             ),
@@ -297,8 +357,6 @@ class _StaticMapPreview extends StatelessWidget {
     );
   }
 }
-
-// ── Sub-widgets ────────────────────────────────────────────────────
 
 class _PhotoSection extends StatelessWidget {
   final ListingModel listing;
@@ -353,7 +411,9 @@ class _PhotoSection extends StatelessWidget {
                   height: 6,
                   margin: const EdgeInsets.symmetric(horizontal: 2),
                   decoration: BoxDecoration(
-                    color: i == currentIndex ? Colors.white : Colors.white.withOpacity(0.5),
+                    color: i == currentIndex
+                        ? Colors.white
+                        : Colors.white.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                   ),
                 ),
@@ -364,14 +424,19 @@ class _PhotoSection extends StatelessWidget {
         Positioned(
           top: MediaQuery.of(context).padding.top + 8,
           left: 12,
-          child: _CircleBtn(icon: Icons.arrow_back_ios_new_rounded, onTap: onBack),
+          child: _CircleBtn(
+            icon: Icons.arrow_back_ios_new_rounded,
+            onTap: onBack,
+          ),
         ),
         // Fav
         Positioned(
           top: MediaQuery.of(context).padding.top + 8,
           right: 12,
           child: _CircleBtn(
-            icon: isFavourited ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+            icon: isFavourited
+                ? Icons.favorite_rounded
+                : Icons.favorite_border_rounded,
             iconColor: isFavourited ? AppColors.error : AppColors.grey600,
             onTap: onFavourite,
           ),
@@ -383,7 +448,9 @@ class _PhotoSection extends StatelessWidget {
   Widget get _placeholder => Container(
     height: 280,
     color: AppColors.grey50,
-    child: const Center(child: Icon(Icons.image_outlined, size: 64, color: AppColors.grey100)),
+    child: const Center(
+      child: Icon(Icons.image_outlined, size: 64, color: AppColors.grey100),
+    ),
   );
 }
 
@@ -402,7 +469,9 @@ class _CircleBtn extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         shape: BoxShape.circle,
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 6)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 6),
+        ],
       ),
       child: Icon(icon, size: 18, color: iconColor ?? AppColors.grey700),
     ),
@@ -423,7 +492,11 @@ class _SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     text,
-    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.grey900),
+    style: const TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w700,
+      color: AppColors.grey900,
+    ),
   );
 }
 
@@ -431,7 +504,11 @@ class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  const _InfoRow({required this.icon, required this.label, required this.value});
+  const _InfoRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -440,11 +517,18 @@ class _InfoRow extends StatelessWidget {
       children: [
         Icon(icon, size: 16, color: AppColors.grey400),
         const SizedBox(width: 8),
-        Text(label, style: const TextStyle(fontSize: 13, color: AppColors.grey400)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 13, color: AppColors.grey400),
+        ),
         const Spacer(),
         Text(
           value,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.grey800),
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: AppColors.grey800,
+          ),
         ),
       ],
     ),
@@ -474,13 +558,19 @@ class _FacilitiesGrid extends StatelessWidget {
       final icon = _facilityIcons[f] ?? Icons.check_circle_outlined;
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-        decoration: BoxDecoration(color: AppColors.grey50, borderRadius: BorderRadius.circular(AppSizes.radiusFull)),
+        decoration: BoxDecoration(
+          color: AppColors.grey50,
+          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 14, color: AppColors.grey600),
             const SizedBox(width: 5),
-            Text(f[0].toUpperCase() + f.substring(1), style: const TextStyle(fontSize: 12, color: AppColors.grey700)),
+            Text(
+              f[0].toUpperCase() + f.substring(1),
+              style: const TextStyle(fontSize: 12, color: AppColors.grey700),
+            ),
           ],
         ),
       );
@@ -495,19 +585,33 @@ class _OwnerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(AppSizes.md),
-    decoration: BoxDecoration(color: AppColors.grey50, borderRadius: BorderRadius.circular(AppSizes.radiusLg)),
+    decoration: BoxDecoration(
+      color: AppColors.grey50,
+      borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+    ),
     child: Row(
       children: [
-        UserAvatar(name: listing.ownerName, photoUrl: listing.ownerPhotoUrl, size: 44),
+        UserAvatar(
+          name: listing.ownerName,
+          photoUrl: listing.ownerPhotoUrl,
+          size: 44,
+        ),
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               listing.ownerName,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.grey900),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.grey900,
+              ),
             ),
-            const Text('House Owner', style: TextStyle(fontSize: 12, color: AppColors.grey400)),
+            const Text(
+              'House Owner',
+              style: TextStyle(fontSize: 12, color: AppColors.grey400),
+            ),
           ],
         ),
       ],
@@ -542,7 +646,11 @@ class _BottomCTA extends ConsumerWidget {
             border: Border.all(color: AppColors.grey100),
             borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           ),
-          child: const Icon(Icons.share_outlined, size: 20, color: AppColors.grey600),
+          child: const Icon(
+            Icons.share_outlined,
+            size: 20,
+            color: AppColors.grey600,
+          ),
         ),
         const SizedBox(width: 12),
         // Inquire
@@ -553,16 +661,24 @@ class _BottomCTA extends ConsumerWidget {
               onPressed: () {
                 final user = userAsync.asData?.value;
                 if (user == null) return;
-                context.push(AppRoutes.inquire.replaceAll(':id', listing.id), extra: listing);
+                context.push(
+                  AppRoutes.inquire.replaceAll(':id', listing.id),
+                  extra: listing,
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.customerPrimary,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSizes.radiusMd)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                ),
               ),
               icon: const Icon(Icons.message_outlined, size: 18),
-              label: const Text('Message owner', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+              label: const Text(
+                'Message owner',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
             ),
           ),
         ),

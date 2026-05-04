@@ -9,13 +9,11 @@ import 'package:merokotha/features/customer/data/listings_repository.dart';
 
 part 'customers_providers.g.dart';
 
-// ── All active listings for home feed ──
 @riverpod
 Stream<List<ListingModel>> activeListings(Ref ref) {
   return ref.watch(listingsRepositoryProvider).watchActiveListings();
 }
 
-// ── Single listing detail ──
 @riverpod
 Future<ListingModel?> listingDetail(Ref ref, String listingId) async {
   final listing = await ref
@@ -27,7 +25,6 @@ Future<ListingModel?> listingDetail(Ref ref, String listingId) async {
   return listing;
 }
 
-// ── Search filter state ──
 @riverpod
 class SearchFilterNotifier extends _$SearchFilterNotifier {
   @override
@@ -56,7 +53,6 @@ class SearchFilterNotifier extends _$SearchFilterNotifier {
   void reset() => state = const SearchFilter();
 }
 
-// ── Search results (re-runs when filter changes) ──
 @riverpod
 class SearchResults extends _$SearchResults {
   @override
@@ -66,7 +62,6 @@ class SearchResults extends _$SearchResults {
   }
 }
 
-// ── Favourite IDs stream ──
 @riverpod
 Stream<List<String>> favouriteIds(Ref ref) {
   final user = ref.watch(authStateProvider).value;
@@ -74,7 +69,6 @@ Stream<List<String>> favouriteIds(Ref ref) {
   return ref.watch(favouritesRepositoryProvider).watchFavouriteIds(user.uid);
 }
 
-// ── Check if a specific listing is favourited ──
 @riverpod
 bool isListingFavourited(Ref ref, String listingId) {
   final asyncFavIds = ref.watch(favouriteIdsProvider);
@@ -82,7 +76,6 @@ bool isListingFavourited(Ref ref, String listingId) {
   return favIds.contains(listingId);
 }
 
-// ── Favourite listings (fetched from listings collection by IDs) ──
 @riverpod
 Future<List<ListingModel>> favouriteListings(Ref ref) async {
   final ids = ref.watch(favouriteIdsProvider).value ?? [];
@@ -93,7 +86,6 @@ Future<List<ListingModel>> favouriteListings(Ref ref) async {
   return results.whereType<ListingModel>().toList();
 }
 
-// ── Toggle favourite ──
 @riverpod
 class FavouriteNotifier extends _$FavouriteNotifier {
   @override
@@ -117,7 +109,6 @@ class FavouriteNotifier extends _$FavouriteNotifier {
   }
 }
 
-// ── Send inquiry state ──
 class SendInquiryState {
   final bool isLoading;
   final String? error;
@@ -192,7 +183,6 @@ class SendInquiryNotifier extends _$SendInquiryNotifier {
   void reset() => state = const SendInquiryState();
 }
 
-// ── All listings for map view ──
 @riverpod
 Future<List<ListingModel>> mapListings(Ref ref) {
   return ref.watch(listingsRepositoryProvider).getAllActiveForMap();

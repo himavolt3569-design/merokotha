@@ -10,13 +10,10 @@ class AuthRepository {
 
   AuthRepository(this._auth);
 
-  // Current Firebase user stream
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  // Current Firebase user (sync)
   User? get currentUser => _auth.currentUser;
 
-  // Step 1 — Send OTP to phone number
   Future<void> sendOtp({
     required String phoneNumber,
     required void Function(String verificationId, int? resendToken) onCodeSent,
@@ -26,25 +23,20 @@ class AuthRepository {
     try {
       await _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
-        timeout: const Duration(
-          seconds: 120,
-        ), // Increased timeout from 60 to 120 seconds
+        // 120s timeout: default 60s was too short on slow networks
+        timeout: const Duration(seconds: 120),
         verificationCompleted: onAutoVerified,
         verificationFailed: onError,
         codeSent: onCodeSent,
-        codeAutoRetrievalTimeout: (verificationId) {
-          // Called when auto-retrieval times out
-        },
+        codeAutoRetrievalTimeout: (_) {},
       );
     } catch (e) {
-      // Handle any exceptions during phone number verification
       if (e is FirebaseAuthException) {
         onError(e);
       }
     }
   }
 
-  // Step 2 — Verify OTP and sign in
   Future<UserCredential> verifyOtp({
     required String verificationId,
     required String smsCode,
@@ -56,7 +48,6 @@ class AuthRepository {
     return await _auth.signInWithCredential(credential);
   }
 
-  // Sign out
   Future<void> signOut() async {
     await _auth.signOut();
   }

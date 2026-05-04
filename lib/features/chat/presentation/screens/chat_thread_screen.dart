@@ -133,7 +133,6 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       ),
       body: Column(
         children: [
-          // ── Messages list ──
           Expanded(
             child: messagesAsync.when(
               loading: () => const MkLoading(),
@@ -197,7 +196,6 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
             ),
           ),
 
-          // ── Input bar ──
           _InputBar(
             controller: _textCtrl,
             onSend: _sendText,
@@ -211,8 +209,6 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
   bool _sameDay(DateTime a, DateTime b) =>
       a.day == b.day && a.month == b.month && a.year == b.year;
 }
-
-// ── App bar ───────────────────────────────────────────────────────
 
 class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ChatModel? chat;
@@ -279,8 +275,6 @@ class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
-
-// ── Message bubble ────────────────────────────────────────────────
 
 class _MessageBubble extends StatelessWidget {
   final MessageModel message;
@@ -414,8 +408,6 @@ class _MessageBubble extends StatelessWidget {
   }
 }
 
-// ── Date divider ──────────────────────────────────────────────────
-
 class _DateDivider extends StatelessWidget {
   final DateTime date;
   const _DateDivider(this.date);
@@ -440,8 +432,6 @@ class _DateDivider extends StatelessWidget {
     );
   }
 }
-
-// ── Input bar ─────────────────────────────────────────────────────
 
 class _InputBar extends StatelessWidget {
   final TextEditingController controller;

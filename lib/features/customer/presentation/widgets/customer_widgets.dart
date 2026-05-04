@@ -8,8 +8,6 @@ import 'package:merokotha/features/chat/providers/chat_providers.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
 
-// ─────────────────────────── Listing Card ───────────────────────────
-
 class ListingCard extends StatelessWidget {
   final ListingModel listing;
   final bool isFavourited;
@@ -196,8 +194,6 @@ class ListingCard extends StatelessWidget {
   );
 }
 
-// ─────────────────────────── Filter Chip Row ───────────────────────────
-
 class FilterChipRow extends StatelessWidget {
   final String? selectedCategoryId;
   final List<({String id, String name})> categories;
@@ -278,8 +274,6 @@ class _Chip extends StatelessWidget {
   }
 }
 
-// ─────────────────────────── Facilities Filter Row ───────────────────────────
-
 const _facilityOptions = [
   ('wifi', 'WiFi', Icons.wifi_rounded),
   ('parking', 'Parking', Icons.local_parking_rounded),
@@ -347,8 +341,6 @@ class FacilityFilterRow extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────── Price Range Slider ───────────────────────────
 
 class PriceRangeSlider extends StatefulWidget {
   final double? minValue;
@@ -435,8 +427,6 @@ class _PriceRangeSliderState extends State<PriceRangeSlider> {
     );
   }
 }
-
-// ─────────────────────────── Inquiry Status Tracker ───────────────────────────
 
 class InquiryStatusTracker extends StatelessWidget {
   final String status; // pending / accepted / declined
@@ -529,8 +519,6 @@ class InquiryStatusTracker extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────── Customer Bottom Nav ───────────────────────────
 
 class CustomerBottomNav extends ConsumerWidget {
   final int currentIndex;

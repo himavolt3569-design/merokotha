@@ -8,7 +8,6 @@ import 'package:merokotha/features/owner/data/inquiry_repository.dart';
 
 part 'owner_providers.g.dart';
 
-// ── Watch owner's listings in real time ──
 @riverpod
 Stream<List<ListingModel>> ownerListings(Ref ref) {
   final user = ref.watch(authStateProvider).asData?.value;
@@ -16,7 +15,6 @@ Stream<List<ListingModel>> ownerListings(Ref ref) {
   return ref.watch(ownerRepositoryProvider).watchMyListings(user.uid);
 }
 
-// ── Watch pending inquiry count for notification badge ──
 @riverpod
 Stream<int> pendingInquiryCount(Ref ref) {
   final user = ref.watch(authStateProvider).asData?.value;
@@ -24,7 +22,6 @@ Stream<int> pendingInquiryCount(Ref ref) {
   return ref.watch(inquiryRepositoryProvider).watchPendingCount(user.uid);
 }
 
-// ── Upload listing state ──
 class UploadListingState {
   final bool isLoading;
   final String? error;
@@ -48,14 +45,11 @@ class UploadListingState {
   );
 }
 
-// NOTE: The generated provider name will be uploadListingProvider
-// because the class is UploadListingNotifier → uploadListing + Provider
 @riverpod
 class UploadListingNotifier extends _$UploadListingNotifier {
   @override
   UploadListingState build() => const UploadListingState();
 
-  // Returns the new listing ID on success, null on failure
   Future<String?> uploadListing({
     required String ownerId,
     required String ownerName,
@@ -96,7 +90,7 @@ class UploadListingNotifier extends _$UploadListingNotifier {
         address: address,
         nearbyLandmarks: nearbyLandmarks,
         availableFrom: availableFrom,
-        status: ListingStatus.active, // all listings go live immediately
+        status: ListingStatus.active,
         createdAt: now,
         updatedAt: now,
         roomType: roomType,
@@ -118,7 +112,6 @@ class UploadListingNotifier extends _$UploadListingNotifier {
   void reset() => state = const UploadListingState();
 }
 
-// ── Toggle / update listing status ──
 @riverpod
 class ListingStatusNotifier extends _$ListingStatusNotifier {
   @override

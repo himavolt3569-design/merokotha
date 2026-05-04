@@ -67,7 +67,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
 
     if (!success || !mounted) return;
 
-    // Check if user is new or existing
     final firebaseUser = ref.read(authStateProvider).value;
     if (firebaseUser == null) return;
 
@@ -93,7 +92,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
   Widget build(BuildContext context) {
     final otpState = ref.watch(otpProvider);
 
-    // Show error if any
     ref.listen(otpProvider, (prev, next) {
       if (next.errorMessage != null &&
           next.errorMessage != prev?.errorMessage) {
@@ -120,7 +118,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
             children: [
               const SizedBox(height: 40),
 
-              // Logo + App name
               Row(
                 children: [
                   Container(
@@ -152,7 +149,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
 
               const SizedBox(height: 60),
 
-              // Heading
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 child: _showOtpField
@@ -162,7 +158,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
 
               const SizedBox(height: 32),
 
-              // Phone form
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 transitionBuilder: (child, anim) =>
@@ -184,7 +179,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Phone input
           TextFormField(
             controller: _phoneController,
             keyboardType: TextInputType.phone,
@@ -213,7 +207,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
 
           const SizedBox(height: AppSizes.lg),
 
-          // Send OTP button
           SizedBox(
             width: double.infinity,
             height: AppSizes.buttonHeight,
@@ -240,7 +233,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // OTP boxes
         OtpInputField(
           key: _otpKey,
           onCompleted: (otp) => setState(() => _otpValue = otp),
@@ -249,7 +241,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
 
         const SizedBox(height: AppSizes.lg),
 
-        // Verify button
         SizedBox(
           width: double.infinity,
           height: AppSizes.buttonHeight,
@@ -270,11 +261,9 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
 
         const SizedBox(height: AppSizes.md),
 
-        // Resend + change number row
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Resend OTP
             _resendCountdown > 0
                 ? Text(
                     '${AppStrings.resendIn} $_resendCountdown${AppStrings.seconds}',
@@ -295,7 +284,6 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
                     ),
                   ),
 
-            // Change number
             GestureDetector(
               onTap: () {
                 ref.read(otpProvider.notifier).resetAll();

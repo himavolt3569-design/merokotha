@@ -196,11 +196,9 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  // ── Avatar section ──
                   _AvatarSection(user: user),
                   const SizedBox(height: 24),
 
-                  // ── Info card ──
                   _Card(
                     title: 'Personal information',
                     children: [
@@ -243,7 +241,6 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── Save button (edit mode) ──
                   if (_isEditing) ...[
                     MkButton(
                       label: 'Save changes',
@@ -253,7 +250,6 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
                     const SizedBox(height: 16),
                   ],
 
-                  // ── Account card ──
                   _Card(
                     title: 'Account',
                     children: [
@@ -287,7 +283,6 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── App card ──
                   _Card(
                     title: 'App',
                     children: [
@@ -319,7 +314,6 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── Sign out ──
                   MkButton(
                     label: 'Sign out',
                     onPressed: _signOut,
@@ -337,8 +331,6 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
     );
   }
 }
-
-// ── Shared sub-widgets ─────────────────────────────────────────────
 
 class _AvatarSection extends StatelessWidget {
   final UserModel user;

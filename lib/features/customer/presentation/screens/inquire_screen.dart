@@ -118,8 +118,6 @@ class _InquireScreenState extends ConsumerState<InquireScreen> {
   }
 }
 
-// ── Form view ──
-
 class _FormView extends StatelessWidget {
   final ListingModel listing;
   final GlobalKey<FormState> formKey;
@@ -148,7 +146,6 @@ class _FormView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Listing summary ──
             Container(
               padding: const EdgeInsets.all(AppSizes.md),
               decoration: BoxDecoration(
@@ -202,7 +199,6 @@ class _FormView extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            // ── Move-in date ──
             const Text(
               'Preferred move-in date',
               style: TextStyle(
@@ -253,7 +249,6 @@ class _FormView extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // ── Message ──
             MkTextField(
               label: 'Message to owner',
               hint: 'Write your inquiry...',
@@ -270,7 +265,6 @@ class _FormView extends StatelessWidget {
 
             const SizedBox(height: 32),
 
-            // ── Submit ──
             MkButton(
               label: 'Send inquiry',
               onPressed: onSubmit,
@@ -285,8 +279,6 @@ class _FormView extends StatelessWidget {
     );
   }
 }
-
-// ── Success view ──
 
 class _SuccessView extends StatelessWidget {
   final ListingModel listing;

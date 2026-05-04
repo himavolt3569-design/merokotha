@@ -12,17 +12,12 @@ import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 
-// Landing
 import 'package:merokotha/features/landing/presentation/screens/landing_screen.dart';
-
-// Owner screens
 import 'package:merokotha/features/owner/presentation/screens/owner_home_screen.dart';
 import 'package:merokotha/features/owner/presentation/screens/upload_listing_screen.dart';
 import 'package:merokotha/features/owner/presentation/screens/owner_inquiries_screen.dart';
 import 'package:merokotha/features/owner/presentation/screens/owner_map_screen.dart';
 import 'package:merokotha/features/owner/presentation/screens/owner_profile_screen.dart';
-
-// Customer screens
 import 'package:merokotha/features/customer/presentation/screens/customer_home_screen.dart';
 import 'package:merokotha/features/customer/presentation/screens/search_screen.dart';
 import 'package:merokotha/features/customer/presentation/screens/customer_map_screen.dart';
@@ -30,12 +25,8 @@ import 'package:merokotha/features/customer/presentation/screens/room_detail_scr
 import 'package:merokotha/features/customer/presentation/screens/favourites_screen.dart';
 import 'package:merokotha/features/customer/presentation/screens/inquire_screen.dart';
 import 'package:merokotha/features/customer/presentation/screens/customer_profile_screen.dart';
-
-// Chat screens
 import 'package:merokotha/features/chat/presentation/screens/chat_list_screen.dart';
 import 'package:merokotha/features/chat/presentation/screens/chat_thread_screen.dart';
-
-// Admin screens
 import 'package:merokotha/features/admin/presentation/screens/admin_home_screen.dart';
 import 'package:merokotha/features/admin/presentation/screens/admin_users_screen.dart';
 import 'package:merokotha/features/admin/presentation/screens/admin_user_detail_screen.dart';
@@ -49,10 +40,9 @@ GoRouter appRouter(Ref ref) {
   final authState = ref.watch(authStateProvider);
 
   return GoRouter(
-    initialLocation: AppRoutes.splash, // ← always start at splash
+    initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
     redirect: (context, state) {
-      // Wait for Firebase Auth to resolve
       if (authState.isLoading) return null;
 
       final isLoggedIn = authState.value != null;
@@ -66,21 +56,17 @@ GoRouter appRouter(Ref ref) {
         AppRoutes.onboarding,
       ];
 
-      // Only redirect unauthenticated users away from protected routes
       if (!isLoggedIn && !publicRoutes.contains(loc)) {
         return AppRoutes.login;
       }
 
-      return null; // splash handles all role-based routing
+      return null;
     },
     routes: [
-      // ── Public / Landing ──────────────────────────────────────
       GoRoute(
         path: AppRoutes.landing,
         builder: (_, _) => const LandingScreen(),
       ),
-
-      // ── Auth ──────────────────────────────────────────────────
       GoRoute(path: AppRoutes.splash, builder: (_, _) => const SplashScreen()),
       GoRoute(path: AppRoutes.login, builder: (_, _) => const OtpLoginScreen()),
       GoRoute(
@@ -91,8 +77,6 @@ GoRouter appRouter(Ref ref) {
         path: AppRoutes.onboarding,
         builder: (_, _) => const OnboardingScreen(),
       ),
-
-      // ── Owner ─────────────────────────────────────────────────
       GoRoute(
         path: AppRoutes.ownerHome,
         builder: (_, _) => const OwnerHomeScreen(),
@@ -117,8 +101,6 @@ GoRouter appRouter(Ref ref) {
         path: AppRoutes.ownerProfile,
         builder: (_, _) => const OwnerProfileScreen(),
       ),
-
-      // ── Customer ──────────────────────────────────────────────
       GoRoute(
         path: AppRoutes.customerHome,
         builder: (_, _) => const CustomerHomeScreen(),
@@ -146,8 +128,6 @@ GoRouter appRouter(Ref ref) {
         builder: (_, state) =>
             InquireScreen(listing: state.extra as ListingModel),
       ),
-
-      // ── Chat ──────────────────────────────────────────────────
       GoRoute(
         path: AppRoutes.chatList,
         builder: (_, _) => const ChatListScreen(),
@@ -157,8 +137,6 @@ GoRouter appRouter(Ref ref) {
         builder: (_, state) =>
             ChatThreadScreen(chatId: state.pathParameters['chatId']!),
       ),
-
-      // ── Super Admin ───────────────────────────────────────────
       GoRoute(
         path: AppRoutes.adminHome,
         builder: (_, _) => const AdminHomeScreen(),

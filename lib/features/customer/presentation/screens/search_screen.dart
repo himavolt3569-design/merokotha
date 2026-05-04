@@ -102,7 +102,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       ),
       body: Column(
         children: [
-          // ── Filter panel ──
           AnimatedSize(
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeOut,
@@ -115,11 +114,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 : const SizedBox.shrink(),
           ),
 
-          // ── Active filter chips ──
           if (filter.hasActiveFilters)
             _ActiveFiltersBar(filter: filter, onClear: () => notifier.reset()),
 
-          // ── Results ──
           Expanded(
             child: resultsAsync.when(
               loading: () => const MkLoading(fullScreen: false),
@@ -184,8 +181,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   }
 }
 
-// ── Filter Panel ──
-
 class _FilterPanel extends StatelessWidget {
   final SearchFilter filter;
   final SearchFilterNotifier notifier;
@@ -230,7 +225,6 @@ class _FilterPanel extends StatelessWidget {
               ),
             ],
           ),
-          // ── Price range ──
           const Text(
             'Price range',
             style: TextStyle(
@@ -250,7 +244,6 @@ class _FilterPanel extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          // ── Facilities ──
           const Text(
             'Facilities',
             style: TextStyle(
@@ -292,8 +285,6 @@ class _FilterPanel extends StatelessWidget {
     );
   }
 }
-
-// ── Active Filters Bar ──
 
 class _ActiveFiltersBar extends StatelessWidget {
   final SearchFilter filter;

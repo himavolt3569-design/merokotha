@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum FurnishingType { furnished, semiFurnished, unfurnished }
-enum ListingStatus  { active, paused, rented }
+
+enum ListingStatus { active, paused, rented }
 
 class ListingModel {
   final String id;
@@ -81,10 +82,8 @@ class ListingModel {
         orElse: () => ListingStatus.active,
       ),
       viewCount: map['viewCount'] as int? ?? 0,
-      createdAt:
-          (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      updatedAt:
-          (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      updatedAt: (map['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
 
@@ -92,28 +91,28 @@ class ListingModel {
       ListingModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
 
   Map<String, dynamic> toMap() => {
-        'ownerId': ownerId,
-        'ownerName': ownerName,
-        'ownerPhotoUrl': ownerPhotoUrl,
-        'title': title,
-        'roomType': roomType,
-        'rentPerMonth': rentPerMonth,
-        'depositAmount': depositAmount,
-        'floor': floor,
-        'totalFloors': totalFloors,
-        'furnishing': furnishing.name,
-        'facilities': facilities,
-        'description': description,
-        'photoUrls': photoUrls,
-        'geoPoint': geoPoint,
-        'address': address,
-        'nearbyLandmarks': nearbyLandmarks,
-        'availableFrom': Timestamp.fromDate(availableFrom),
-        'status': status.name,
-        'viewCount': viewCount,
-        'createdAt': Timestamp.fromDate(createdAt),
-        'updatedAt': Timestamp.fromDate(updatedAt),
-      };
+    'ownerId': ownerId,
+    'ownerName': ownerName,
+    'ownerPhotoUrl': ownerPhotoUrl,
+    'title': title,
+    'roomType': roomType,
+    'rentPerMonth': rentPerMonth,
+    'depositAmount': depositAmount,
+    'floor': floor,
+    'totalFloors': totalFloors,
+    'furnishing': furnishing.name,
+    'facilities': facilities,
+    'description': description,
+    'photoUrls': photoUrls,
+    'geoPoint': geoPoint,
+    'address': address,
+    'nearbyLandmarks': nearbyLandmarks,
+    'availableFrom': Timestamp.fromDate(availableFrom),
+    'status': status.name,
+    'viewCount': viewCount,
+    'createdAt': Timestamp.fromDate(createdAt),
+    'updatedAt': Timestamp.fromDate(updatedAt),
+  };
 
   ListingModel copyWith({
     String? title,
@@ -132,31 +131,30 @@ class ListingModel {
     DateTime? availableFrom,
     ListingStatus? status,
     int? viewCount,
-  }) =>
-      ListingModel(
-        id: id,
-        ownerId: ownerId,
-        ownerName: ownerName,
-        ownerPhotoUrl: ownerPhotoUrl,
-        title: title ?? this.title,
-        roomType: roomType ?? this.roomType,
-        rentPerMonth: rentPerMonth ?? this.rentPerMonth,
-        depositAmount: depositAmount ?? this.depositAmount,
-        floor: floor ?? this.floor,
-        totalFloors: totalFloors ?? this.totalFloors,
-        furnishing: furnishing ?? this.furnishing,
-        facilities: facilities ?? this.facilities,
-        description: description ?? this.description,
-        photoUrls: photoUrls ?? this.photoUrls,
-        geoPoint: geoPoint ?? this.geoPoint,
-        address: address ?? this.address,
-        nearbyLandmarks: nearbyLandmarks ?? this.nearbyLandmarks,
-        availableFrom: availableFrom ?? this.availableFrom,
-        status: status ?? this.status,
-        viewCount: viewCount ?? this.viewCount,
-        createdAt: createdAt,
-        updatedAt: DateTime.now(),
-      );
+  }) => ListingModel(
+    id: id,
+    ownerId: ownerId,
+    ownerName: ownerName,
+    ownerPhotoUrl: ownerPhotoUrl,
+    title: title ?? this.title,
+    roomType: roomType ?? this.roomType,
+    rentPerMonth: rentPerMonth ?? this.rentPerMonth,
+    depositAmount: depositAmount ?? this.depositAmount,
+    floor: floor ?? this.floor,
+    totalFloors: totalFloors ?? this.totalFloors,
+    furnishing: furnishing ?? this.furnishing,
+    facilities: facilities ?? this.facilities,
+    description: description ?? this.description,
+    photoUrls: photoUrls ?? this.photoUrls,
+    geoPoint: geoPoint ?? this.geoPoint,
+    address: address ?? this.address,
+    nearbyLandmarks: nearbyLandmarks ?? this.nearbyLandmarks,
+    availableFrom: availableFrom ?? this.availableFrom,
+    status: status ?? this.status,
+    viewCount: viewCount ?? this.viewCount,
+    createdAt: createdAt,
+    updatedAt: DateTime.now(),
+  );
 
   // ── Helpers ──
   bool get isActive => status == ListingStatus.active;
@@ -164,22 +162,33 @@ class ListingModel {
   // Human readable room type label
   String get roomTypeLabel {
     switch (roomType) {
-      case 'room':      return 'Room';
-      case 'flat':      return 'Flat';
-      case 'apartment': return 'Apartment';
-      case 'house':     return 'House';
-      case 'office':    return 'Office';
-      case 'shop':      return 'Shop';
-      case 'land':      return 'Land';
-      default:          return 'Other';
+      case 'room':
+        return 'Room';
+      case 'flat':
+        return 'Flat';
+      case 'apartment':
+        return 'Apartment';
+      case 'house':
+        return 'House';
+      case 'office':
+        return 'Office';
+      case 'shop':
+        return 'Shop';
+      case 'land':
+        return 'Land';
+      default:
+        return 'Other';
     }
   }
 
   String get furnishingLabel {
     switch (furnishing) {
-      case FurnishingType.furnished:     return 'Furnished';
-      case FurnishingType.semiFurnished: return 'Semi-furnished';
-      case FurnishingType.unfurnished:   return 'Unfurnished';
+      case FurnishingType.furnished:
+        return 'Furnished';
+      case FurnishingType.semiFurnished:
+        return 'Semi-furnished';
+      case FurnishingType.unfurnished:
+        return 'Unfurnished';
     }
   }
 }

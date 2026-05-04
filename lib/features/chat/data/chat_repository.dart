@@ -16,7 +16,6 @@ class ChatRepository {
   CollectionReference<Map<String, dynamic>> _messages(String chatId) =>
       _db.collection('chats').doc(chatId).collection('messages');
 
-  // ── Create a new chat (called when inquiry is accepted) ──
   Future<String> createChat({
     required String ownerId,
     required String ownerName,
@@ -27,7 +26,7 @@ class ChatRepository {
     required String listingId,
     required String listingTitle,
   }) async {
-    // Check if chat already exists for this inquiry pair
+    // Return existing chat if one already exists for this owner+customer+listing
     final existing = await _chats
         .where('ownerId', isEqualTo: ownerId)
         .where('customerId', isEqualTo: customerId)
@@ -56,7 +55,6 @@ class ChatRepository {
     return ref.id;
   }
 
-  // ── Watch all chats for an owner ──
   Stream<List<ChatModel>> watchOwnerChats(String ownerId) {
     return _chats
         .where('ownerId', isEqualTo: ownerId)
@@ -65,7 +63,6 @@ class ChatRepository {
         .map((s) => s.docs.map((d) => ChatModel.fromSnapshot(d)).toList());
   }
 
-  // ── Watch all chats for a customer ──
   Stream<List<ChatModel>> watchCustomerChats(String customerId) {
     return _chats
         .where('customerId', isEqualTo: customerId)
@@ -74,7 +71,6 @@ class ChatRepository {
         .map((s) => s.docs.map((d) => ChatModel.fromSnapshot(d)).toList());
   }
 
-  // ── Watch a single chat ──
   Stream<ChatModel?> watchChat(String chatId) {
     return _chats
         .doc(chatId)
@@ -82,7 +78,6 @@ class ChatRepository {
         .map((s) => s.exists ? ChatModel.fromSnapshot(s) : null);
   }
 
-  // ── Watch messages in a chat ──
   Stream<List<MessageModel>> watchMessages(String chatId) {
     return _messages(chatId)
         .orderBy('createdAt', descending: false)
@@ -90,7 +85,6 @@ class ChatRepository {
         .map((s) => s.docs.map((d) => MessageModel.fromSnapshot(d)).toList());
   }
 
-  // ── Send a text message ──
   Future<void> sendMessage({
     required String chatId,
     required String senderId,
@@ -100,7 +94,6 @@ class ChatRepository {
   }) async {
     final batch = _db.batch();
 
-    // Add message
     final msgRef = _messages(chatId).doc();
     batch.set(
       msgRef,
@@ -113,13 +106,11 @@ class ChatRepository {
       ).toMap(),
     );
 
-    // Update chat: lastMessage, lastMessageAt, increment unread for OTHER person
     final chatRef = _chats.doc(chatId);
     batch.update(chatRef, {
       'lastMessage': imageUrl != null ? '📷 Photo' : text,
       'lastMessageAt': Timestamp.fromDate(DateTime.now()),
       'lastMessageSenderId': senderId,
-      // Increment unread for the recipient
       if (senderIsOwner)
         'unreadCustomer': FieldValue.increment(1)
       else
@@ -129,7 +120,6 @@ class ChatRepository {
     await batch.commit();
   }
 
-  // ── Mark all messages as read (clear unread count) ──
   Future<void> markAsRead({
     required String chatId,
     required bool readerIsOwner,
@@ -139,7 +129,6 @@ class ChatRepository {
     });
   }
 
-  // ── Get total unread count for a user ──
   Stream<int> watchTotalUnread({
     required String userId,
     required bool isOwner,
@@ -153,7 +142,7 @@ class ChatRepository {
         .map(
           (s) => s.docs.fold<int>(
             0,
-            (sum, doc) => sum + ((doc.data()[unreadField] as int?) ?? 0),
+            (total, doc) => total + ((doc.data()[unreadField] as int?) ?? 0),
           ),
         );
   }

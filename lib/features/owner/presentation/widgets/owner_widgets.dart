@@ -7,7 +7,6 @@ import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/shared/models/inquiry_model.dart';
 
-// ── UserAvatar ────────────────────────────────────────────────────────────────
 class UserAvatar extends StatelessWidget {
   final String name;
   final String? photoUrl;
@@ -40,7 +39,6 @@ class UserAvatar extends StatelessWidget {
   }
 }
 
-// ── StatsCard ─────────────────────────────────────────────────────────────────
 class StatsCard extends StatelessWidget {
   final String label;
   final String value;
@@ -92,7 +90,6 @@ class StatsCard extends StatelessWidget {
   }
 }
 
-// ── OwnerListingCard ──────────────────────────────────────────────────────────
 class OwnerListingCard extends StatelessWidget {
   final ListingModel listing;
   final VoidCallback onToggle;
@@ -132,7 +129,6 @@ class OwnerListingCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Thumbnail
           Stack(
             children: [
               ClipRRect(
@@ -149,7 +145,6 @@ class OwnerListingCard extends StatelessWidget {
                       )
                     : _PlaceholderImage(),
               ),
-              // Status badge
               Positioned(
                 top: 10,
                 left: 10,
@@ -175,7 +170,6 @@ class OwnerListingCard extends StatelessWidget {
             ],
           ),
 
-          // Details
           Padding(
             padding: const EdgeInsets.all(AppSizes.md),
             child: Column(
@@ -225,10 +219,8 @@ class OwnerListingCard extends StatelessWidget {
                         color: AppColors.primary,
                       ),
                     ),
-                    // Action buttons
                     Row(
                       children: [
-                        // View
                         _IconBtn(
                           icon: Icons.visibility_outlined,
                           color: AppColors.info,
@@ -237,7 +229,6 @@ class OwnerListingCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        // Edit
                         _IconBtn(
                           icon: Icons.edit_outlined,
                           color: AppColors.grey600,
@@ -246,7 +237,6 @@ class OwnerListingCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        // Toggle (hide if rented)
                         if (!isRented)
                           _IconBtn(
                             icon: isActive
@@ -258,7 +248,6 @@ class OwnerListingCard extends StatelessWidget {
                             onTap: onToggle,
                           ),
                         if (!isRented) const SizedBox(width: 6),
-                        // Delete
                         _IconBtn(
                           icon: Icons.delete_outline_rounded,
                           color: AppColors.error,
@@ -320,7 +309,6 @@ class _IconBtn extends StatelessWidget {
   }
 }
 
-// ── InquiryCard ───────────────────────────────────────────────────────────────
 class InquiryCard extends StatelessWidget {
   final InquiryModel inquiry;
   final VoidCallback? onAccept;
@@ -347,7 +335,6 @@ class InquiryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header row
           Row(
             children: [
               CircleAvatar(
@@ -394,12 +381,10 @@ class InquiryCard extends StatelessWidget {
                   ],
                 ),
               ),
-              // Status chip
               _StatusChip(status: inquiry.status),
             ],
           ),
 
-          // Message
           if (inquiry.message.isNotEmpty) ...[
             const SizedBox(height: 10),
             Text(
@@ -414,7 +399,6 @@ class InquiryCard extends StatelessWidget {
             ),
           ],
 
-          // Action buttons
           if (onAccept != null || onDecline != null || onOpenChat != null) ...[
             const SizedBox(height: 12),
             Row(
@@ -545,7 +529,6 @@ class _StatusChip extends StatelessWidget {
   }
 }
 
-// ── FacilitiesSelector ────────────────────────────────────────────────────────
 class FacilitiesSelector extends StatefulWidget {
   final List<String> selected;
   final ValueChanged<List<String>> onChanged;

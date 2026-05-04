@@ -9,7 +9,6 @@ import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/shared/models/user_model.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
 
-// ── Admin color constants ──────────────────────────────────────────
 class AdminColors {
   static const primary = Color(0xFF2C2C2A);
   static const accent = Color(0xFFE24B4A);
@@ -17,8 +16,6 @@ class AdminColors {
   static const surface = Color(0xFF3D3D3A);
   static const bg = Color(0xFF1A1A18);
 }
-
-// ─────────────────────────── Admin Bottom Nav ─────────────────────
 
 class AdminBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -85,8 +82,6 @@ class AdminBottomNav extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────── Admin App Bar ────────────────────────
 
 class AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -155,8 +150,6 @@ class AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-// ─────────────────────────── Stat Card ───────────────────────────
-
 class AdminStatCard extends StatelessWidget {
   final String label;
   final String value;
@@ -216,8 +209,6 @@ class AdminStatCard extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────── User Tile ───────────────────────────
 
 class AdminUserTile extends StatelessWidget {
   final UserModel user;
@@ -422,8 +413,6 @@ class _SmallAction extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────── Admin Listing Tile ──────────────────
 
 class AdminListingTile extends StatelessWidget {
   final ListingModel listing;

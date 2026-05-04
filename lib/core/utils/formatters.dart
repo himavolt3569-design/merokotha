@@ -29,5 +29,4 @@ class Formatters {
     if (diff.inDays < 7) return '${diff.inDays}d ago';
     return DateFormat('dd MMM').format(date);
   }
-
 }

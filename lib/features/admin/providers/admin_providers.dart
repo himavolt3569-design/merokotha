@@ -7,31 +7,26 @@ import 'package:merokotha/features/admin/data/admin_repository.dart';
 
 part 'admin_providers.g.dart';
 
-// ── Dashboard stats ──
 @riverpod
 Future<AdminStats> dashboardStats(Ref ref) {
   return ref.watch(adminRepositoryProvider).getDashboardStats();
 }
 
-// ── All users stream ──
 @riverpod
 Stream<List<UserModel>> allUsers(Ref ref) {
   return ref.watch(adminRepositoryProvider).watchAllUsers();
 }
 
-// ── All listings stream ──
 @riverpod
 Stream<List<ListingModel>> allListings(Ref ref) {
   return ref.watch(adminRepositoryProvider).watchAllListings();
 }
 
-// ── All inquiries stream ──
 @riverpod
 Stream<List<InquiryModel>> allInquiries(Ref ref) {
   return ref.watch(adminRepositoryProvider).watchAllInquiries();
 }
 
-// ── Recent items for dashboard ──
 @riverpod
 Future<List<UserModel>> recentUsers(Ref ref) {
   return ref.watch(adminRepositoryProvider).getRecentUsers();
@@ -42,13 +37,11 @@ Future<List<ListingModel>> recentListings(Ref ref) {
   return ref.watch(adminRepositoryProvider).getRecentListings();
 }
 
-// ── User detail ──
 @riverpod
 Future<UserModel?> adminUserDetail(Ref ref, String uid) {
   return ref.watch(adminRepositoryProvider).getUserById(uid);
 }
 
-// ── User search query state ──
 // Generated name: userSearchProvider (used in screens as ref.watch(userSearchProvider))
 @riverpod
 class UserSearch extends _$UserSearch {
@@ -58,7 +51,6 @@ class UserSearch extends _$UserSearch {
   void clear() => state = '';
 }
 
-// ── Searched users ──
 @riverpod
 Future<List<UserModel>> searchedUsers(Ref ref) async {
   final query = ref.watch(userSearchProvider);
@@ -68,7 +60,6 @@ Future<List<UserModel>> searchedUsers(Ref ref) async {
   return ref.watch(adminRepositoryProvider).searchUsers(query.trim());
 }
 
-// ── Admin action state ──
 class AdminActionState {
   final bool isLoading;
   final String? error;

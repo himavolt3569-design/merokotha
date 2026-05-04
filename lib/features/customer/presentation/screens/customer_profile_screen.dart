@@ -194,11 +194,9 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  // ── Avatar ──
                   _CustomerAvatarSection(user: user),
                   const SizedBox(height: 24),
 
-                  // ── Stats row ──
                   Row(
                     children: [
                       Expanded(
@@ -222,7 +220,6 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // ── Personal info card ──
                   _Card(
                     title: 'Personal information',
                     children: [
@@ -265,7 +262,6 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── Save button ──
                   if (_isEditing) ...[
                     MkButton(
                       label: 'Save changes',
@@ -276,7 +272,6 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                     const SizedBox(height: 16),
                   ],
 
-                  // ── Quick links card ──
                   _Card(
                     title: 'Quick links',
                     children: [
@@ -306,7 +301,6 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── Account card ──
                   _Card(
                     title: 'Account',
                     children: [
@@ -348,7 +342,6 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── Sign out ──
                   MkButton(
                     label: 'Sign out',
                     onPressed: _signOut,
@@ -366,8 +359,6 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
     );
   }
 }
-
-// ── Sub-widgets ────────────────────────────────────────────────────
 
 class _CustomerAvatarSection extends StatelessWidget {
   final UserModel user;

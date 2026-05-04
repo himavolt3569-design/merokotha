@@ -3,8 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
 
-// ─────────────────────────── User Avatar ───────────────────────────
-
 class UserAvatar extends StatelessWidget {
   final String? photoUrl;
   final String name;
@@ -57,8 +55,6 @@ class UserAvatar extends StatelessWidget {
   );
 }
 
-// ─────────────────────────── Price Badge ───────────────────────────
-
 class PriceBadge extends StatelessWidget {
   final double amount;
   final bool showPerMonth;
@@ -105,8 +101,6 @@ class PriceBadge extends StatelessWidget {
   }
 }
 
-// ─────────────────────────── Loading ───────────────────────────
-
 class MkLoading extends StatelessWidget {
   final bool fullScreen;
 
@@ -122,8 +116,6 @@ class MkLoading extends StatelessWidget {
     return Scaffold(body: Center(child: spinner));
   }
 }
-
-// ─────────────────────────── Error Widget ───────────────────────────
 
 class MkErrorWidget extends StatelessWidget {
   final String message;
@@ -173,8 +165,6 @@ class MkErrorWidget extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────── Empty State ───────────────────────────
 
 class MkEmptyState extends StatelessWidget {
   final String title;
@@ -238,8 +228,6 @@ class MkEmptyState extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────── Status Badge ───────────────────────────
 
 class StatusBadge extends StatelessWidget {
   final String label;

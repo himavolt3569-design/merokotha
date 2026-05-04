@@ -69,8 +69,6 @@ class AdminAdsScreen extends ConsumerWidget {
   }
 }
 
-// ── Ad tile ───────────────────────────────────────────────────────
-
 class _AdTile extends ConsumerWidget {
   final AdModel ad;
   const _AdTile({required this.ad});
@@ -294,8 +292,6 @@ class _AdTile extends ConsumerWidget {
     );
   }
 }
-
-// ── Create ad bottom sheet ────────────────────────────────────────
 
 class _CreateAdSheet extends ConsumerStatefulWidget {
   const _CreateAdSheet();
@@ -601,8 +597,6 @@ class _CreateAdSheetState extends ConsumerState<_CreateAdSheet> {
     }
   }
 }
-
-// ── Small widgets ─────────────────────────────────────────────────
 
 class _StatusBadge extends StatelessWidget {
   final AdModel ad;

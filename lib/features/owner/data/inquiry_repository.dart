@@ -16,7 +16,6 @@ class InquiryRepository {
   CollectionReference<Map<String, dynamic>> get _inquiries =>
       _db.collection('inquiries');
 
-  // ── Watch all inquiries for owner ──
   Stream<List<InquiryModel>> watchOwnerInquiries(String ownerId) {
     return _inquiries
         .where('ownerId', isEqualTo: ownerId)
@@ -25,7 +24,6 @@ class InquiryRepository {
         .map((s) => s.docs.map((d) => InquiryModel.fromSnapshot(d)).toList());
   }
 
-  // ── Watch inquiries by status ──
   Stream<List<InquiryModel>> watchByStatus(
     String ownerId,
     InquiryStatus status,
@@ -38,7 +36,6 @@ class InquiryRepository {
         .map((s) => s.docs.map((d) => InquiryModel.fromSnapshot(d)).toList());
   }
 
-  // ── Watch customer's own inquiries ──
   Stream<List<InquiryModel>> watchCustomerInquiries(String customerId) {
     return _inquiries
         .where('customerId', isEqualTo: customerId)
@@ -47,26 +44,23 @@ class InquiryRepository {
         .map((s) => s.docs.map((d) => InquiryModel.fromSnapshot(d)).toList());
   }
 
-  // ── Create inquiry (customer sends) ──
   Future<String> createInquiry(InquiryModel inquiry) async {
     final ref = await _inquiries.add(inquiry.toMap());
     return ref.id;
   }
 
-  // ── Accept inquiry + auto-create chat thread ──
   Future<String> acceptInquiry({
     required String inquiryId,
     required InquiryModel inquiry,
     required String ownerName,
     String? ownerPhotoUrl,
   }) async {
-    // 1. Mark inquiry as accepted
     await _inquiries.doc(inquiryId).update({
       'status': InquiryStatus.accepted.name,
       'updatedAt': FieldValue.serverTimestamp(),
     });
 
-    // 2. Auto-create a chat thread between owner and customer
+    // Auto-create a chat thread between owner and customer on acceptance
     final chatRepo = ChatRepository(_db);
     final chatId = await chatRepo.createChat(
       ownerId: inquiry.ownerId,
@@ -79,7 +73,6 @@ class InquiryRepository {
       listingTitle: inquiry.listingTitle,
     );
 
-    // 3. Show local notification confirming acceptance
     await NotificationService().showInquiryAccepted(
       listingTitle: inquiry.listingTitle,
     );
@@ -87,7 +80,6 @@ class InquiryRepository {
     return chatId;
   }
 
-  // ── Decline inquiry ──
   Future<void> declineInquiry(String id, {String? reason}) async {
     await _inquiries.doc(id).update({
       'status': InquiryStatus.declined.name,
@@ -96,7 +88,6 @@ class InquiryRepository {
     });
   }
 
-  // ── Unread pending count for owner ──
   Stream<int> watchPendingCount(String ownerId) {
     return _inquiries
         .where('ownerId', isEqualTo: ownerId)

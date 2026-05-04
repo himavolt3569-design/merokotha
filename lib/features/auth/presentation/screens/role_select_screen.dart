@@ -9,7 +9,6 @@ import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/features/auth/presentation/widgets/role_card.dart';
 import 'package:merokotha/shared/models/user_model.dart';
 
-// Temporary provider to hold selected role before saving
 final _selectedRoleProvider = StateProvider<UserRole?>((ref) => null);
 
 // Secret admin code — change this in production
@@ -32,7 +31,6 @@ class RoleSelectScreen extends ConsumerWidget {
             children: [
               const SizedBox(height: 40),
 
-              // Header
               const Text(
                 AppStrings.chooseRole,
                 style: TextStyle(
@@ -53,7 +51,6 @@ class RoleSelectScreen extends ConsumerWidget {
 
               const SizedBox(height: 40),
 
-              // Owner card
               RoleCard(
                 title: AppStrings.owner,
                 description: AppStrings.ownerDesc,
@@ -67,7 +64,6 @@ class RoleSelectScreen extends ConsumerWidget {
 
               const SizedBox(height: AppSizes.md),
 
-              // Customer card
               RoleCard(
                 title: AppStrings.customer,
                 description: AppStrings.customerDesc,
@@ -81,7 +77,6 @@ class RoleSelectScreen extends ConsumerWidget {
 
               const Spacer(),
 
-              // Hidden admin code button (tap icon 5 times to reveal)
               _HiddenAdminButton(
                 onAdminSelected: () =>
                     ref.read(_selectedRoleProvider.notifier).state =
@@ -91,7 +86,6 @@ class RoleSelectScreen extends ConsumerWidget {
 
               const SizedBox(height: AppSizes.md),
 
-              // Continue button
               SizedBox(
                 width: double.infinity,
                 height: AppSizes.buttonHeight,
@@ -121,7 +115,6 @@ class RoleSelectScreen extends ConsumerWidget {
   }
 }
 
-// ── Hidden Admin Login Button ──
 class _HiddenAdminButton extends StatefulWidget {
   final VoidCallback onAdminSelected;
   final UserRole? selected;

@@ -14,7 +14,7 @@ import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/features/owner/providers/owner_providers.dart';
 import 'package:merokotha/features/owner/data/inquiry_repository.dart';
 import 'package:merokotha/features/owner/presentation/widgets/owner_widgets.dart'
-    hide UserAvatar; // ← ADD THIS
+    hide UserAvatar;
 
 class OwnerHomeScreen extends ConsumerWidget {
   const OwnerHomeScreen({super.key});
@@ -222,8 +222,6 @@ class OwnerHomeScreen extends ConsumerWidget {
   }
 }
 
-// ── Sub-widgets ──────────────────────────────────────────────────────
-
 class _Greeting extends StatelessWidget {
   final String name;
   const _Greeting({required this.name});
@@ -387,7 +385,7 @@ class _QA extends StatelessWidget {
   }
 }
 
-// ── Fixed: fetch user inside widget so ownerName/ownerPhotoUrl are available ──
+// Fetches user internally so ownerName/ownerPhotoUrl are available for InquiryCard callbacks
 class _RecentInquiries extends ConsumerWidget {
   const _RecentInquiries();
 
@@ -439,7 +437,6 @@ class _RecentInquiries extends ConsumerWidget {
                           padding: const EdgeInsets.only(bottom: 10),
                           child: InquiryCard(
                             inquiry: inq,
-                            // ← Pass all required named params
                             onAccept: () => ref
                                 .read(inquiryRepositoryProvider)
                                 .acceptInquiry(
