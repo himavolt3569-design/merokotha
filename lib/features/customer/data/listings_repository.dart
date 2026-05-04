@@ -33,15 +33,8 @@ class ListingsRepository {
       isEqualTo: ListingStatus.active.name,
     );
 
-    // ── Category filters (replaces old roomType) ──
     if (filter.categoryL1Id != null) {
-      q = q.where('categoryL1Id', isEqualTo: filter.categoryL1Id);
-    }
-    if (filter.categoryL2Id != null) {
-      q = q.where('categoryL2Id', isEqualTo: filter.categoryL2Id);
-    }
-    if (filter.categoryL3Id != null) {
-      q = q.where('categoryL3Id', isEqualTo: filter.categoryL3Id);
+      q = q.where('roomType', isEqualTo: filter.categoryL1Id);
     }
 
     if (filter.furnishing != null) {
@@ -96,10 +89,7 @@ class ListingsRepository {
 
 class SearchFilter {
   final String? query;
-  // ── Replaces RoomType with dynamic category IDs ──
   final String? categoryL1Id;
-  final String? categoryL2Id;
-  final String? categoryL3Id;
   final FurnishingType? furnishing;
   final double? minRent;
   final double? maxRent;
@@ -108,8 +98,6 @@ class SearchFilter {
   const SearchFilter({
     this.query,
     this.categoryL1Id,
-    this.categoryL2Id,
-    this.categoryL3Id,
     this.furnishing,
     this.minRent,
     this.maxRent,
@@ -119,8 +107,6 @@ class SearchFilter {
   SearchFilter copyWith({
     String? query,
     String? categoryL1Id,
-    String? categoryL2Id,
-    String? categoryL3Id,
     FurnishingType? furnishing,
     double? minRent,
     double? maxRent,
@@ -130,8 +116,6 @@ class SearchFilter {
   }) => SearchFilter(
     query: query ?? this.query,
     categoryL1Id: clearCategory ? null : (categoryL1Id ?? this.categoryL1Id),
-    categoryL2Id: clearCategory ? null : (categoryL2Id ?? this.categoryL2Id),
-    categoryL3Id: clearCategory ? null : (categoryL3Id ?? this.categoryL3Id),
     furnishing: clearFurnishing ? null : (furnishing ?? this.furnishing),
     minRent: minRent ?? this.minRent,
     maxRent: maxRent ?? this.maxRent,
@@ -140,8 +124,6 @@ class SearchFilter {
 
   bool get hasActiveFilters =>
       categoryL1Id != null ||
-      categoryL2Id != null ||
-      categoryL3Id != null ||
       furnishing != null ||
       minRent != null ||
       maxRent != null ||

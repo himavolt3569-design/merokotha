@@ -22,7 +22,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _locationController = TextEditingController();
-  final _propertyCountController = TextEditingController();
 
   bool _isSaving = false;
   UserRole? _role;
@@ -39,7 +38,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   void dispose() {
     _nameController.dispose();
     _locationController.dispose();
-    _propertyCountController.dispose();
     super.dispose();
   }
 
@@ -209,25 +207,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ),
                   ),
                 ),
-
-                // ── Owner-only: property count ──
-                if (isOwner) ...[
-                  const SizedBox(height: AppSizes.md),
-                  _SectionLabel(label: 'Number of rooms you own'),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _propertyCountController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      hintText: 'e.g. 2',
-                      prefixIcon: Icon(
-                        Icons.meeting_room_outlined,
-                        size: 20,
-                        color: AppColors.grey400,
-                      ),
-                    ),
-                  ),
-                ],
 
                 const SizedBox(height: AppSizes.xl),
 

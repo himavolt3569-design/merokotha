@@ -11,7 +11,6 @@ import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/features/customer/presentation/widgets/customer_widgets.dart';
 import 'package:merokotha/features/ads/data/ad_model.dart';
 import 'package:merokotha/features/ads/presentation/widgets/ad_banner.dart';
-import 'package:merokotha/features/admin/providers/category_providers.dart';
 
 class CustomerHomeScreen extends ConsumerWidget {
   const CustomerHomeScreen({super.key});
@@ -29,7 +28,6 @@ class CustomerHomeScreen extends ConsumerWidget {
           color: AppColors.customerPrimary,
           onRefresh: () async {
             ref.invalidate(activeListingsProvider);
-            ref.invalidate(level1CategoriesProvider);
           },
           child: CustomScrollView(
             slivers: [
@@ -48,13 +46,31 @@ class CustomerHomeScreen extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'MeroKotha',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.grey900,
+                            Text(
+                              _greeting(),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.grey400,
                               ),
+                            ),
+                            userAsync.when(
+                              data: (u) => Text(
+                                u?.name.split(' ').first ?? 'MeroKotha',
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.grey900,
+                                ),
+                              ),
+                              loading: () => const Text(
+                                'MeroKotha',
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.grey900,
+                                ),
+                              ),
+                              error: (_, _) => const SizedBox.shrink(),
                             ),
                             userAsync.when(
                               data: (u) => Row(
@@ -189,7 +205,7 @@ class CustomerHomeScreen extends ConsumerWidget {
                   final listings = selectedL1 == null
                       ? allListings
                       : allListings
-                            .where((l) => l.categoryL1Id == selectedL1)
+                            .where((l) => l.roomType == selectedL1)
                             .toList();
 
                   if (listings.isEmpty) {
@@ -262,40 +278,51 @@ class CustomerHomeScreen extends ConsumerWidget {
   }
 }
 
-//Widget for category filter chips row
-class _CategoryChipRow extends ConsumerWidget {
+String _greeting() {
+  final hour = DateTime.now().hour;
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+const _roomTypeOptions = [
+  ('room', 'Room'),
+  ('flat', 'Flat'),
+  ('apartment', 'Apartment'),
+  ('house', 'House'),
+  ('office', 'Office'),
+  ('shop', 'Shop'),
+  ('land', 'Land'),
+  ('other', 'Other'),
+];
+
+class _CategoryChipRow extends StatelessWidget {
   final String? selected;
   final ValueChanged<String?> onSelect;
 
   const _CategoryChipRow({required this.selected, required this.onSelect});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final catsAsync = ref.watch(level1CategoriesProvider);
-
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 36,
-      child: catsAsync.when(
-        loading: () => const SizedBox(),
-        error: (_, _) => const SizedBox(),
-        data: (cats) => ListView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: AppSizes.pagePadding),
-          children: [
-            _CatChip(
-              label: 'All',
-              active: selected == null,
-              onTap: () => onSelect(null),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.pagePadding),
+        children: [
+          _CatChip(
+            label: 'All',
+            active: selected == null,
+            onTap: () => onSelect(null),
+          ),
+          ..._roomTypeOptions.map(
+            (c) => _CatChip(
+              label: c.$2,
+              active: selected == c.$1,
+              onTap: () => onSelect(selected == c.$1 ? null : c.$1),
             ),
-            ...cats.map(
-              (c) => _CatChip(
-                label: c.name,
-                active: selected == c.id,
-                onTap: () => onSelect(selected == c.id ? null : c.id),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

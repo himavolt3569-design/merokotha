@@ -194,12 +194,12 @@ class AdminHomeScreen extends ConsumerWidget {
               const _SectionHeader('Quick actions'),
               const SizedBox(height: 12),
               GridView.count(
-                crossAxisCount: 3,
+                crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                childAspectRatio: 1.2,
+                childAspectRatio: 2.2,
                 children: [
                   _QuickAction(
                     label: 'All users',
@@ -218,12 +218,6 @@ class AdminHomeScreen extends ConsumerWidget {
                     icon: Icons.inbox_rounded,
                     color: AppColors.warning,
                     onTap: () => context.push(AppRoutes.adminInquiries),
-                  ),
-                  _QuickAction(
-                    label: 'Categories',
-                    icon: Icons.category_rounded,
-                    color: AppColors.info,
-                    onTap: () => context.push(AppRoutes.adminCategories),
                   ),
                   _QuickAction(
                     label: 'Ads',

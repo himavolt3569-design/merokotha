@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
-import 'package:merokotha/features/admin/providers/category_providers.dart';
 
 // ─── DESIGN TOKENS ──────────────────────────────────────────────────────────
 // Aesthetic: "Quiet Luxury" — off-white base, deep forest green accent,
@@ -30,37 +29,22 @@ class _T {
     color: ink,
   );
 
-  static TextStyle get labelSm => GoogleFonts.dmSans(
-    fontSize: 11,
-    fontWeight: FontWeight.w600,
-    letterSpacing: 1.4,
-    color: accentMuted,
-  );
+  static TextStyle get labelSm =>
+      GoogleFonts.dmSans(fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 1.4, color: accentMuted);
 
-  static TextStyle get bodyMd =>
-      GoogleFonts.dmSans(fontSize: 13, color: stone, height: 1.5);
+  static TextStyle get bodyMd => GoogleFonts.dmSans(fontSize: 13, color: stone, height: 1.5);
 
-  static TextStyle get priceLg => GoogleFonts.cormorantGaramond(
-    fontSize: 20,
-    fontWeight: FontWeight.w700,
-    color: ink,
-    letterSpacing: -0.3,
-  );
+  static TextStyle get priceLg =>
+      GoogleFonts.cormorantGaramond(fontSize: 20, fontWeight: FontWeight.w700, color: ink, letterSpacing: -0.3);
 
-  static TextStyle get titleMd => GoogleFonts.dmSans(
-    fontSize: 14,
-    fontWeight: FontWeight.w600,
-    color: ink,
-    letterSpacing: -0.1,
-  );
+  static TextStyle get titleMd =>
+      GoogleFonts.dmSans(fontSize: 14, fontWeight: FontWeight.w600, color: ink, letterSpacing: -0.1);
 
   // Shape
   static const double r = 12.0;
 
   // Shadow — single, barely-there
-  static const shadow = [
-    BoxShadow(color: Color(0x0A1A1917), blurRadius: 16, offset: Offset(0, 4)),
-  ];
+  static const shadow = [BoxShadow(color: Color(0x0A1A1917), blurRadius: 16, offset: Offset(0, 4))];
 }
 
 // ─── LANDING SCREEN ─────────────────────────────────────────────────────────
@@ -75,7 +59,7 @@ class LandingScreen extends ConsumerStatefulWidget {
 class _LandingScreenState extends ConsumerState<LandingScreen> {
   String _search = '';
   String? _category;
-  bool _isGrid = true;
+  bool _isGrid = false;
 
   @override
   Widget build(BuildContext context) {
@@ -96,23 +80,6 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             titleSpacing: 20,
             title: Row(
               children: [
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: _T.accent,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Center(
-                    child: Image(
-                      image: AssetImage('assets/merokotha.png'),
-                      width: 16,
-                      height: 16,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
                 Text(
                   'MeroKotha',
                   style: GoogleFonts.dmSans(
@@ -130,21 +97,14 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                 child: GestureDetector(
                   onTap: () => context.go(AppRoutes.login),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
                       border: Border.all(color: _T.hairline, width: 1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       'Sign In',
-                      style: GoogleFonts.dmSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: _T.ink,
-                      ),
+                      style: GoogleFonts.dmSans(fontSize: 13, fontWeight: FontWeight.w600, color: _T.ink),
                     ),
                   ),
                 ),
@@ -171,9 +131,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                   Text('Find Your\nNext Home\nin Nepal', style: _T.displayLg),
                   const SizedBox(height: 24),
                   // Search bar — minimal pill
-                  _SearchBar(
-                    onChanged: (v) => setState(() => _search = v.toLowerCase()),
-                  ),
+                  _SearchBar(onChanged: (v) => setState(() => _search = v.toLowerCase())),
                 ],
               ),
             ),
@@ -181,10 +139,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
 
           // ── CATEGORY FILTER ───────────────────────────────────────────────
           SliverToBoxAdapter(
-            child: _CategoryRow(
-              selected: _category,
-              onSelect: (c) => setState(() => _category = c),
-            ),
+            child: _CategoryRow(selected: _category, onSelect: (c) => setState(() => _category = c)),
           ),
 
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
@@ -199,10 +154,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                   Text('AVAILABLE ROOMS', style: _T.labelSm),
                   const Spacer(),
                   // Grid/List toggle — minimal icon pair
-                  _ToggleView(
-                    isGrid: _isGrid,
-                    onToggle: () => setState(() => _isGrid = !_isGrid),
-                  ),
+                  _ToggleView(isGrid: _isGrid, onToggle: () => setState(() => _isGrid = !_isGrid)),
                 ],
               ),
             ),
@@ -215,10 +167,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                 child: SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 1.5,
-                    color: _T.accent,
-                  ),
+                  child: CircularProgressIndicator(strokeWidth: 1.5, color: _T.accent),
                 ),
               ),
             ),
@@ -227,10 +176,8 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             ),
             data: (list) {
               final listings = list.where((l) {
-                final matchQ =
-                    _search.isEmpty || l.title.toLowerCase().contains(_search);
-                final matchC =
-                    _category == null || l.categoryL1Name == _category;
+                final matchQ = _search.isEmpty || l.title.toLowerCase().contains(_search);
+                final matchC = _category == null || l.roomType == _category;
                 return matchQ && matchC;
               }).toList();
 
@@ -240,11 +187,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.search_off_rounded,
-                          color: _T.stone,
-                          size: 40,
-                        ),
+                        Icon(Icons.search_off_rounded, color: _T.stone, size: 40),
                         const SizedBox(height: 12),
                         Text('No properties found', style: _T.bodyMd),
                       ],
@@ -257,18 +200,14 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
                 sliver: _isGrid
                     ? SliverGrid(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 14,
-                              crossAxisSpacing: 14,
-                              childAspectRatio: 0.62,
-                            ),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 14,
+                          crossAxisSpacing: 14,
+                          childAspectRatio: 0.62,
+                        ),
                         delegate: SliverChildBuilderDelegate(
-                          (ctx, i) => _GridCard(
-                            listing: listings[i],
-                            onTap: () => _showLoginSheet(context),
-                          ),
+                          (ctx, i) => _GridCard(listing: listings[i], onTap: () => _showLoginSheet(context)),
                           childCount: listings.length,
                         ),
                       )
@@ -276,10 +215,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                         delegate: SliverChildBuilderDelegate(
                           (ctx, i) => Padding(
                             padding: const EdgeInsets.only(bottom: 12),
-                            child: _ListCard(
-                              listing: listings[i],
-                              onTap: () => _showLoginSheet(context),
-                            ),
+                            child: _ListCard(listing: listings[i], onTap: () => _showLoginSheet(context)),
                           ),
                           childCount: listings.length,
                         ),
@@ -293,11 +229,7 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
   }
 
   void _showLoginSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const _LoginSheet(),
-    );
+    showModalBottomSheet(context: context, backgroundColor: Colors.transparent, builder: (_) => const _LoginSheet());
   }
 }
 
@@ -336,10 +268,7 @@ class _SearchBar extends StatelessWidget {
           Container(
             margin: const EdgeInsets.all(6),
             padding: const EdgeInsets.symmetric(horizontal: 14),
-            decoration: BoxDecoration(
-              color: _T.accent,
-              borderRadius: BorderRadius.circular(7),
-            ),
+            decoration: BoxDecoration(color: _T.accent, borderRadius: BorderRadius.circular(7)),
             height: 38,
             alignment: Alignment.center,
             child: Text(
@@ -359,39 +288,41 @@ class _SearchBar extends StatelessWidget {
 }
 
 // ─── CATEGORY ROW ────────────────────────────────────────────────────────────
-class _CategoryRow extends ConsumerWidget {
+
+const _roomTypeOptions = [
+  ('room', 'Room'),
+  ('flat', 'Flat'),
+  ('apartment', 'Apartment'),
+  ('house', 'House'),
+  ('office', 'Office'),
+  ('shop', 'Shop'),
+  ('land', 'Land'),
+  ('other', 'Other'),
+];
+
+class _CategoryRow extends StatelessWidget {
   final String? selected;
   final ValueChanged<String?> onSelect;
 
   const _CategoryRow({required this.selected, required this.onSelect});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final catsAsync = ref.watch(level1CategoriesProvider);
-
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 36,
-      child: catsAsync.when(
-        loading: () => const SizedBox(),
-        error: (_, _) => const SizedBox(),
-        data: (cats) => ListView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          children: [
-            _Chip(
-              label: 'All',
-              active: selected == null,
-              onTap: () => onSelect(null),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        children: [
+          _Chip(label: 'All', active: selected == null, onTap: () => onSelect(null)),
+          ..._roomTypeOptions.map(
+            (c) => _Chip(
+              label: c.$2,
+              active: selected == c.$1,
+              onTap: () => onSelect(selected == c.$1 ? null : c.$1),
             ),
-            ...cats.map(
-              (c) => _Chip(
-                label: c.name,
-                active: selected == c.name,
-                onTap: () => onSelect(selected == c.name ? null : c.name),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -450,11 +381,7 @@ class _ToggleView extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: _T.hairline, width: 1),
         ),
-        child: Icon(
-          isGrid ? Icons.format_list_bulleted_rounded : Icons.grid_view_rounded,
-          color: _T.accent,
-          size: 16,
-        ),
+        child: Icon(isGrid ? Icons.format_list_bulleted_rounded : Icons.grid_view_rounded, color: _T.accent, size: 16),
       ),
     );
   }
@@ -473,25 +400,44 @@ class _GridCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          color: _T.surface,
-          borderRadius: BorderRadius.circular(_T.r),
-          boxShadow: _T.shadow,
-        ),
+        decoration: BoxDecoration(color: _T.surface, borderRadius: BorderRadius.circular(_T.r), boxShadow: _T.shadow),
         clipBehavior: Clip.hardEdge,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image
+            // Photo
+            Expanded(
+              flex: 5,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  listing.photoUrls.isNotEmpty
+                      ? Image.network(listing.photoUrls.first, fit: BoxFit.cover, width: double.infinity)
+                      : Container(
+                          color: _T.hairline,
+                          child: Icon(Icons.home_outlined, color: _T.stone, size: 32),
+                        ),
+                  // Room type badge
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: _T.accent.withOpacity(0.85),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(listing.roomTypeLabel.toUpperCase(), style: _T.labelSm.copyWith(color: Colors.white, fontSize: 9)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Info
             Expanded(
               flex: 4,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  12,
-                  10,
-                  12,
-                  10,
-                ), // ← reduce from 12 all sides
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -504,25 +450,18 @@ class _GridCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: _T.titleMd,
-                        ), // ← maxLines 2→1
-                        const SizedBox(height: 3), // ← reduce from 4
+                        ),
+                        const SizedBox(height: 3),
                         Row(
                           children: [
-                            Icon(
-                              Icons.place_outlined,
-                              size: 11,
-                              color: _T.stone,
-                            ),
+                            Icon(Icons.place_outlined, size: 11, color: _T.stone),
                             const SizedBox(width: 3),
                             Expanded(
                               child: Text(
                                 listing.address ?? 'Nepal',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.dmSans(
-                                  fontSize: 11,
-                                  color: _T.stone,
-                                ),
+                                style: GoogleFonts.dmSans(fontSize: 11, color: _T.stone),
                               ),
                             ),
                           ],
@@ -536,31 +475,15 @@ class _GridCard extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Rs. ${listing.rentPerMonth}',
-                              style: _T.priceLg,
-                            ),
-                            Text(
-                              '/month',
-                              style: GoogleFonts.dmSans(
-                                fontSize: 10,
-                                color: _T.stone,
-                              ),
-                            ),
+                            Text('Rs. ${listing.rentPerMonth}', style: _T.priceLg),
+                            Text('/month', style: GoogleFonts.dmSans(fontSize: 10, color: _T.stone)),
                           ],
                         ),
                         Container(
                           width: 28,
                           height: 28,
-                          decoration: BoxDecoration(
-                            color: _T.accent,
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_forward_rounded,
-                            color: Colors.white,
-                            size: 14,
-                          ),
+                          decoration: BoxDecoration(color: _T.accent, borderRadius: BorderRadius.circular(7)),
+                          child: const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 14),
                         ),
                       ],
                     ),
@@ -588,11 +511,7 @@ class _ListCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          color: _T.surface,
-          borderRadius: BorderRadius.circular(_T.r),
-          boxShadow: _T.shadow,
-        ),
+        decoration: BoxDecoration(color: _T.surface, borderRadius: BorderRadius.circular(_T.r), boxShadow: _T.shadow),
         clipBehavior: Clip.hardEdge,
         child: Row(
           children: [
@@ -608,26 +527,14 @@ class _ListCard extends StatelessWidget {
             // Info
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 14,
-                  horizontal: 0,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (listing.categoryL1Name != null)
-                      Text(
-                        listing.categoryL1Name!.toUpperCase(),
-                        style: _T.labelSm.copyWith(fontSize: 9),
-                      ),
+                    Text(listing.roomTypeLabel.toUpperCase(), style: _T.labelSm.copyWith(fontSize: 9)),
                     const SizedBox(height: 4),
-                    Text(
-                      listing.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: _T.titleMd,
-                    ),
+                    Text(listing.title, maxLines: 1, overflow: TextOverflow.ellipsis, style: _T.titleMd),
                     const SizedBox(height: 4),
                     Row(
                       children: [
@@ -636,10 +543,7 @@ class _ListCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             listing.address ?? 'Kathmandu',
-                            style: GoogleFonts.dmSans(
-                              fontSize: 11,
-                              color: _T.stone,
-                            ),
+                            style: GoogleFonts.dmSans(fontSize: 11, color: _T.stone),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -654,11 +558,7 @@ class _ListCard extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 16),
-              child: Icon(
-                Icons.chevron_right_rounded,
-                color: _T.hairline,
-                size: 20,
-              ),
+              child: Icon(Icons.chevron_right_rounded, color: _T.hairline, size: 20),
             ),
           ],
         ),
@@ -676,10 +576,7 @@ class _LoginSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: _T.surface,
-        borderRadius: BorderRadius.circular(20),
-      ),
+      decoration: BoxDecoration(color: _T.surface, borderRadius: BorderRadius.circular(20)),
       padding: const EdgeInsets.fromLTRB(28, 28, 28, 36),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -690,29 +587,20 @@ class _LoginSheet extends StatelessWidget {
             child: Container(
               width: 32,
               height: 3,
-              decoration: BoxDecoration(
-                color: _T.hairline,
-                borderRadius: BorderRadius.circular(2),
-              ),
+              decoration: BoxDecoration(color: _T.hairline, borderRadius: BorderRadius.circular(2)),
             ),
           ),
           const SizedBox(height: 28),
           Container(
             width: 44,
             height: 44,
-            decoration: BoxDecoration(
-              color: _T.accent.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            decoration: BoxDecoration(color: _T.accent.withOpacity(0.08), borderRadius: BorderRadius.circular(10)),
             child: const Icon(Icons.key_outlined, color: _T.accent, size: 20),
           ),
           const SizedBox(height: 20),
           Text('Ready to Move In?', style: _T.titleMd.copyWith(fontSize: 22)),
           const SizedBox(height: 6),
-          Text(
-            'Sign in to contact owners, save listings, and schedule viewings.',
-            style: _T.bodyMd,
-          ),
+          Text('Sign in to contact owners, save listings, and schedule viewings.', style: _T.bodyMd),
           const SizedBox(height: 28),
           SizedBox(
             width: double.infinity,
@@ -722,9 +610,7 @@ class _LoginSheet extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: _T.accent,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text(
                 'Get Started',
@@ -741,10 +627,7 @@ class _LoginSheet extends StatelessWidget {
           Center(
             child: GestureDetector(
               onTap: () => Navigator.pop(context),
-              child: Text(
-                'Maybe later',
-                style: _T.bodyMd.copyWith(fontSize: 13),
-              ),
+              child: Text('Maybe later', style: _T.bodyMd.copyWith(fontSize: 13)),
             ),
           ),
         ],

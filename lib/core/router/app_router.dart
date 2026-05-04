@@ -41,7 +41,6 @@ import 'package:merokotha/features/admin/presentation/screens/admin_users_screen
 import 'package:merokotha/features/admin/presentation/screens/admin_user_detail_screen.dart';
 import 'package:merokotha/features/admin/presentation/screens/admin_listings_screen.dart';
 import 'package:merokotha/features/admin/presentation/screens/admin_inquiries_screen.dart';
-import 'package:merokotha/features/admin/presentation/screens/admin_categories_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -175,10 +174,6 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.adminInquiries,
         builder: (_, _) => const AdminInquiriesScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.adminCategories,
-        builder: (_, _) => const AdminCategoriesScreen(),
       ),
       GoRoute(
         path: AppRoutes.adminAds,

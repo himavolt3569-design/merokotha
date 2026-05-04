@@ -8,15 +8,6 @@ class Formatters {
     return 'NPR ${formatter.format(amount)}';
   }
 
-  static String nprShort(num amount) {
-    if (amount >= 100000) {
-      return 'NPR ${(amount / 100000).toStringAsFixed(1)}L';
-    } else if (amount >= 1000) {
-      return 'NPR ${(amount / 1000).toStringAsFixed(0)}K';
-    }
-    return 'NPR $amount';
-  }
-
   static String date(DateTime date) {
     return DateFormat('dd MMM yyyy').format(date);
   }
@@ -39,16 +30,4 @@ class Formatters {
     return DateFormat('dd MMM').format(date);
   }
 
-  static String distance(double km) {
-    if (km < 1) return '${(km * 1000).toStringAsFixed(0)}m';
-    return '${km.toStringAsFixed(1)}km';
-  }
-
-  static String phone(String raw) {
-    final cleaned = raw.replaceAll(RegExp(r'\D'), '');
-    if (cleaned.length == 10) {
-      return '${cleaned.substring(0, 3)}-${cleaned.substring(3, 7)}-${cleaned.substring(7)}';
-    }
-    return raw;
-  }
 }

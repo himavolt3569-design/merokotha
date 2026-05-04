@@ -61,12 +61,7 @@ class UploadListingNotifier extends _$UploadListingNotifier {
     required String ownerName,
     String? ownerPhotoUrl,
     required String title,
-    String? categoryL1Id,
-    String? categoryL2Id,
-    String? categoryL3Id,
-    String? categoryL1Name,
-    String? categoryL2Name,
-    String? categoryL3Name,
+    required String roomType,
     required double rentPerMonth,
     required double depositAmount,
     required int floor,
@@ -89,12 +84,6 @@ class UploadListingNotifier extends _$UploadListingNotifier {
         ownerName: ownerName,
         ownerPhotoUrl: ownerPhotoUrl,
         title: title,
-        categoryL1Id: categoryL1Id,
-        categoryL2Id: categoryL2Id,
-        categoryL3Id: categoryL3Id,
-        categoryL1Name: categoryL1Name,
-        categoryL2Name: categoryL2Name,
-        categoryL3Name: categoryL3Name,
         rentPerMonth: rentPerMonth,
         depositAmount: depositAmount,
         floor: floor,
@@ -110,6 +99,7 @@ class UploadListingNotifier extends _$UploadListingNotifier {
         status: ListingStatus.active, // all listings go live immediately
         createdAt: now,
         updatedAt: now,
+        roomType: roomType,
       );
 
       final id = await ref.read(ownerRepositoryProvider).createListing(listing);

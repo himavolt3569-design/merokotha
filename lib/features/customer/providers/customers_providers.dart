@@ -36,28 +36,13 @@ class SearchFilterNotifier extends _$SearchFilterNotifier {
   void setQuery(String q) =>
       state = state.copyWith(query: q.isEmpty ? null : q);
 
-  // ── Replaces setRoomType — filters by deepest category level ──
-  void setCategory({
-    String? categoryL1Id,
-    String? categoryL2Id,
-    String? categoryL3Id,
-  }) {
-    if (categoryL1Id == null && categoryL2Id == null && categoryL3Id == null) {
+  void setCategory({String? categoryL1Id}) {
+    if (categoryL1Id == null) {
       state = state.copyWith(clearCategory: true);
     } else {
-      state = state.copyWith(
-        categoryL1Id: categoryL1Id,
-        categoryL2Id: categoryL2Id,
-        categoryL3Id: categoryL3Id,
-      );
+      state = state.copyWith(categoryL1Id: categoryL1Id);
     }
   }
-
-  void clearCategories() => state = state.copyWith(
-    categoryL1Id: null,
-    categoryL2Id: null,
-    categoryL3Id: null,
-  );
 
   void setFurnishing(FurnishingType? f) => f == null
       ? state = state.copyWith(clearFurnishing: true)

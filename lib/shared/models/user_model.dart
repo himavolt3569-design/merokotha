@@ -31,7 +31,6 @@ class UserModel {
 
   // From Firestore document
   factory UserModel.fromMap(Map<String, dynamic> map, String id) {
-    print('🗂️ Raw map role value: ${map['role']}'); // ADD THIS
     return UserModel(
       id: id,
       name: map['name'] as String? ?? '',
@@ -78,6 +77,7 @@ class UserModel {
     String? location,
     String? fcmToken,
     bool? isVerified,
+    bool? isBanned,
   }) {
     return UserModel(
       id: id,
@@ -88,6 +88,7 @@ class UserModel {
       location: location ?? this.location,
       fcmToken: fcmToken ?? this.fcmToken,
       isVerified: isVerified ?? this.isVerified,
+      isBanned: isBanned ?? this.isBanned,
       createdAt: createdAt,
       updatedAt: DateTime.now(),
     );

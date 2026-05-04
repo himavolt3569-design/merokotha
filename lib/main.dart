@@ -7,8 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:merokotha/features/notification/notification_service.dart';
 
-import 'app.dart';
-import 'firebase_options.dart';
+import 'package:merokotha/app.dart';
+import 'package:merokotha/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

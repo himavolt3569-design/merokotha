@@ -341,7 +341,7 @@ class _ActiveFiltersBar extends StatelessWidget {
 
   String _summary(SearchFilter f) {
     final parts = <String>[];
-    if (f.categoryL3Id != null) parts.add('Category filtered');
+    if (f.categoryL1Id != null) parts.add('Type: ${f.categoryL1Id}');
     if (f.minRent != null || f.maxRent != null) {
       final min = f.minRent != null
           ? 'NPR ${f.minRent!.toStringAsFixed(0)}'
