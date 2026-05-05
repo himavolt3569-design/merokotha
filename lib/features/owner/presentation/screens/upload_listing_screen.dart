@@ -10,20 +10,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_sizes.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/router/app_routes.dart';
-import '../../../../core/utils/validators.dart';
-import '../../../../shared/models/listing_model.dart';
-import '../../../../shared/widgets/mk_app_bar.dart';
-import '../../../../shared/widgets/mk_button.dart';
-import '../../../../shared/widgets/mk_text_field.dart';
-import '../../../auth/providers/auth_provider.dart';
-import '../../data/owner_repository.dart';
-import '../../providers/owner_providers.dart';
-import '../widgets/owner_widgets.dart';
+import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/core/constants/app_strings.dart';
+import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/core/utils/validators.dart';
+import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/features/owner/data/owner_repository.dart';
+import 'package:merokotha/features/owner/presentation/widgets/owner_widgets.dart';
+import 'package:merokotha/features/owner/providers/owner_providers.dart';
+import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/shared/widgets/mk_app_bar.dart';
+import 'package:merokotha/shared/widgets/mk_button.dart';
+import 'package:merokotha/shared/widgets/mk_text_field.dart';
 
 const _roomTypes = [
   ('room', 'Room'),

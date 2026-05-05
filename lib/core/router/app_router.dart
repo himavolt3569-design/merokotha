@@ -56,7 +56,9 @@ GoRouter appRouter(Ref ref) {
         AppRoutes.onboarding,
       ];
 
-      if (!isLoggedIn && !publicRoutes.contains(loc)) {
+      if (!isLoggedIn &&
+          !publicRoutes.contains(loc) &&
+          !loc.startsWith('/customer/room/')) {
         return AppRoutes.login;
       }
 

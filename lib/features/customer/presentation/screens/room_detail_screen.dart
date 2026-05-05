@@ -14,6 +14,7 @@ import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
 import 'package:merokotha/features/ads/data/ad_model.dart';
 import 'package:merokotha/features/ads/presentation/widgets/ad_banner.dart';
+import 'package:merokotha/shared/widgets/login_sheet.dart';
 
 class RoomDetailScreen extends ConsumerStatefulWidget {
   final String listingId;
@@ -54,9 +55,13 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                         currentIndex: _photoIndex,
                         onPageChanged: (i) => setState(() => _photoIndex = i),
                         isFavourited: isFav,
-                        onFavourite: () => ref
-                            .read(favouriteProvider.notifier)
-                            .toggle(listing),
+                        onFavourite: () {
+                          if (userAsync.asData?.value == null) {
+                            showLoginSheet(context);
+                            return;
+                          }
+                          ref.read(favouriteProvider.notifier).toggle(listing);
+                        },
                         onBack: () => context.pop(),
                       ),
                     ),
@@ -659,8 +664,10 @@ class _BottomCTA extends ConsumerWidget {
             height: 48,
             child: ElevatedButton.icon(
               onPressed: () {
-                final user = userAsync.asData?.value;
-                if (user == null) return;
+                if (userAsync.asData?.value == null) {
+                  showLoginSheet(context);
+                  return;
+                }
                 context.push(
                   AppRoutes.inquire.replaceAll(':id', listing.id),
                   extra: listing,

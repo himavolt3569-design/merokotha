@@ -12,7 +12,7 @@ import 'package:merokotha/shared/models/user_model.dart';
 final _selectedRoleProvider = StateProvider<UserRole?>((ref) => null);
 
 // Secret admin code — change this in production
-const _ADMIN_SECRET_CODE = 'admin123';
+const _adminSecretCode = 'admin123';
 
 class RoleSelectScreen extends ConsumerWidget {
   const RoleSelectScreen({super.key});
@@ -176,7 +176,7 @@ class _HiddenAdminButtonState extends State<_HiddenAdminButton> {
           ),
           TextButton(
             onPressed: () {
-              if (codeController.text.trim() == _ADMIN_SECRET_CODE) {
+              if (codeController.text.trim() == _adminSecretCode) {
                 Navigator.pop(context);
                 widget.onAdminSelected();
                 ScaffoldMessenger.of(context).showSnackBar(

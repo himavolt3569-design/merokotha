@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/features/ads/data/ad_model.dart';
+import 'package:merokotha/features/ads/presentation/widgets/ad_banner.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
 
@@ -155,11 +157,15 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
             ),
           ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 20)),
+          const SliverToBoxAdapter(child: SizedBox(height: 8)),
+
+          const SliverToBoxAdapter(
+            child: AdBanner(placement: AdPlacement.landingPage),
+          ),
 
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 16, 16),
+              padding: const EdgeInsets.fromLTRB(20, 12, 16, 16),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -231,7 +237,12 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                         delegate: SliverChildBuilderDelegate(
                           (ctx, i) => _GridCard(
                             listing: listings[i],
-                            onTap: () => _showLoginSheet(context),
+                            onTap: () => context.push(
+                              AppRoutes.roomDetail.replaceAll(
+                                ':id',
+                                listings[i].id,
+                              ),
+                            ),
                           ),
                           childCount: listings.length,
                         ),
@@ -242,7 +253,12 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
                             padding: const EdgeInsets.only(bottom: 12),
                             child: _ListCard(
                               listing: listings[i],
-                              onTap: () => _showLoginSheet(context),
+                              onTap: () => context.push(
+                                AppRoutes.roomDetail.replaceAll(
+                                  ':id',
+                                  listings[i].id,
+                                ),
+                              ),
                             ),
                           ),
                           childCount: listings.length,
@@ -253,14 +269,6 @@ class _LandingScreenState extends ConsumerState<LandingScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  void _showLoginSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const _LoginSheet(),
     );
   }
 }
@@ -661,90 +669,6 @@ class _ListCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _LoginSheet extends StatelessWidget {
-  const _LoginSheet();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: _T.surface,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      padding: const EdgeInsets.fromLTRB(28, 28, 28, 36),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Handle
-          Center(
-            child: Container(
-              width: 32,
-              height: 3,
-              decoration: BoxDecoration(
-                color: _T.hairline,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 28),
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: _T.accent.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.key_outlined, color: _T.accent, size: 20),
-          ),
-          const SizedBox(height: 20),
-          Text('Ready to Move In?', style: _T.titleMd.copyWith(fontSize: 22)),
-          const SizedBox(height: 6),
-          Text(
-            'Sign in to contact owners, save listings, and schedule viewings.',
-            style: _T.bodyMd,
-          ),
-          const SizedBox(height: 28),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: () => context.go(AppRoutes.login),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _T.accent,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                'Get Started',
-                style: GoogleFonts.dmSans(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                  color: Colors.white,
-                  letterSpacing: 0.2,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Center(
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: Text(
-                'Maybe later',
-                style: _T.bodyMd.copyWith(fontSize: 13),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
