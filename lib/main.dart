@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

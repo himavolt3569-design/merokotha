@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,22 +8,22 @@ import 'package:merokotha/core/constants/app_colors.dart';
 
 part 'conectivity_provider.g.dart';
 
-// Simple connectivity check using a periodic HTTP ping
-// (avoids adding connectivity_plus package)
+Future<bool> _checkConnectivity() async {
+  try {
+    final result = await InternetAddress.lookup('google.com')
+        .timeout(const Duration(seconds: 4));
+    return result.isNotEmpty && result.first.rawAddress.isNotEmpty;
+  } catch (_) {
+    return false;
+  }
+}
+
 @riverpod
 Stream<bool> isOnline(Ref ref) async* {
-  // Assume online at start
-  yield true;
+  yield await _checkConnectivity();
 
-  // Poll every 5 seconds
-  await for (final _ in Stream.periodic(const Duration(seconds: 5))) {
-    try {
-      // Firestore itself will throw if offline — this is a lightweight
-      // indicator only. For full offline detection add connectivity_plus.
-      yield true;
-    } catch (_) {
-      yield false;
-    }
+  await for (final _ in Stream.periodic(const Duration(seconds: 10))) {
+    yield await _checkConnectivity();
   }
 }
 

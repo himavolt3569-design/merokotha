@@ -107,7 +107,7 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
+                            color: Colors.black.withValues(alpha: 0.08),
                             blurRadius: 8,
                           ),
                         ],
@@ -159,7 +159,7 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
                       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.customerPrimary.withOpacity(0.3),
+                          color: AppColors.customerPrimary.withValues(alpha: 0.3),
                           blurRadius: 8,
                         ),
                       ],
@@ -232,7 +232,7 @@ class _PriceMarker extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isSelected ? 0.2 : 0.1),
+                color: Colors.black.withValues(alpha: isSelected ? 0.2 : 0.1),
                 blurRadius: isSelected ? 8 : 4,
                 offset: const Offset(0, 2),
               ),
@@ -302,7 +302,7 @@ class _ListingPreviewCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: Colors.black.withValues(alpha: 0.12),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -424,7 +424,7 @@ class _MapBtn extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8),
           ],
         ),
         child: Icon(icon, size: 20, color: AppColors.grey800),

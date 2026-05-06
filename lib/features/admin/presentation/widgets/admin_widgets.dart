@@ -184,7 +184,7 @@ class AdminStatCard extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
+                color: color.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
               ),
               child: Icon(icon, size: 18, color: color),
@@ -235,7 +235,7 @@ class AdminUserTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
           border: Border.all(
             color: user.isBanned
-                ? AppColors.error.withOpacity(0.3)
+                ? AppColors.error.withValues(alpha: 0.3)
                 : AppColors.grey50,
           ),
         ),
@@ -398,7 +398,7 @@ class _SmallAction extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppSizes.radiusFull),
         ),
         child: Text(

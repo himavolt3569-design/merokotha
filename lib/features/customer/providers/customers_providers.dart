@@ -20,7 +20,7 @@ Future<ListingModel?> listingDetail(Ref ref, String listingId) async {
       .watch(listingsRepositoryProvider)
       .getListingById(listingId);
   if (listing != null) {
-    ref.watch(listingsRepositoryProvider).incrementView(listingId);
+    ref.read(listingsRepositoryProvider).incrementView(listingId);
   }
   return listing;
 }
@@ -45,8 +45,13 @@ class SearchFilterNotifier extends _$SearchFilterNotifier {
       ? state = state.copyWith(clearFurnishing: true)
       : state = state.copyWith(furnishing: f);
 
-  void setMinRent(double? v) => state = state.copyWith(minRent: v);
-  void setMaxRent(double? v) => state = state.copyWith(maxRent: v);
+  void setMinRent(double? v) => v == null
+      ? state = state.copyWith(clearMinRent: true)
+      : state = state.copyWith(minRent: v);
+
+  void setMaxRent(double? v) => v == null
+      ? state = state.copyWith(clearMaxRent: true)
+      : state = state.copyWith(maxRent: v);
 
   void setFacilities(List<String> f) => state = state.copyWith(facilities: f);
 

@@ -482,7 +482,7 @@ class _GridCard extends StatelessWidget {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: _T.accent.withOpacity(0.85),
+                        color: _T.accent.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(

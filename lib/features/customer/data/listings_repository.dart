@@ -113,12 +113,14 @@ class SearchFilter {
     List<String>? facilities,
     bool clearCategory = false,
     bool clearFurnishing = false,
+    bool clearMinRent = false,
+    bool clearMaxRent = false,
   }) => SearchFilter(
     query: query ?? this.query,
     categoryL1Id: clearCategory ? null : (categoryL1Id ?? this.categoryL1Id),
     furnishing: clearFurnishing ? null : (furnishing ?? this.furnishing),
-    minRent: minRent ?? this.minRent,
-    maxRent: maxRent ?? this.maxRent,
+    minRent: clearMinRent ? null : (minRent ?? this.minRent),
+    maxRent: clearMaxRent ? null : (maxRent ?? this.maxRent),
     facilities: facilities ?? this.facilities,
   );
 

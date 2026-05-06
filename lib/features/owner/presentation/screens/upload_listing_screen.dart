@@ -634,7 +634,7 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 6,
                   ),
                 ],
@@ -670,7 +670,7 @@ class _MapPickerScreenState extends State<_MapPickerScreen> {
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 8,
                   ),
                 ],

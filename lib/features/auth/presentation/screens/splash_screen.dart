@@ -107,7 +107,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 AppStrings.tagline,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
               const SizedBox(height: 60),

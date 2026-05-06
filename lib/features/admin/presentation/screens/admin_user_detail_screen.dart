@@ -318,7 +318,7 @@ class _ActionTile extends StatelessWidget {
             width: 34,
             height: 34,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppSizes.radiusMd),
             ),
             child: Icon(icon, size: 17, color: color),
@@ -336,7 +336,7 @@ class _ActionTile extends StatelessWidget {
           Icon(
             Icons.chevron_right_rounded,
             size: 18,
-            color: color.withOpacity(0.5),
+            color: color.withValues(alpha: 0.5),
           ),
         ],
       ),

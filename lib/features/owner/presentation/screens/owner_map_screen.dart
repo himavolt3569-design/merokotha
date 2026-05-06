@@ -56,7 +56,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                   border: Border.all(color: AppColors.ownerPrimary, width: 2),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
+                      color: Colors.black.withValues(alpha: 0.15),
                       blurRadius: 6,
                     ),
                   ],
@@ -170,7 +170,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                       borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                           blurRadius: 8,
                         ),
                       ],
@@ -223,7 +223,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.ownerPrimary.withOpacity(0.3),
+                          color: AppColors.ownerPrimary.withValues(alpha: 0.3),
                           blurRadius: 8,
                         ),
                       ],
@@ -263,7 +263,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                     borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
+                        color: Colors.black.withValues(alpha: 0.08),
                         blurRadius: 8,
                       ),
                     ],
@@ -334,7 +334,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                   borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.12),
+                      color: Colors.black.withValues(alpha: 0.12),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -441,7 +441,7 @@ class _MapBtn extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8),
           ],
         ),
         child: Icon(icon, size: 20, color: AppColors.grey800),

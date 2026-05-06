@@ -83,7 +83,7 @@ class _AdTile extends ConsumerWidget {
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
         border: Border.all(
           color: isActive && ad.isLive
-              ? AppColors.success.withOpacity(0.3)
+              ? AppColors.success.withValues(alpha: 0.3)
               : AppColors.grey50,
         ),
       ),

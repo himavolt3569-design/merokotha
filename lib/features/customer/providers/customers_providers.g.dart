@@ -105,7 +105,7 @@ final class ListingDetailProvider
   }
 }
 
-String _$listingDetailHash() => r'd04ea97f9f22fa55ca14fe1e8d04038caa5ffa65';
+String _$listingDetailHash() => r'37418a0ff39801dbe68c7103d58db0acb81581ee';
 
 final class ListingDetailFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<ListingModel?>, String> {
@@ -158,7 +158,7 @@ final class SearchFilterNotifierProvider
 }
 
 String _$searchFilterNotifierHash() =>
-    r'15c8bbbfd201ea31b76ba71521a8dde0276133dc';
+    r'189116ad20487e218a1ba3c3bab376f4ababcc69';
 
 abstract class _$SearchFilterNotifier extends $Notifier<SearchFilter> {
   SearchFilter build();

@@ -40,4 +40,4 @@ final class IsOnlineProvider
   }
 }
 
-String _$isOnlineHash() => r'c16655f5f8586ac227031722eb7a09ee595a7c78';
+String _$isOnlineHash() => r'9aec84f889fb794d95dfaff5e0ec1d89b2ed5166';

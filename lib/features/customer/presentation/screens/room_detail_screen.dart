@@ -418,7 +418,7 @@ class _PhotoSection extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: i == currentIndex
                         ? Colors.white
-                        : Colors.white.withOpacity(0.5),
+                        : Colors.white.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                   ),
                 ),
@@ -475,7 +475,7 @@ class _CircleBtn extends StatelessWidget {
         color: Colors.white,
         shape: BoxShape.circle,
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 6),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 6),
         ],
       ),
       child: Icon(icon, size: 18, color: iconColor ?? AppColors.grey700),
