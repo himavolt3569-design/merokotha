@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:merokotha/features/owner/data/inquiry_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -192,3 +193,10 @@ class SendInquiryNotifier extends _$SendInquiryNotifier {
 Future<List<ListingModel>> mapListings(Ref ref) {
   return ref.watch(listingsRepositoryProvider).getAllActiveForMap();
 }
+
+final similarListingsProvider =
+    FutureProvider.family<List<ListingModel>, String>((ref, excludeId) {
+  return ref
+      .watch(listingsRepositoryProvider)
+      .getSimilarListings(excludeId);
+});

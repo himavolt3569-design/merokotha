@@ -59,16 +59,9 @@ class MyListingsScreen extends ConsumerWidget {
                 final l = listings[i];
                 return OwnerListingCard(
                   listing: l,
-                  onToggle: () {
-                    ref
-                        .read(listingStatusProvider.notifier)
-                        .toggle(
-                          l.id,
-                          l.isActive
-                              ? ListingStatus.paused
-                              : ListingStatus.active,
-                        );
-                  },
+                  onStatusChange: (status) => ref
+                      .read(listingStatusProvider.notifier)
+                      .toggle(l.id, status),
                   onDelete: () => _confirmDelete(context, ref, l),
                 );
               },

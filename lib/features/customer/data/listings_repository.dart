@@ -85,6 +85,22 @@ class ListingsRepository {
   Future<void> incrementView(String id) async {
     await _col.doc(id).update({'viewCount': FieldValue.increment(1)});
   }
+
+  Future<List<ListingModel>> getSimilarListings(
+    String excludeId, {
+    int limit = 4,
+  }) async {
+    final snap = await _col
+        .where('status', isEqualTo: ListingStatus.active.name)
+        .orderBy('createdAt', descending: true)
+        .limit(limit + 1)
+        .get();
+    return snap.docs
+        .map((d) => ListingModel.fromSnapshot(d))
+        .where((l) => l.id != excludeId)
+        .take(limit)
+        .toList();
+  }
 }
 
 class SearchFilter {

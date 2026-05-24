@@ -161,9 +161,13 @@ class LandingListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final price = listing.rentPerMonth.toInt();
+    final amenities = listing.facilities.take(3).join(' · ');
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        height: 110,
         decoration: BoxDecoration(
           color: LandingTheme.surface,
           borderRadius: BorderRadius.circular(LandingTheme.r),
@@ -173,65 +177,84 @@ class LandingListCard extends StatelessWidget {
         child: Row(
           children: [
             SizedBox(
-              width: 110,
+              width: 120,
               height: 110,
               child: listing.photoUrls.isNotEmpty
-                  ? Image.network(listing.photoUrls.first, fit: BoxFit.cover)
+                  ? Image.network(
+                      listing.photoUrls.first,
+                      fit: BoxFit.cover,
+                    )
                   : Container(color: const Color(0xFFE8E5E0)),
             ),
-            const SizedBox(width: 14),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+                child: Stack(
                   children: [
-                    Text(
-                      listing.roomTypeLabel.toUpperCase(),
-                      style: LandingTheme.labelSm.copyWith(fontSize: 9),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      listing.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: LandingTheme.titleMd,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.place_outlined,
-                          size: 11,
-                          color: LandingTheme.stone,
+                        Text(
+                          listing.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: LandingTheme.titleMd,
                         ),
-                        const SizedBox(width: 3),
-                        Expanded(
-                          child: Text(
-                            listing.address ?? 'Kathmandu',
+                        const SizedBox(height: 4),
+                        Text(
+                          listing.address ?? 'Kathmandu',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.dmSans(
+                            fontSize: 12,
+                            color: LandingTheme.stone,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              'Rs. ${price.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
+                              style: LandingTheme.priceLg,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              '/month',
+                              style: GoogleFonts.dmSans(
+                                fontSize: 11,
+                                color: LandingTheme.stone,
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (amenities.isNotEmpty) ...[
+                          const SizedBox(height: 5),
+                          Text(
+                            amenities,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.dmSans(
                               fontSize: 11,
                               color: LandingTheme.stone,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
+                        ],
                       ],
                     ),
-                    const SizedBox(height: 10),
-                    Text('Rs. ${listing.rentPerMonth}', style: LandingTheme.priceLg),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Icon(
+                        Icons.favorite_border_rounded,
+                        size: 18,
+                        color: LandingTheme.stone,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: Icon(
-                Icons.chevron_right_rounded,
-                color: LandingTheme.hairline,
-                size: 20,
               ),
             ),
           ],

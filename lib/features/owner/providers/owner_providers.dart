@@ -109,6 +109,48 @@ class UploadListingNotifier extends _$UploadListingNotifier {
     }
   }
 
+  Future<void> updateExistingListing({
+    required String listingId,
+    required String title,
+    required String roomType,
+    required double rentPerMonth,
+    required double depositAmount,
+    required int floor,
+    required int totalFloors,
+    required FurnishingType furnishing,
+    required List<String> facilities,
+    required String description,
+    required DateTime availableFrom,
+    GeoPoint? geoPoint,
+    String? address,
+    String? nearbyLandmarks,
+  }) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+    try {
+      await ref.read(ownerRepositoryProvider).updateListing(listingId, {
+        'title': title,
+        'roomType': roomType,
+        'rentPerMonth': rentPerMonth,
+        'depositAmount': depositAmount,
+        'floor': floor,
+        'totalFloors': totalFloors,
+        'furnishing': furnishing.name,
+        'facilities': facilities,
+        'description': description,
+        'availableFrom': Timestamp.fromDate(availableFrom),
+        if (geoPoint != null) 'geoPoint': geoPoint,
+        if (address != null) 'address': address,
+        if (nearbyLandmarks != null) 'nearbyLandmarks': nearbyLandmarks,
+      });
+      state = state.copyWith(isLoading: false, success: true);
+    } catch (_) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to update listing. Please try again.',
+      );
+    }
+  }
+
   void reset() => state = const UploadListingState();
 }
 

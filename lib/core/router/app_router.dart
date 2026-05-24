@@ -85,7 +85,8 @@ GoRouter appRouter(Ref ref) {
       ),
       GoRoute(
         path: AppRoutes.uploadListing,
-        builder: (_, _) => const UploadListingScreen(),
+        builder: (_, state) =>
+            UploadListingScreen(listing: state.extra as ListingModel?),
       ),
       GoRoute(
         path: AppRoutes.myListings,

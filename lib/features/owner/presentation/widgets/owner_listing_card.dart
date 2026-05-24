@@ -7,13 +7,13 @@ import 'package:merokotha/shared/models/listing_model.dart';
 
 class OwnerListingCard extends StatelessWidget {
   final ListingModel listing;
-  final VoidCallback onToggle;
+  final void Function(ListingStatus) onStatusChange;
   final VoidCallback onDelete;
 
   const OwnerListingCard({
     super.key,
     required this.listing,
-    required this.onToggle,
+    required this.onStatusChange,
     required this.onDelete,
   });
 
@@ -147,21 +147,16 @@ class OwnerListingCard extends StatelessWidget {
                           icon: Icons.edit_outlined,
                           color: AppColors.grey600,
                           onTap: () => context.push(
-                            '${AppRoutes.uploadListing}?id=${listing.id}',
+                            AppRoutes.uploadListing,
+                            extra: listing,
                           ),
                         ),
                         const SizedBox(width: 6),
-                        if (!isRented)
-                          _IconBtn(
-                            icon: isActive
-                                ? Icons.pause_circle_outline_rounded
-                                : Icons.play_circle_outline_rounded,
-                            color: isActive
-                                ? AppColors.warning
-                                : AppColors.success,
-                            onTap: onToggle,
-                          ),
-                        if (!isRented) const SizedBox(width: 6),
+                        _StatusMenuBtn(
+                          listing: listing,
+                          onStatusChange: onStatusChange,
+                        ),
+                        const SizedBox(width: 6),
                         _IconBtn(
                           icon: Icons.delete_outline_rounded,
                           color: AppColors.error,
@@ -173,6 +168,60 @@ class OwnerListingCard extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusMenuBtn extends StatelessWidget {
+  final ListingModel listing;
+  final void Function(ListingStatus) onStatusChange;
+
+  const _StatusMenuBtn({
+    required this.listing,
+    required this.onStatusChange,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (listing.status == ListingStatus.rented) {
+      return _IconBtn(
+        icon: Icons.home_rounded,
+        color: AppColors.primary,
+        onTap: () => onStatusChange(ListingStatus.active),
+        tooltip: 'Mark as Available',
+      );
+    }
+
+    final isActive = listing.status == ListingStatus.active;
+    final iconColor = isActive ? AppColors.warning : AppColors.success;
+    final icon = isActive
+        ? Icons.pause_circle_outline_rounded
+        : Icons.play_circle_outline_rounded;
+
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        color: iconColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: PopupMenuButton<ListingStatus>(
+        onSelected: onStatusChange,
+        padding: EdgeInsets.zero,
+        iconSize: 16,
+        icon: Icon(icon, size: 16, color: iconColor),
+        constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+        itemBuilder: (_) => [
+          PopupMenuItem(
+            value: isActive ? ListingStatus.paused : ListingStatus.active,
+            child: Text(isActive ? 'Pause listing' : 'Resume listing'),
+          ),
+          const PopupMenuItem(
+            value: ListingStatus.rented,
+            child: Text('Mark as Rented'),
           ),
         ],
       ),
@@ -200,20 +249,29 @@ class _IconBtn extends StatelessWidget {
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
+  final String? tooltip;
 
-  const _IconBtn({required this.icon, required this.color, required this.onTap});
+  const _IconBtn({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+    this.tooltip,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
+    return Tooltip(
+      message: tooltip ?? '',
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 16, color: color),
         ),
-        child: Icon(icon, size: 16, color: color),
       ),
     );
   }

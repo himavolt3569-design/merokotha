@@ -17,6 +17,7 @@ import 'package:merokotha/features/customer/presentation/widgets/room_info_row.d
 import 'package:merokotha/features/customer/presentation/widgets/room_facilities_grid.dart';
 import 'package:merokotha/features/customer/presentation/widgets/room_owner_card.dart';
 import 'package:merokotha/features/customer/presentation/widgets/room_bottom_cta.dart';
+import 'package:merokotha/features/customer/presentation/widgets/more_rooms_section.dart';
 import 'package:merokotha/features/customer/presentation/widgets/room_static_map_preview.dart';
 
 class RoomDetailScreen extends ConsumerStatefulWidget {
@@ -286,10 +287,20 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
                             padding: EdgeInsets.symmetric(vertical: 8),
                           ),
 
-                          const SizedBox(height: 120),
+                          const SizedBox(height: 24),
                         ],
                       ),
                     ),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: MoreRoomsSection(
+                      excludeListingId: widget.listingId,
+                    ),
+                  ),
+
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 120),
                   ),
                 ],
               ),

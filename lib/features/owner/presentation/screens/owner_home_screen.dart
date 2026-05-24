@@ -149,14 +149,9 @@ class OwnerHomeScreen extends ConsumerWidget {
                                 padding: const EdgeInsets.only(bottom: 12),
                                 child: OwnerListingCard(
                                   listing: l,
-                                  onToggle: () => ref
+                                  onStatusChange: (status) => ref
                                       .read(listingStatusProvider.notifier)
-                                      .toggle(
-                                        l.id,
-                                        l.isActive
-                                            ? ListingStatus.paused
-                                            : ListingStatus.active,
-                                      ),
+                                      .toggle(l.id, status),
                                   onDelete: () =>
                                       _confirmDelete(context, ref, l),
                                 ),

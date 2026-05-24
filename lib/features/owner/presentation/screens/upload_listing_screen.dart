@@ -34,7 +34,9 @@ const _roomTypes = [
 ];
 
 class UploadListingScreen extends ConsumerStatefulWidget {
-  const UploadListingScreen({super.key});
+  final ListingModel? listing;
+
+  const UploadListingScreen({super.key, this.listing});
 
   @override
   ConsumerState<UploadListingScreen> createState() =>
@@ -59,6 +61,31 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
   DateTime _availableFrom = DateTime.now();
   LatLng? _pickedLocation;
   final List<File> _pickedImages = [];
+
+  bool get _isEdit => widget.listing != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final l = widget.listing;
+    if (l != null) {
+      _titleCtrl.text = l.title;
+      _rentCtrl.text = l.rentPerMonth.toStringAsFixed(0);
+      _depositCtrl.text = l.depositAmount.toStringAsFixed(0);
+      _floorCtrl.text = l.floor.toString();
+      _totalFloorsCtrl.text = l.totalFloors.toString();
+      _descCtrl.text = l.description;
+      _addressCtrl.text = l.address ?? '';
+      _landmarksCtrl.text = l.nearbyLandmarks ?? '';
+      _roomType = l.roomType;
+      _furnishing = l.furnishing;
+      _facilities = List.from(l.facilities);
+      _availableFrom = l.availableFrom;
+      if (l.geoPoint != null) {
+        _pickedLocation = LatLng(l.geoPoint!.latitude, l.geoPoint!.longitude);
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -90,7 +117,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
   }
 
   Future<void> _openMapPicker() async {
-    LatLng initial = const LatLng(27.7172, 85.3240);
+    LatLng initial = _pickedLocation ?? const LatLng(27.7172, 85.3240);
     try {
       LocationPermission perm = await Geolocator.checkPermission();
       if (perm == LocationPermission.denied) {
@@ -101,7 +128,9 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
         final pos = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.medium,
         );
-        initial = LatLng(pos.latitude, pos.longitude);
+        if (_pickedLocation == null) {
+          initial = LatLng(pos.latitude, pos.longitude);
+        }
       }
     } catch (_) {}
 
@@ -129,9 +158,16 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     return urls;
   }
 
+  GeoPoint? get _resolvedGeoPoint {
+    if (_pickedLocation != null) {
+      return GeoPoint(_pickedLocation!.latitude, _pickedLocation!.longitude);
+    }
+    return widget.listing?.geoPoint;
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_pickedLocation == null) {
+    if (_resolvedGeoPoint == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please pin your room location on the map'),
@@ -142,6 +178,14 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     }
     FocusScope.of(context).unfocus();
 
+    if (_isEdit) {
+      await _submitEdit();
+    } else {
+      await _submitCreate();
+    }
+  }
+
+  Future<void> _submitCreate() async {
     final user = await ref.read(currentUserProvider.future);
     if (user == null) return;
 
@@ -161,10 +205,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
           facilities: _facilities,
           description: _descCtrl.text.trim(),
           availableFrom: _availableFrom,
-          geoPoint: GeoPoint(
-            _pickedLocation!.latitude,
-            _pickedLocation!.longitude,
-          ),
+          geoPoint: _resolvedGeoPoint,
           address: _addressCtrl.text.trim(),
           nearbyLandmarks: _landmarksCtrl.text.trim(),
         );
@@ -199,17 +240,69 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     }
   }
 
+  Future<void> _submitEdit() async {
+    final listingId = widget.listing!.id;
+
+    await ref
+        .read(uploadListingProvider.notifier)
+        .updateExistingListing(
+          listingId: listingId,
+          title: _titleCtrl.text.trim(),
+          roomType: _roomType,
+          rentPerMonth: double.parse(_rentCtrl.text.trim()),
+          depositAmount: double.tryParse(_depositCtrl.text.trim()) ?? 0,
+          floor: int.tryParse(_floorCtrl.text.trim()) ?? 0,
+          totalFloors: int.tryParse(_totalFloorsCtrl.text.trim()) ?? 1,
+          furnishing: _furnishing,
+          facilities: _facilities,
+          description: _descCtrl.text.trim(),
+          availableFrom: _availableFrom,
+          geoPoint: _resolvedGeoPoint,
+          address: _addressCtrl.text.trim(),
+          nearbyLandmarks: _landmarksCtrl.text.trim(),
+        );
+
+    if (!mounted) return;
+    if (ref.read(uploadListingProvider).success) {
+      if (_pickedImages.isNotEmpty) {
+        try {
+          final photoUrls = await _uploadImages(listingId);
+          await ref.read(ownerRepositoryProvider).updateListing(listingId, {
+            'photoUrls': photoUrls,
+          });
+        } catch (_) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Listing updated, but photo upload failed.'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+          context.go(AppRoutes.myListings);
+          return;
+        }
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Listing updated!'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+      context.go(AppRoutes.myListings);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final uploadState = ref.watch(uploadListingProvider);
+    final existingPhotos = widget.listing?.photoUrls ?? [];
+    final locationSet =
+        _pickedLocation != null || (_isEdit && widget.listing?.geoPoint != null);
 
     ref.listen(uploadListingProvider, (_, next) {
       if (next.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.error!),
-            backgroundColor: AppColors.error,
-          ),
+          SnackBar(content: Text(next.error!), backgroundColor: AppColors.error),
         );
       }
     });
@@ -217,7 +310,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       appBar: MkAppBar(
-        title: 'Add listing',
+        title: _isEdit ? 'Edit listing' : 'Add listing',
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new_rounded,
@@ -241,6 +334,10 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                     ..clear()
                     ..addAll(imgs);
                 }),
+                existingPhotoUrl: existingPhotos.isNotEmpty
+                    ? existingPhotos.first
+                    : null,
+                existingPhotoCount: existingPhotos.length,
               ),
               const SizedBox(height: 20),
 
@@ -468,12 +565,12 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(AppSizes.md),
                       decoration: BoxDecoration(
-                        color: _pickedLocation != null
+                        color: locationSet
                             ? AppColors.primaryLight
                             : AppColors.grey50,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                         border: Border.all(
-                          color: _pickedLocation != null
+                          color: locationSet
                               ? AppColors.primary
                               : AppColors.grey100,
                         ),
@@ -481,10 +578,10 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                       child: Row(
                         children: [
                           Icon(
-                            _pickedLocation != null
+                            locationSet
                                 ? Icons.location_on_rounded
                                 : Icons.add_location_alt_outlined,
-                            color: _pickedLocation != null
+                            color: locationSet
                                 ? AppColors.primary
                                 : AppColors.grey400,
                             size: 22,
@@ -492,15 +589,17 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              _pickedLocation != null
-                                  ? 'Pinned: ${_pickedLocation!.latitude.toStringAsFixed(4)}, ${_pickedLocation!.longitude.toStringAsFixed(4)}'
+                              locationSet
+                                  ? _pickedLocation != null
+                                      ? 'Pinned: ${_pickedLocation!.latitude.toStringAsFixed(4)}, ${_pickedLocation!.longitude.toStringAsFixed(4)}'
+                                      : 'Location already set — tap to update'
                                   : AppStrings.pinLocation,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: _pickedLocation != null
+                                color: locationSet
                                     ? AppColors.primary
                                     : AppColors.grey600,
-                                fontWeight: _pickedLocation != null
+                                fontWeight: locationSet
                                     ? FontWeight.w600
                                     : FontWeight.w400,
                               ),
@@ -509,7 +608,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                           Icon(
                             Icons.chevron_right_rounded,
                             size: 20,
-                            color: _pickedLocation != null
+                            color: locationSet
                                 ? AppColors.primary
                                 : AppColors.grey400,
                           ),
@@ -522,10 +621,12 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               const SizedBox(height: 24),
 
               MkButton(
-                label: AppStrings.publishListing,
+                label: _isEdit ? 'Save changes' : AppStrings.publishListing,
                 onPressed: _submit,
                 isLoading: uploadState.isLoading,
-                prefixIcon: Icons.publish_rounded,
+                prefixIcon: _isEdit
+                    ? Icons.save_rounded
+                    : Icons.publish_rounded,
               ),
               const SizedBox(height: 40),
             ],
