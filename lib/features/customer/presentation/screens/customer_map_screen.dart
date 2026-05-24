@@ -8,6 +8,7 @@ import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/features/customer/presentation/widgets/customer_widgets.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
+import 'package:merokotha/shared/widgets/mk_map_button.dart';
 
 import 'dart:ui' as ui;
 
@@ -89,7 +90,7 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
             right: 12,
             child: Row(
               children: [
-                _MapBtn(
+                MkMapButton(
                   icon: Icons.arrow_back_ios_new_rounded,
                   onTap: () => context.pop(),
                 ),
@@ -133,7 +134,7 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                _MapBtn(
+                MkMapButton(
                   icon: Icons.my_location_rounded,
                   onTap: () => _mapController.move(_kathmandu, 14),
                 ),
@@ -159,7 +160,9 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
                       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.customerPrimary.withValues(alpha: 0.3),
+                          color: AppColors.customerPrimary.withValues(
+                            alpha: 0.3,
+                          ),
                           blurRadius: 8,
                         ),
                       ],
@@ -408,27 +411,3 @@ class _ListingPreviewCard extends StatelessWidget {
   );
 }
 
-class _MapBtn extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  const _MapBtn({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 42,
-        height: 42,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8),
-          ],
-        ),
-        child: Icon(icon, size: 20, color: AppColors.grey800),
-      ),
-    );
-  }
-}

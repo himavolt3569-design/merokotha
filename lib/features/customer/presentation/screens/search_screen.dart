@@ -122,10 +122,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               loading: () => const MkLoading(fullScreen: false),
               error: (e, _) => MkErrorWidget(message: e.toString()),
               data: (listings) {
-                // Filter out any listings with null or empty ids
                 final validListings = listings
-                    // ignore: unnecessary_null_comparison
-                    .where((l) => l.id != null && l.id.isNotEmpty)
+                    .where((l) => l.id.isNotEmpty)
                     .toList();
 
                 if (validListings.isEmpty) {

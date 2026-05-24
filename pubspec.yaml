@@ -1,10 +1,10 @@
 name: merokotha
-description: "A new Flutter project."
+description: "MeroKotha - Find and list rental rooms in Nepal."
 
 publish_to: 'none' 
 
 sdk: ">=3.11.3 <4.0.0"
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.11.3
@@ -29,7 +29,6 @@ dependencies:
   flutter_map: ^8.2.2
   latlong2: ^0.9.1
   permission_handler: ^12.0.1
-  flutter_svg: ^2.2.4
   firebase_app_check: ^0.4.3
   url_launcher: ^6.3.2
   google_fonts: ^8.0.2

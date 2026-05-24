@@ -411,7 +411,7 @@ class _QuickAction extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 11,
-              color: AppColors.grey700,
+              color: AppColors.grey600,
               fontWeight: FontWeight.w600,
             ),
           ),

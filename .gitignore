@@ -34,3 +34,9 @@ Thumbs.db
 .idea/
 .vscode/
 *.iml
+
+# Android signing (extra safety)
+android/key.properties
+
+# Assets
+android/app/src/main/assets/

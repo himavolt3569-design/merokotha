@@ -1,11 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
 
 class AppTheme {
   AppTheme._();
 
+  static TextTheme get _textTheme => GoogleFonts.dmSansTextTheme(
+    const TextTheme(
+      displayLarge: TextStyle(fontSize: 57, fontWeight: FontWeight.w700, letterSpacing: -1.5, color: AppColors.grey900),
+      displayMedium: TextStyle(fontSize: 45, fontWeight: FontWeight.w700, letterSpacing: -0.5, color: AppColors.grey900),
+      displaySmall: TextStyle(fontSize: 36, fontWeight: FontWeight.w700, color: AppColors.grey900),
+      headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: AppColors.grey900),
+      headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.grey900),
+      headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: AppColors.grey900),
+      titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: AppColors.grey900),
+      titleMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.grey900),
+      titleSmall: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.grey900),
+      bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, height: 1.5, color: AppColors.grey800),
+      bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.5, color: AppColors.grey600),
+      bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, height: 1.4, color: AppColors.grey400),
+      labelLarge: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 0.1, color: AppColors.grey900),
+      labelMedium: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.grey600),
+      labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.grey400),
+    ),
+  );
+
   static ThemeData get light {
+    final textTheme = _textTheme;
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
@@ -15,18 +37,20 @@ class AppTheme {
         error: AppColors.error,
         surface: AppColors.surface,
       ),
+      textTheme: textTheme,
       scaffoldBackgroundColor: AppColors.backgroundSecondary,
-      fontFamily: 'Inter',
 
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.grey900,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: false,
-        titleTextStyle: TextStyle(
+        titleTextStyle: GoogleFonts.dmSans(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: AppColors.grey900,
+          letterSpacing: -0.2,
         ),
       ),
 

@@ -6,12 +6,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:merokotha/core/constants/app_colors.dart';
 
-part 'conectivity_provider.g.dart';
+part 'connectivity_provider.g.dart';
 
 Future<bool> _checkConnectivity() async {
   try {
-    final result = await InternetAddress.lookup('google.com')
-        .timeout(const Duration(seconds: 4));
+    final result = await InternetAddress.lookup(
+      'google.com',
+    ).timeout(const Duration(seconds: 4));
     return result.isNotEmpty && result.first.rawAddress.isNotEmpty;
   } catch (_) {
     return false;

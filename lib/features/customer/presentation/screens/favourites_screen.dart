@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/core/router/app_routes.dart';
-import 'package:merokotha/features/customer/presentation/screens/customer_home_screen.dart';
 import 'package:merokotha/features/customer/presentation/widgets/customer_widgets.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
 import 'package:merokotha/shared/widgets/mk_app_bar.dart';
@@ -20,18 +19,7 @@ class FavouritesScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
-      appBar: MkAppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 20,
-            color: AppColors.grey800,
-          ),
-          onPressed: () => context.pop(CustomerHomeScreen()),
-        ),
-        title: 'Saved rooms',
-        showBack: false,
-      ),
+      appBar: const MkAppBar(title: 'Saved rooms'),
       body: favListingsAsync.when(
         loading: () => const MkLoading(),
         error: (e, _) => MkErrorWidget(message: e.toString()),

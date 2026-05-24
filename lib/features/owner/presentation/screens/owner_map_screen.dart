@@ -5,7 +5,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:merokotha/shared/widgets/owner_botton_nav.dart';
+import 'package:merokotha/shared/widgets/mk_map_button.dart';
+import 'package:merokotha/shared/widgets/owner_bottom_nav.dart';
 
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
@@ -154,7 +155,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
             right: 12,
             child: Row(
               children: [
-                _MapBtn(
+                MkMapButton(
                   icon: Icons.arrow_back_ios_new_rounded,
                   onTap: () => context.pop(),
                 ),
@@ -196,7 +197,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                _MapBtn(
+                MkMapButton(
                   icon: Icons.add_location_alt_outlined,
                   onTap: () => context.go(AppRoutes.uploadListing),
                 ),
@@ -425,27 +426,3 @@ class _TrianglePainter extends CustomPainter {
   bool shouldRepaint(_TrianglePainter old) => old.color != color;
 }
 
-class _MapBtn extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  const _MapBtn({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 42,
-        height: 42,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8),
-          ],
-        ),
-        child: Icon(icon, size: 20, color: AppColors.grey800),
-      ),
-    );
-  }
-}

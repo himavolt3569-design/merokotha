@@ -6,6 +6,7 @@ import 'package:merokotha/features/customer/providers/customers_providers.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/core/router/app_routes.dart';
+import 'package:merokotha/shared/widgets/mk_section_title.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
 import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/features/customer/presentation/widgets/customer_widgets.dart';
@@ -31,123 +32,178 @@ class CustomerHomeScreen extends ConsumerWidget {
           },
           child: CustomScrollView(
             slivers: [
-              // ── App bar ──
+              // ── Header + Search ──
               SliverToBoxAdapter(
-                child: Padding(
+                child: Container(
+                  color: Colors.white,
                   padding: const EdgeInsets.fromLTRB(
                     AppSizes.pagePadding,
-                    16,
+                    20,
                     AppSizes.pagePadding,
-                    0,
+                    20,
                   ),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _greeting(),
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColors.grey400,
-                              ),
-                            ),
-                            userAsync.when(
-                              data: (u) => Text(
-                                u?.name.split(' ').first ?? 'MeroKotha',
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.grey900,
-                                ),
-                              ),
-                              loading: () => const Text(
-                                'MeroKotha',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.grey900,
-                                ),
-                              ),
-                              error: (_, _) => const SizedBox.shrink(),
-                            ),
-                            userAsync.when(
-                              data: (u) => Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on_rounded,
-                                    size: 13,
-                                    color: AppColors.customerPrimary,
+                      // Greeting row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _greeting(),
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.grey400,
+                                    letterSpacing: 0.2,
                                   ),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    u?.location ?? 'Kathmandu',
+                                ),
+                                const SizedBox(height: 2),
+                                userAsync.when(
+                                  data: (u) => Text(
+                                    u?.name.split(' ').first ?? 'MeroKotha',
                                     style: const TextStyle(
-                                      fontSize: 12,
-                                      color: AppColors.grey400,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.grey900,
+                                      height: 1.15,
                                     ),
                                   ),
-                                ],
+                                  loading: () => const Text(
+                                    'MeroKotha',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.grey900,
+                                      height: 1.15,
+                                    ),
+                                  ),
+                                  error: (_, _) => const SizedBox.shrink(),
+                                ),
+                                const SizedBox(height: 4),
+                                userAsync.when(
+                                  data: (u) => Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_on_rounded,
+                                        size: 13,
+                                        color: AppColors.customerPrimary,
+                                      ),
+                                      const SizedBox(width: 3),
+                                      Text(
+                                        u?.location ?? 'Kathmandu',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.grey400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  loading: () => const SizedBox.shrink(),
+                                  error: (_, _) => const SizedBox.shrink(),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              // Notification bell
+                              Container(
+                                width: 42,
+                                height: 42,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.grey50,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.notifications_outlined,
+                                  size: 20,
+                                  color: AppColors.grey600,
+                                ),
                               ),
-                              loading: () => const SizedBox.shrink(),
-                              error: (_, _) => const SizedBox.shrink(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      userAsync.when(
-                        data: (u) => GestureDetector(
-                          onTap: () => context.push(AppRoutes.customerProfile),
-                          child: UserAvatar(
-                            name: u?.name ?? 'User',
-                            photoUrl: u?.photoUrl,
-                            size: 38,
-                            backgroundColor: AppColors.customerLight,
-                          ),
-                        ),
-                        loading: () => const SizedBox(width: 38, height: 38),
-                        error: (_, _) => const SizedBox.shrink(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // ── Search bar ──
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSizes.pagePadding),
-                  child: GestureDetector(
-                    onTap: () => context.push(AppRoutes.search),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 13,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        border: Border.all(color: AppColors.grey100),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(
-                            Icons.search_rounded,
-                            size: 20,
-                            color: AppColors.grey400,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            'Search rooms, area, landmarks...',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.grey400,
-                            ),
+                              const SizedBox(width: 10),
+                              // Avatar with colored ring
+                              userAsync.when(
+                                data: (u) => GestureDetector(
+                                  onTap: () =>
+                                      context.push(AppRoutes.customerProfile),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2.5),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: AppColors.customerPrimary,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: UserAvatar(
+                                      name: u?.name ?? 'User',
+                                      photoUrl: u?.photoUrl,
+                                      size: 36,
+                                      backgroundColor: AppColors.customerLight,
+                                    ),
+                                  ),
+                                ),
+                                loading: () =>
+                                    const SizedBox(width: 42, height: 42),
+                                error: (_, _) => const SizedBox.shrink(),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ),
+                      const SizedBox(height: 20),
+                      // Search bar
+                      GestureDetector(
+                        onTap: () => context.push(AppRoutes.search),
+                        child: Container(
+                          height: 52,
+                          padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundSecondary,
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.radiusFull),
+                            border: Border.all(color: AppColors.grey100),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.search_rounded,
+                                size: 20,
+                                color: AppColors.grey400,
+                              ),
+                              const SizedBox(width: 10),
+                              const Expanded(
+                                child: Text(
+                                  'Search rooms, area, landmarks...',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColors.grey400,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: AppColors.customerPrimary,
+                                  borderRadius: BorderRadius.circular(
+                                    AppSizes.radiusFull,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.tune_rounded,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -156,35 +212,33 @@ class CustomerHomeScreen extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: Column(
                   children: [
+                    const SizedBox(height: 16),
                     _CategoryChipRow(
                       selected: ref.watch(searchFilterProvider).categoryL1Id,
                       onSelect: (id) => ref
                           .read(searchFilterProvider.notifier)
                           .setCategory(categoryL1Id: id),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
 
               // ── Section header ──
-              const SliverToBoxAdapter(
+              SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: AppSizes.pagePadding,
                   ),
-                  child: Text(
+                  child: MkSectionTitle(
                     'Rooms near you',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.grey900,
-                    ),
+                    showAccent: true,
+                    accentColor: AppColors.customerPrimary,
                   ),
                 ),
               ),
 
-              const SliverToBoxAdapter(child: SizedBox(height: 12)),
+              const SliverToBoxAdapter(child: SizedBox(height: 14)),
 
               // ── Listings with injected ads ──
               listingsAsync.when(

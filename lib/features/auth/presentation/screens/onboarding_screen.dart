@@ -6,7 +6,6 @@ import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/core/constants/app_strings.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/core/utils/validators.dart';
-import 'package:merokotha/features/admin/presentation/widgets/admin_widgets.dart';
 import 'package:merokotha/features/auth/data/user_repository.dart';
 import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/shared/models/user_model.dart';
@@ -91,13 +90,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Color get _themeColor {
     if (_role == UserRole.owner) return AppColors.ownerPrimary;
-    if (_role == UserRole.superAdmin) return AdminColors.accent;
+    if (_role == UserRole.superAdmin) return AppColors.error;
     return AppColors.customerPrimary;
   }
 
   Color get _themeLightColor {
     if (_role == UserRole.owner) return AppColors.ownerLight;
-    if (_role == UserRole.superAdmin) return AdminColors.accentLight;
+    if (_role == UserRole.superAdmin) return AppColors.errorLight;
     return AppColors.customerLight;
   }
 

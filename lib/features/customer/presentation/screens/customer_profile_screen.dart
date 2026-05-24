@@ -15,6 +15,7 @@ import 'package:merokotha/shared/widgets/mk_app_bar.dart';
 import 'package:merokotha/shared/widgets/mk_button.dart';
 import 'package:merokotha/shared/widgets/mk_text_field.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/shared/widgets/profile_section.dart';
 
 class CustomerProfileScreen extends ConsumerStatefulWidget {
   const CustomerProfileScreen({super.key});
@@ -194,13 +195,20 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  _CustomerAvatarSection(user: user),
+                  ProfileAvatarSection(
+                    user: user,
+                    roleBadgeIcon: Icons.search_rounded,
+                    roleBadgeLabel: 'Room Seeker',
+                    badgeColor: AppColors.customerPrimary,
+                    badgeBackgroundColor: AppColors.customerLight,
+                    avatarBackgroundColor: AppColors.customerLight,
+                  ),
                   const SizedBox(height: 24),
 
                   Row(
                     children: [
                       Expanded(
-                        child: _StatMini(
+                        child: ProfileStatMini(
                           label: 'Saved rooms',
                           value: '${favIds.length}',
                           icon: Icons.favorite_rounded,
@@ -208,8 +216,8 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Expanded(
-                        child: _StatMini(
+                      const Expanded(
+                        child: ProfileStatMini(
                           label: 'Inquiries sent',
                           value: '—',
                           icon: Icons.send_rounded,
@@ -220,7 +228,7 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  _Card(
+                  ProfileSectionCard(
                     title: 'Personal information',
                     children: [
                       MkTextField(
@@ -272,13 +280,15 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                     const SizedBox(height: 16),
                   ],
 
-                  _Card(
+                  ProfileSectionCard(
                     title: 'Quick links',
                     children: [
-                      _SettingsTile(
+                      ProfileSettingsTile(
                         icon: Icons.favorite_outline_rounded,
                         label: 'Saved rooms',
                         count: favIds.length,
+                        countColor: AppColors.customerPrimary,
+                        countBackgroundColor: AppColors.customerLight,
                         onTap: () => context.go(AppRoutes.favourites),
                         trailing: const Icon(
                           Icons.chevron_right_rounded,
@@ -286,8 +296,8 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                           color: AppColors.grey400,
                         ),
                       ),
-                      _Divider(),
-                      _SettingsTile(
+                      const ProfileDivider(),
+                      ProfileSettingsTile(
                         icon: Icons.inbox_outlined,
                         label: 'My inquiries',
                         onTap: () {},
@@ -301,10 +311,10 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  _Card(
+                  ProfileSectionCard(
                     title: 'Account',
                     children: [
-                      _SettingsTile(
+                      ProfileSettingsTile(
                         icon: Icons.swap_horiz_rounded,
                         label: 'Switch to Owner mode',
                         onTap: () => _switchRole(user),
@@ -314,11 +324,11 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                           color: AppColors.grey400,
                         ),
                       ),
-                      _Divider(),
-                      _SettingsTile(
+                      const ProfileDivider(),
+                      const ProfileSettingsTile(
                         icon: Icons.language_rounded,
                         label: 'Language',
-                        trailing: const Text(
+                        trailing: Text(
                           'English',
                           style: TextStyle(
                             fontSize: 13,
@@ -326,11 +336,11 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
                           ),
                         ),
                       ),
-                      _Divider(),
-                      _SettingsTile(
+                      const ProfileDivider(),
+                      const ProfileSettingsTile(
                         icon: Icons.info_outline_rounded,
                         label: 'App version',
-                        trailing: const Text(
+                        trailing: Text(
                           '1.0.0',
                           style: TextStyle(
                             fontSize: 13,
@@ -358,253 +368,4 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
       bottomNavigationBar: const CustomerBottomNav(currentIndex: 4),
     );
   }
-}
-
-class _CustomerAvatarSection extends StatelessWidget {
-  final UserModel user;
-  const _CustomerAvatarSection({required this.user});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            UserAvatar(
-              name: user.name,
-              photoUrl: user.photoUrl,
-              size: 88,
-              backgroundColor: AppColors.customerLight,
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: AppColors.customerPrimary,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: const Icon(
-                  Icons.camera_alt_rounded,
-                  size: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Text(
-          user.name,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: AppColors.grey900,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.customerLight,
-            borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.search_rounded,
-                size: 12,
-                color: AppColors.customerPrimary,
-              ),
-              SizedBox(width: 5),
-              Text(
-                'Room Seeker',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.customerPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatMini extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-
-  const _StatMini({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSizes.md),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey50),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-            ),
-            child: Icon(icon, size: 18, color: color),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.grey900,
-                ),
-              ),
-              Text(
-                label,
-                style: const TextStyle(fontSize: 11, color: AppColors.grey400),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Card extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-  const _Card({required this.title, required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey50),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSizes.md,
-              AppSizes.md,
-              AppSizes.md,
-              10,
-            ),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: AppColors.grey600,
-              ),
-            ),
-          ),
-          const Divider(height: 1, color: AppColors.grey50),
-          Padding(
-            padding: const EdgeInsets.all(AppSizes.md),
-            child: Column(children: children),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Widget? trailing;
-  final int? count;
-  final VoidCallback? onTap;
-
-  const _SettingsTile({
-    required this.icon,
-    required this.label,
-    this.trailing,
-    this.count,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: AppColors.grey50,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-              ),
-              child: Icon(icon, size: 17, color: AppColors.grey600),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(fontSize: 14, color: AppColors.grey900),
-              ),
-            ),
-            if (count != null && count! > 0)
-              Container(
-                margin: const EdgeInsets.only(right: 6),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.customerLight,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                ),
-                child: Text(
-                  '$count',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.customerPrimary,
-                  ),
-                ),
-              ),
-            ?trailing,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Divider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) =>
-      const Divider(height: 1, color: AppColors.grey50);
 }

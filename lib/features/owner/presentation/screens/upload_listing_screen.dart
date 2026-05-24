@@ -4,9 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
@@ -111,7 +109,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
     final result = await Navigator.push<LatLng>(
       context,
       MaterialPageRoute(
-        builder: (_) => _MapPickerScreen(initialLocation: initial),
+        builder: (_) => MapPickerScreen(initialLocation: initial),
       ),
     );
     if (result != null) setState(() => _pickedLocation = result);
@@ -236,7 +234,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _PhotoPicker(
+              ListingPhotoPicker(
                 images: _pickedImages,
                 onChanged: (imgs) => setState(() {
                   _pickedImages
@@ -246,7 +244,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 20),
 
-              _Card(
+              UploadFormCard(
                 title: 'Basic information',
                 children: [
                   MkTextField(
@@ -258,7 +256,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                   ),
                   const SizedBox(height: AppSizes.md),
 
-                  const _Label('Room type'),
+                  const UploadFormLabel('Room type'),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     value: _roomType,
@@ -300,9 +298,9 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                   ),
 
                   const SizedBox(height: AppSizes.md),
-                  const _Label('Furnishing'),
+                  const UploadFormLabel('Furnishing'),
                   const SizedBox(height: 8),
-                  _SegmentSelector<FurnishingType>(
+                  SegmentSelector<FurnishingType>(
                     values: FurnishingType.values,
                     selected: _furnishing,
                     label: (t) {
@@ -321,7 +319,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 16),
 
-              _Card(
+              UploadFormCard(
                 title: 'Pricing',
                 children: [
                   Row(
@@ -348,7 +346,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 16),
 
-              _Card(
+              UploadFormCard(
                 title: 'Building details',
                 children: [
                   Row(
@@ -379,7 +377,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                     ],
                   ),
                   const SizedBox(height: AppSizes.md),
-                  const _Label('Available from'),
+                  const UploadFormLabel('Available from'),
                   const SizedBox(height: 8),
                   GestureDetector(
                     onTap: _pickDate,
@@ -422,7 +420,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 16),
 
-              _Card(
+              UploadFormCard(
                 title: 'Facilities',
                 children: [
                   FacilitiesSelector(
@@ -433,7 +431,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 16),
 
-              _Card(
+              UploadFormCard(
                 title: 'Description',
                 children: [
                   MkTextField(
@@ -448,7 +446,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
               ),
               const SizedBox(height: 16),
 
-              _Card(
+              UploadFormCard(
                 title: 'Location',
                 children: [
                   MkTextField(
@@ -534,354 +532,6 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _MapPickerScreen extends StatefulWidget {
-  final LatLng initialLocation;
-  const _MapPickerScreen({required this.initialLocation});
-  @override
-  State<_MapPickerScreen> createState() => _MapPickerScreenState();
-}
-
-class _MapPickerScreenState extends State<_MapPickerScreen> {
-  late LatLng _currentPin;
-  late final MapController _mapController;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentPin = widget.initialLocation;
-    _mapController = MapController();
-  }
-
-  @override
-  void dispose() {
-    _mapController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: AppColors.grey900,
-        elevation: 0,
-        title: const Text(
-          'Pin your room location',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: AppColors.grey900,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, _currentPin),
-            child: const Text(
-              'Confirm',
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w700,
-                fontSize: 15,
-              ),
-            ),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: AppColors.grey50),
-        ),
-      ),
-      body: Stack(
-        children: [
-          FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              initialCenter: widget.initialLocation,
-              initialZoom: 15,
-              onPositionChanged: (pos, _) =>
-                  setState(() => _currentPin = pos.center),
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.merokotha.app',
-                maxZoom: 19,
-              ),
-            ],
-          ),
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 40),
-              child: Icon(
-                Icons.location_on_rounded,
-                size: 48,
-                color: AppColors.error,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 12,
-            left: 12,
-            right: 12,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 6,
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.location_on_rounded,
-                    size: 16,
-                    color: AppColors.primary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${_currentPin.latitude.toStringAsFixed(5)},  ${_currentPin.longitude.toStringAsFixed(5)}',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontFamily: 'monospace',
-                      color: AppColors.grey700,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 24,
-            left: 16,
-            right: 16,
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 8,
-                  ),
-                ],
-              ),
-              child: const Row(
-                children: [
-                  Icon(
-                    Icons.info_outline_rounded,
-                    size: 16,
-                    color: AppColors.grey400,
-                  ),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Drag the map so the pin sits on your room\'s exact location, then tap Confirm.',
-                      style: TextStyle(fontSize: 12, color: AppColors.grey600),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PhotoPicker extends StatelessWidget {
-  final List<File> images;
-  final ValueChanged<List<File>> onChanged;
-  const _PhotoPicker({required this.images, required this.onChanged});
-
-  Future<void> _pick(BuildContext context) async {
-    try {
-      final picked = await ImagePicker().pickMultiImage(imageQuality: 75);
-      if (picked.isEmpty) return;
-      onChanged(picked.map((f) => File(f.path)).toList());
-    } catch (_) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Failed to pick images')));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _pick(context),
-      child: Container(
-        width: double.infinity,
-        height: 140,
-        padding: const EdgeInsets.all(AppSizes.md),
-        decoration: BoxDecoration(
-          color: AppColors.grey50,
-          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-          border: Border.all(color: AppColors.grey100),
-        ),
-        child: images.isEmpty
-            ? const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add_photo_alternate_outlined,
-                    size: 36,
-                    color: AppColors.grey400,
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Add photos',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.grey600,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Tap to select images',
-                    style: TextStyle(fontSize: 11, color: AppColors.grey400),
-                  ),
-                ],
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: images.length,
-                      separatorBuilder: (_, _) => const SizedBox(width: 10),
-                      itemBuilder: (_, i) => ClipRRect(
-                        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        child: Image.file(
-                          images[i],
-                          width: 100,
-                          height: 100,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${images.length} photo${images.length == 1 ? '' : 's'} selected. Tap to change.',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.grey500,
-                    ),
-                  ),
-                ],
-              ),
-      ),
-    );
-  }
-}
-
-class _Card extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-  const _Card({required this.title, required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSizes.md),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey50),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: AppColors.grey900,
-            ),
-          ),
-          const SizedBox(height: 14),
-          const Divider(height: 1, color: AppColors.grey50),
-          const SizedBox(height: 14),
-          ...children,
-        ],
-      ),
-    );
-  }
-}
-
-class _Label extends StatelessWidget {
-  final String text;
-  const _Label(this.text);
-  @override
-  Widget build(BuildContext context) => Text(
-    text,
-    style: const TextStyle(
-      fontSize: 13,
-      fontWeight: FontWeight.w500,
-      color: AppColors.grey800,
-    ),
-  );
-}
-
-class _SegmentSelector<T> extends StatelessWidget {
-  final List<T> values;
-  final T selected;
-  final String Function(T) label;
-  final void Function(T) onChanged;
-  const _SegmentSelector({
-    required this.values,
-    required this.selected,
-    required this.label,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: values.map((v) {
-        final isSelected = selected == v;
-        final isLast = v == values.last;
-        return Expanded(
-          child: GestureDetector(
-            onTap: () => onChanged(v),
-            child: Container(
-              margin: EdgeInsets.only(right: isLast ? 0 : 8),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primaryLight : Colors.white,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.grey100,
-                ),
-              ),
-              child: Text(
-                label(v),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: isSelected ? AppColors.primary : AppColors.grey600,
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 }

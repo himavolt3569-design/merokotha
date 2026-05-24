@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:merokotha/shared/widgets/owner_botton_nav.dart';
+import 'package:merokotha/shared/widgets/owner_bottom_nav.dart';
 
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
@@ -11,6 +11,7 @@ import 'package:merokotha/shared/widgets/mk_app_bar.dart';
 import 'package:merokotha/shared/widgets/mk_button.dart';
 import 'package:merokotha/shared/widgets/mk_text_field.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/shared/widgets/profile_section.dart';
 import 'package:merokotha/features/auth/data/user_repository.dart';
 import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/features/auth/data/auth_repository.dart';
@@ -110,9 +111,7 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
     );
     if (confirm != true || !mounted) return;
 
-    await ref
-        .read(userRepositoryProvider)
-        .updateRole(user.id, UserRole.customer);
+    await ref.read(userRepositoryProvider).updateRole(user.id, UserRole.customer);
     if (mounted) context.go(AppRoutes.customerHome);
   }
 
@@ -196,10 +195,16 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
               key: _formKey,
               child: Column(
                 children: [
-                  _AvatarSection(user: user),
+                  ProfileAvatarSection(
+                    user: user,
+                    roleBadgeIcon: Icons.house_rounded,
+                    roleBadgeLabel: 'House Owner',
+                    badgeColor: AppColors.ownerPrimary,
+                    badgeBackgroundColor: AppColors.ownerLight,
+                  ),
                   const SizedBox(height: 24),
 
-                  _Card(
+                  ProfileSectionCard(
                     title: 'Personal information',
                     children: [
                       MkTextField(
@@ -250,10 +255,10 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
                     const SizedBox(height: 16),
                   ],
 
-                  _Card(
+                  ProfileSectionCard(
                     title: 'Account',
                     children: [
-                      _SettingsTile(
+                      ProfileSettingsTile(
                         icon: Icons.verified_user_outlined,
                         label: 'Verified status',
                         trailing: user.isVerified
@@ -268,8 +273,8 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
                                 backgroundColor: AppColors.grey50,
                               ),
                       ),
-                      _Divider(),
-                      _SettingsTile(
+                      const ProfileDivider(),
+                      ProfileSettingsTile(
                         icon: Icons.swap_horiz_rounded,
                         label: 'Switch to Customer mode',
                         onTap: () => _switchRole(user),
@@ -283,10 +288,10 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  _Card(
+                  ProfileSectionCard(
                     title: 'App',
                     children: [
-                      _SettingsTile(
+                      ProfileSettingsTile(
                         icon: Icons.language_rounded,
                         label: 'Language',
                         trailing: const Text(
@@ -298,11 +303,11 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
                         ),
                         onTap: () {},
                       ),
-                      _Divider(),
-                      _SettingsTile(
+                      const ProfileDivider(),
+                      const ProfileSettingsTile(
                         icon: Icons.info_outline_rounded,
                         label: 'App version',
-                        trailing: const Text(
+                        trailing: Text(
                           '1.0.0',
                           style: TextStyle(
                             fontSize: 13,
@@ -330,172 +335,4 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
       bottomNavigationBar: const OwnerBottomNav(currentIndex: 4),
     );
   }
-}
-
-class _AvatarSection extends StatelessWidget {
-  final UserModel user;
-  const _AvatarSection({required this.user});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            UserAvatar(name: user.name, photoUrl: user.photoUrl, size: 88),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: const Icon(
-                  Icons.camera_alt_rounded,
-                  size: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Text(
-          user.name,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: AppColors.grey900,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.ownerLight,
-            borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          ),
-          child: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.house_rounded,
-                size: 12,
-                color: AppColors.ownerPrimary,
-              ),
-              SizedBox(width: 5),
-              Text(
-                'House Owner',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.ownerPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Card extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-  const _Card({required this.title, required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey50),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSizes.md,
-              AppSizes.md,
-              AppSizes.md,
-              10,
-            ),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: AppColors.grey600,
-              ),
-            ),
-          ),
-          const Divider(height: 1, color: AppColors.grey50),
-          Padding(
-            padding: const EdgeInsets.all(AppSizes.md),
-            child: Column(children: children),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SettingsTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Widget? trailing;
-  final VoidCallback? onTap;
-
-  const _SettingsTile({
-    required this.icon,
-    required this.label,
-    this.trailing,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: AppColors.grey50,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-              ),
-              child: Icon(icon, size: 17, color: AppColors.grey600),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(fontSize: 14, color: AppColors.grey900),
-              ),
-            ),
-            ?trailing,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Divider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) =>
-      const Divider(height: 1, color: AppColors.grey50);
 }

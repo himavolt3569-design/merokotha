@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:merokotha/shared/widgets/owner_botton_nav.dart';
+import 'package:merokotha/shared/widgets/owner_bottom_nav.dart';
 
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
-import 'package:merokotha/shared/models/inquiry_model.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
 import 'package:merokotha/shared/widgets/mk_app_bar.dart';
 import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/features/owner/providers/owner_providers.dart';
-import 'package:merokotha/features/owner/data/inquiry_repository.dart';
-import 'package:merokotha/features/owner/presentation/widgets/owner_widgets.dart'
-    hide UserAvatar;
+import 'package:merokotha/features/owner/presentation/widgets/owner_widgets.dart';
 
 class OwnerHomeScreen extends ConsumerWidget {
   const OwnerHomeScreen({super.key});
@@ -101,14 +98,14 @@ class OwnerHomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               userAsync.when(
-                data: (u) => _Greeting(name: u?.name ?? 'Owner'),
+                data: (u) => OwnerGreeting(name: u?.name ?? 'Owner'),
                 loading: () => const SizedBox(height: 48),
                 error: (_, _) => const SizedBox.shrink(),
               ),
               const SizedBox(height: 20),
 
               listingsAsync.when(
-                data: (l) => _StatsRow(listings: l),
+                data: (l) => OwnerStatsRow(listings: l),
                 loading: () => const SizedBox(
                   height: 90,
                   child: Center(child: CircularProgressIndicator()),
@@ -117,20 +114,20 @@ class OwnerHomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
 
-              const _SectionHeader(title: 'Quick actions'),
+              const OwnerSectionHeader(title: 'Quick actions'),
               const SizedBox(height: 12),
-              _QuickActions(),
+              const OwnerQuickActions(),
               const SizedBox(height: 24),
 
-              _SectionHeader(
+              OwnerSectionHeader(
                 title: 'Pending inquiries',
                 onSeeAll: () => context.push(AppRoutes.ownerInquiries),
               ),
               const SizedBox(height: 12),
-              const _RecentInquiries(),
+              const OwnerRecentInquiries(),
               const SizedBox(height: 24),
 
-              _SectionHeader(
+              OwnerSectionHeader(
                 title: 'My listings',
                 onSeeAll: () => context.push(AppRoutes.myListings),
               ),
@@ -218,281 +215,6 @@ class OwnerHomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _Greeting extends StatelessWidget {
-  final String name;
-  const _Greeting({required this.name});
-
-  String get _greeting {
-    final h = DateTime.now().hour;
-    if (h < 12) return 'Good morning';
-    if (h < 17) return 'Good afternoon';
-    return 'Good evening';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '$_greeting,',
-          style: const TextStyle(fontSize: 14, color: AppColors.grey400),
-        ),
-        Text(
-          name.split(' ').first,
-          style: const TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.w700,
-            color: AppColors.grey900,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatsRow extends StatelessWidget {
-  final List<ListingModel> listings;
-  const _StatsRow({required this.listings});
-
-  @override
-  Widget build(BuildContext context) {
-    final active = listings
-        .where((l) => l.status == ListingStatus.active)
-        .length;
-    final paused = listings
-        .where((l) => l.status == ListingStatus.paused)
-        .length;
-    final rented = listings
-        .where((l) => l.status == ListingStatus.rented)
-        .length;
-    return Row(
-      children: [
-        Expanded(
-          child: StatsCard(
-            label: 'Active',
-            value: '$active',
-            icon: Icons.check_circle_outline_rounded,
-            color: AppColors.success,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: StatsCard(
-            label: 'Paused',
-            value: '$paused',
-            icon: Icons.pause_circle_outline_rounded,
-            color: AppColors.warning,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: StatsCard(
-            label: 'Rented',
-            value: '$rented',
-            icon: Icons.home_rounded,
-            color: AppColors.primary,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _QuickActions extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _QA(
-          label: 'Add room',
-          icon: Icons.add_home_outlined,
-          color: AppColors.primary,
-          onTap: () => context.push(AppRoutes.uploadListing),
-        ),
-        const SizedBox(width: 10),
-        _QA(
-          label: 'Listings',
-          icon: Icons.list_alt_rounded,
-          color: AppColors.info,
-          onTap: () => context.push(AppRoutes.myListings),
-        ),
-        const SizedBox(width: 10),
-        _QA(
-          label: 'Inquiries',
-          icon: Icons.inbox_rounded,
-          color: AppColors.warning,
-          onTap: () => context.push(AppRoutes.ownerInquiries),
-        ),
-        const SizedBox(width: 10),
-        _QA(
-          label: 'Map',
-          icon: Icons.map_outlined,
-          color: AppColors.success,
-          onTap: () => context.push(AppRoutes.ownerMap),
-        ),
-      ],
-    );
-  }
-}
-
-class _QA extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-  const _QA({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-            border: Border.all(color: AppColors.grey50),
-          ),
-          child: Column(
-            children: [
-              Icon(icon, size: 22, color: color),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Fetches user internally so ownerName/ownerPhotoUrl are available for InquiryCard callbacks
-class _RecentInquiries extends ConsumerWidget {
-  const _RecentInquiries();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ref
-        .watch(currentUserProvider)
-        .when(
-          data: (user) {
-            if (user == null) return const SizedBox.shrink();
-            return StreamBuilder<List<InquiryModel>>(
-              stream: ref
-                  .watch(inquiryRepositoryProvider)
-                  .watchByStatus(user.id, InquiryStatus.pending),
-              builder: (_, snap) {
-                final inquiries = snap.data ?? [];
-                if (inquiries.isEmpty) {
-                  return Container(
-                    padding: const EdgeInsets.all(AppSizes.md),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-                      border: Border.all(color: AppColors.grey50),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(
-                          Icons.check_circle_outline_rounded,
-                          color: AppColors.success,
-                          size: 20,
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          'No pending inquiries',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.grey600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                return Column(
-                  children: inquiries
-                      .take(2)
-                      .map(
-                        (inq) => Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: InquiryCard(
-                            inquiry: inq,
-                            onAccept: () => ref
-                                .read(inquiryRepositoryProvider)
-                                .acceptInquiry(
-                                  inquiryId: inq.id,
-                                  inquiry: inq,
-                                  ownerName: user.name,
-                                  ownerPhotoUrl: user.photoUrl,
-                                ),
-                            onDecline: () => ref
-                                .read(inquiryRepositoryProvider)
-                                .declineInquiry(inq.id),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                );
-              },
-            );
-          },
-          loading: () => const MkLoading(fullScreen: false),
-          error: (_, _) => const SizedBox.shrink(),
-        );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  final VoidCallback? onSeeAll;
-  const _SectionHeader({required this.title, this.onSeeAll});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: AppColors.grey900,
-          ),
-        ),
-        if (onSeeAll != null)
-          GestureDetector(
-            onTap: onSeeAll,
-            child: const Text(
-              'See all',
-              style: TextStyle(
-                fontSize: 13,
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-      ],
     );
   }
 }

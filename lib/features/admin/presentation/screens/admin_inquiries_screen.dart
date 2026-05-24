@@ -230,7 +230,7 @@ class _AdminInquiryCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 fontSize: 12,
-                color: AppColors.grey700,
+                color: AppColors.grey600,
                 height: 1.4,
               ),
             ),

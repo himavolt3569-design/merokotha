@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/features/chat/providers/chat_providers.dart';
 
-// Index map:
-// 0 = Home, 1 = Listings, 2 = Add, 3 = Messages, 4 = Profile
-
-class OwnerBottomNav extends ConsumerWidget {
+class CustomerBottomNav extends ConsumerWidget {
   final int currentIndex;
-  const OwnerBottomNav({super.key, required this.currentIndex});
+  const CustomerBottomNav({super.key, required this.currentIndex});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,14 +16,14 @@ class OwnerBottomNav extends ConsumerWidget {
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.grey50, width: 1)),
+        border: Border(top: BorderSide(color: AppColors.grey50)),
       ),
       child: BottomNavigationBar(
         currentIndex: currentIndex,
         backgroundColor: Colors.transparent,
         elevation: 0,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.ownerPrimary,
+        selectedItemColor: AppColors.customerPrimary,
         unselectedItemColor: AppColors.grey400,
         selectedLabelStyle: const TextStyle(
           fontSize: 11,
@@ -37,46 +33,42 @@ class OwnerBottomNav extends ConsumerWidget {
         onTap: (i) {
           switch (i) {
             case 0:
-              context.push(AppRoutes.ownerHome);
+              context.push(AppRoutes.customerHome);
               break;
             case 1:
-              context.push(AppRoutes.myListings);
+              context.push(AppRoutes.search);
               break;
             case 2:
-              context.push(AppRoutes.uploadListing);
-              break;
-            case 3:
               context.push(AppRoutes.chatList);
               break;
+            case 3:
+              context.push(AppRoutes.favourites);
+              break;
             case 4:
-              context.push(AppRoutes.ownerProfile);
+              context.push(AppRoutes.customerProfile);
               break;
           }
         },
         items: [
           const BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard_rounded),
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home_rounded),
             label: 'Home',
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt_outlined),
-            activeIcon: Icon(Icons.list_alt_rounded),
-            label: 'Listings',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline_rounded),
-            activeIcon: Icon(Icons.add_circle_rounded),
-            label: 'Add',
+            icon: Icon(Icons.search_outlined),
+            activeIcon: Icon(Icons.search_rounded),
+            label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: _ChatIcon(unread: unread, isSelected: currentIndex == 3),
-            activeIcon: _ChatIcon(
-              unread: unread,
-              isSelected: true,
-              filled: true,
-            ),
+            icon: _ChatBadge(unread: unread, filled: false),
+            activeIcon: _ChatBadge(unread: unread, filled: true),
             label: 'Messages',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.favorite_outline_rounded),
+            activeIcon: Icon(Icons.favorite_rounded),
+            label: 'Saved',
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline_rounded),
@@ -89,16 +81,10 @@ class OwnerBottomNav extends ConsumerWidget {
   }
 }
 
-class _ChatIcon extends StatelessWidget {
+class _ChatBadge extends StatelessWidget {
   final int unread;
-  final bool isSelected;
   final bool filled;
-
-  const _ChatIcon({
-    required this.unread,
-    required this.isSelected,
-    this.filled = false,
-  });
+  const _ChatBadge({required this.unread, required this.filled});
 
   @override
   Widget build(BuildContext context) {

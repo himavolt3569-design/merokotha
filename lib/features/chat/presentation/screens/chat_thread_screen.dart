@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,13 +7,14 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'package:merokotha/core/constants/app_colors.dart';
-import 'package:merokotha/core/constants/app_sizes.dart';
-import 'package:merokotha/core/utils/formatters.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
 import 'package:merokotha/features/auth/providers/auth_provider.dart';
-import 'package:merokotha/features/chat/data/chat_model.dart';
 import 'package:merokotha/features/chat/data/chat_repository.dart';
 import 'package:merokotha/features/chat/providers/chat_providers.dart';
+import 'package:merokotha/features/chat/presentation/widgets/chat_app_bar.dart';
+import 'package:merokotha/features/chat/presentation/widgets/chat_message_bubble.dart';
+import 'package:merokotha/features/chat/presentation/widgets/chat_date_divider.dart';
+import 'package:merokotha/features/chat/presentation/widgets/chat_input_bar.dart';
 
 class ChatThreadScreen extends ConsumerStatefulWidget {
   final String chatId;
@@ -30,7 +32,6 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
   @override
   void initState() {
     super.initState();
-    // Mark as read when screen opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _markRead();
     });
@@ -93,18 +94,33 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     final user = ref.read(currentUserProvider).asData?.value;
     if (user == null) return;
 
-    // Show sending indicator
-    await ref
-        .read(sendMessageProvider.notifier)
-        .send(
-          chatId: widget.chatId,
-          senderId: user.id,
-          text: '',
-          imageUrl:
-              picked.path, // local path — will be real URL after Storage wired
-          senderIsOwner: user.isOwner,
-        );
-    _scrollToBottom();
+    try {
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('chats/${widget.chatId}/$fileName');
+      final task = await storageRef.putFile(
+        File(picked.path),
+        SettableMetadata(contentType: 'image/jpeg'),
+      );
+      final imageUrl = await task.ref.getDownloadURL();
+
+      if (!mounted) return;
+
+      await ref.read(sendMessageProvider.notifier).send(
+        chatId: widget.chatId,
+        senderId: user.id,
+        text: '',
+        imageUrl: imageUrl,
+        senderIsOwner: user.isOwner,
+      );
+      _scrollToBottom();
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to send image. Try again.')),
+      );
+    }
   }
 
   @override
@@ -113,7 +129,6 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     final messagesAsync = ref.watch(chatMessagesProvider(widget.chatId));
     final user = ref.watch(currentUserProvider).asData?.value;
 
-    // Scroll to bottom when new messages arrive
     ref.listen(chatMessagesProvider(widget.chatId), (_, _) {
       _scrollToBottom();
     });
@@ -121,7 +136,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       appBar: chatAsync.when(
-        data: (chat) => _ChatAppBar(chat: chat, myUid: user?.id ?? ''),
+        data: (chat) => ChatAppBar(chat: chat, myUid: user?.id ?? ''),
         loading: () => AppBar(
           backgroundColor: Colors.white,
           leading: BackButton(onPressed: () => context.pop()),
@@ -186,8 +201,8 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
 
                     return Column(
                       children: [
-                        if (showDate) _DateDivider(msg.createdAt),
-                        _MessageBubble(message: msg, isMe: isMe),
+                        if (showDate) ChatDateDivider(msg.createdAt),
+                        ChatMessageBubble(message: msg, isMe: isMe),
                       ],
                     );
                   },
@@ -196,7 +211,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
             ),
           ),
 
-          _InputBar(
+          ChatInputBar(
             controller: _textCtrl,
             onSend: _sendText,
             onImage: _sendImage,
@@ -208,322 +223,4 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
 
   bool _sameDay(DateTime a, DateTime b) =>
       a.day == b.day && a.month == b.month && a.year == b.year;
-}
-
-class _ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final ChatModel? chat;
-  final String myUid;
-
-  const _ChatAppBar({required this.chat, required this.myUid});
-
-  @override
-  Size get preferredSize => const Size.fromHeight(64);
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios_new_rounded,
-          size: 20,
-          color: AppColors.grey800,
-        ),
-        onPressed: () => context.pop(),
-      ),
-      title: chat == null
-          ? const SizedBox.shrink()
-          : Row(
-              children: [
-                UserAvatar(
-                  name: chat!.otherName(myUid),
-                  photoUrl: chat!.otherPhoto(myUid),
-                  size: 38,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        chat!.otherName(myUid),
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.grey900,
-                        ),
-                      ),
-                      Text(
-                        chat!.listingTitle,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppColors.grey400,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1),
-        child: Container(height: 1, color: AppColors.grey50),
-      ),
-    );
-  }
-}
-
-class _MessageBubble extends StatelessWidget {
-  final MessageModel message;
-  final bool isMe;
-
-  const _MessageBubble({required this.message, required this.isMe});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        mainAxisAlignment: isMe
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (!isMe) const SizedBox(width: 4),
-
-          // Bubble
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.70,
-            ),
-            child: Container(
-              padding: message.hasImage
-                  ? EdgeInsets.zero
-                  : const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: isMe ? AppColors.primary : Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(18),
-                  topRight: const Radius.circular(18),
-                  bottomLeft: Radius.circular(isMe ? 18 : 4),
-                  bottomRight: Radius.circular(isMe ? 4 : 18),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 1),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // Image
-                  if (message.hasImage)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: message.imageUrl!.startsWith('/')
-                          ? Image.file(
-                              File(message.imageUrl!),
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.network(
-                              message.imageUrl!,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              loadingBuilder: (_, child, prog) => prog == null
-                                  ? child
-                                  : Container(
-                                      height: 160,
-                                      color: AppColors.grey50,
-                                      child: const Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                            ),
-                    ),
-
-                  // Text
-                  if (message.text.isNotEmpty)
-                    Padding(
-                      padding: message.hasImage
-                          ? const EdgeInsets.fromLTRB(10, 6, 10, 8)
-                          : EdgeInsets.zero,
-                      child: Text(
-                        message.text,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isMe ? Colors.white : AppColors.grey900,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-
-                  // Time + read indicator
-                  Padding(
-                    padding: message.hasImage
-                        ? const EdgeInsets.fromLTRB(10, 0, 10, 6)
-                        : const EdgeInsets.only(top: 4),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          Formatters.time(message.createdAt),
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: isMe
-                                ? Colors.white.withValues(alpha: 0.7)
-                                : AppColors.grey400,
-                          ),
-                        ),
-                        if (isMe) ...[
-                          const SizedBox(width: 4),
-                          Icon(
-                            message.isRead
-                                ? Icons.done_all_rounded
-                                : Icons.done_rounded,
-                            size: 13,
-                            color: message.isRead
-                                ? Colors.white
-                                : Colors.white.withValues(alpha: 0.6),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          if (isMe) const SizedBox(width: 4),
-        ],
-      ),
-    );
-  }
-}
-
-class _DateDivider extends StatelessWidget {
-  final DateTime date;
-  const _DateDivider(this.date);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Row(
-        children: [
-          const Expanded(child: Divider(color: AppColors.grey100, height: 1)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(
-              Formatters.date(date),
-              style: const TextStyle(fontSize: 11, color: AppColors.grey400),
-            ),
-          ),
-          const Expanded(child: Divider(color: AppColors.grey100, height: 1)),
-        ],
-      ),
-    );
-  }
-}
-
-class _InputBar extends StatelessWidget {
-  final TextEditingController controller;
-  final VoidCallback onSend;
-  final VoidCallback onImage;
-
-  const _InputBar({
-    required this.controller,
-    required this.onSend,
-    required this.onImage,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        12,
-        8,
-        12,
-        MediaQuery.of(context).padding.bottom + 8,
-      ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.grey50)),
-      ),
-      child: Row(
-        children: [
-          // Image button
-          GestureDetector(
-            onTap: onImage,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.grey50,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-              ),
-              child: const Icon(
-                Icons.image_outlined,
-                size: 20,
-                color: AppColors.grey600,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-
-          // Text input
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: AppColors.grey50,
-                borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-              ),
-              child: TextField(
-                controller: controller,
-                maxLines: 4,
-                minLines: 1,
-                textCapitalization: TextCapitalization.sentences,
-                style: const TextStyle(fontSize: 14),
-                decoration: const InputDecoration(
-                  hintText: 'Type a message...',
-                  hintStyle: TextStyle(fontSize: 14, color: AppColors.grey400),
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                onSubmitted: (_) => onSend(),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-
-          // Send button
-          GestureDetector(
-            onTap: onSend,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-              ),
-              child: const Icon(
-                Icons.send_rounded,
-                size: 18,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
