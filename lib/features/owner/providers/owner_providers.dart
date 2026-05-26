@@ -138,9 +138,9 @@ class UploadListingNotifier extends _$UploadListingNotifier {
         'facilities': facilities,
         'description': description,
         'availableFrom': Timestamp.fromDate(availableFrom),
-        if (geoPoint != null) 'geoPoint': geoPoint,
-        if (address != null) 'address': address,
-        if (nearbyLandmarks != null) 'nearbyLandmarks': nearbyLandmarks,
+        'geoPoint': ?geoPoint,
+        'address': ?address,
+        'nearbyLandmarks': ?nearbyLandmarks,
       });
       state = state.copyWith(isLoading: false, success: true);
     } catch (_) {
