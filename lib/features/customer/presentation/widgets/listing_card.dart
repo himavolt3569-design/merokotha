@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
@@ -5,6 +6,7 @@ import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/shared/widgets/price_badge.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class ListingCard extends StatelessWidget {
   final ListingModel listing;
@@ -31,13 +33,7 @@ class ListingCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.07),
-              blurRadius: 14,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          boxShadow: AppSizes.shadowCard,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,12 +45,19 @@ class ListingCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                     child: listing.photoUrls.isNotEmpty
-                        ? Image.network(
-                            listing.photoUrls.first,
+                        ? CachedNetworkImage(
+                            imageUrl: listing.photoUrls.first,
                             height: 160,
                             width: double.infinity,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => _photoPlaceholder,
+                            placeholder: (_, _) => ShimmerLoading(
+                              child: ShimmerBox(
+                                height: 160,
+                                width: double.infinity,
+                                borderRadius: BorderRadius.zero,
+                              ),
+                            ),
+                            errorWidget: (_, _, _) => _photoPlaceholder,
                           )
                         : _photoPlaceholder,
                   ),

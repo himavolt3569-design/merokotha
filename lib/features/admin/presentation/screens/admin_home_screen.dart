@@ -12,6 +12,7 @@ import 'package:merokotha/features/auth/providers/auth_provider.dart';
 
 import 'package:merokotha/features/admin/providers/admin_providers.dart';
 import 'package:merokotha/features/admin/presentation/widgets/admin_widgets.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class AdminHomeScreen extends ConsumerWidget {
   const AdminHomeScreen({super.key});
@@ -55,23 +56,24 @@ class AdminHomeScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: AdminColors.primary,
                   borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                  boxShadow: AppSizes.shadowRaised,
                 ),
                 child: Row(
                   children: [
                     Container(
-                      width: 44,
-                      height: 44,
+                      width: 48,
+                      height: 48,
                       decoration: BoxDecoration(
                         color: AdminColors.accent,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       ),
                       child: const Icon(
                         Icons.shield_rounded,
-                        color: Colors.white,
+                        color: AdminColors.primary,
                         size: 24,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 14),
                     ref
                         .watch(currentUserProvider)
                         .when(
@@ -81,15 +83,17 @@ class AdminHomeScreen extends ConsumerWidget {
                               Text(
                                 'Welcome, ${u?.name ?? 'Admin'}',
                                 style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.2,
                                   color: Colors.white,
                                 ),
                               ),
+                              const SizedBox(height: 2),
                               const Text(
                                 'Super Administrator',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 12.5,
                                   color: AppColors.grey400,
                                 ),
                               ),
@@ -108,7 +112,7 @@ class AdminHomeScreen extends ConsumerWidget {
               const SizedBox(height: 12),
 
               statsAsync.when(
-                loading: () => const MkLoading(fullScreen: false),
+                loading: () => const _StatsGridSkeleton(),
                 error: (e, _) => MkErrorWidget(message: e.toString()),
                 data: (stats) => Column(
                   children: [
@@ -119,7 +123,7 @@ class AdminHomeScreen extends ConsumerWidget {
                             label: 'Total users',
                             value: '${stats.totalUsers}',
                             icon: Icons.people_rounded,
-                            color: AppColors.customerPrimary,
+                            color: AppColors.primary,
                             onTap: () => context.go(AppRoutes.adminUsers),
                           ),
                         ),
@@ -129,7 +133,7 @@ class AdminHomeScreen extends ConsumerWidget {
                             label: 'House owners',
                             value: '${stats.totalOwners}',
                             icon: Icons.house_rounded,
-                            color: AppColors.ownerPrimary,
+                            color: AppColors.info,
                             onTap: () => context.go(AppRoutes.adminUsers),
                           ),
                         ),
@@ -143,7 +147,7 @@ class AdminHomeScreen extends ConsumerWidget {
                             label: 'Active listings',
                             value: '${stats.activeListings}',
                             icon: Icons.home_work_rounded,
-                            color: AppColors.success,
+                            color: AppColors.secondary,
                             onTap: () => context.go(AppRoutes.adminListings),
                           ),
                         ),
@@ -153,7 +157,7 @@ class AdminHomeScreen extends ConsumerWidget {
                             label: 'Total listings',
                             value: '${stats.totalListings}',
                             icon: Icons.list_alt_rounded,
-                            color: AppColors.info,
+                            color: AppColors.grey800,
                             onTap: () => context.go(AppRoutes.adminListings),
                           ),
                         ),
@@ -201,13 +205,13 @@ class AdminHomeScreen extends ConsumerWidget {
                   _QuickAction(
                     label: 'All users',
                     icon: Icons.people_rounded,
-                    color: AppColors.customerPrimary,
+                    color: AppColors.primary,
                     onTap: () => context.push(AppRoutes.adminUsers),
                   ),
                   _QuickAction(
                     label: 'Listings',
                     icon: Icons.home_work_rounded,
-                    color: AppColors.ownerPrimary,
+                    color: AppColors.info,
                     onTap: () => context.push(AppRoutes.adminListings),
                   ),
                   _QuickAction(
@@ -233,7 +237,7 @@ class AdminHomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               recentUsersAsync.when(
-                loading: () => const MkLoading(fullScreen: false),
+                loading: () => const _ListRowsSkeleton(),
                 error: (_, _) => const SizedBox.shrink(),
                 data: (users) => Column(
                   children: users
@@ -263,7 +267,7 @@ class AdminHomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               recentListingsAsync.when(
-                loading: () => const MkLoading(fullScreen: false),
+                loading: () => const _ListRowsSkeleton(),
                 error: (_, _) => const SizedBox.shrink(),
                 data: (listings) => Column(
                   children: listings
@@ -346,7 +350,8 @@ class _SectionHeader extends StatelessWidget {
         title,
         style: const TextStyle(
           fontSize: 16,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.2,
           color: AppColors.grey900,
         ),
       ),
@@ -357,13 +362,60 @@ class _SectionHeader extends StatelessWidget {
             'See all',
             style: TextStyle(
               fontSize: 13,
-              color: AppColors.error,
-              fontWeight: FontWeight.w600,
+              color: AppColors.primary,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
     ],
   );
+}
+
+class _StatsGridSkeleton extends StatelessWidget {
+  const _StatsGridSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    Widget tile() => Expanded(
+      child: ShimmerBox(
+        height: 116,
+        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+      ),
+    );
+    return ShimmerLoading(
+      child: Column(
+        children: [
+          for (var i = 0; i < 3; i++) ...[
+            Row(children: [tile(), const SizedBox(width: 10), tile()]),
+            if (i < 2) const SizedBox(height: 10),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ListRowsSkeleton extends StatelessWidget {
+  const _ListRowsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerLoading(
+      child: Column(
+        children: [
+          for (var i = 0; i < 2; i++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: ShimmerBox(
+                height: 74,
+                width: double.infinity,
+                borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
 class _QuickAction extends StatelessWidget {
@@ -380,42 +432,48 @@ class _QuickAction extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 8,
-      ), // reduced from 16/12
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-        border: Border.all(color: AppColors.grey50),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 36, // reduced from 44
-            height: 36, // reduced from 44
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-            ),
-            child: Icon(icon, size: 18, color: color), // reduced from 22
+  Widget build(BuildContext context) => Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+      border: Border.all(color: AppColors.border),
+      boxShadow: AppSizes.shadowCard,
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                ),
+                child: Icon(icon, size: 17, color: color),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.grey800,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 11,
-              color: AppColors.grey600,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
+        ),
       ),
     ),
   );

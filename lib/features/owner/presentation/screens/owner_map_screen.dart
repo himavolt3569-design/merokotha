@@ -13,6 +13,7 @@ import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/shared/widgets/mk_button.dart';
 import 'package:merokotha/features/owner/providers/owner_providers.dart';
 
 class OwnerMapScreen extends ConsumerStatefulWidget {
@@ -169,12 +170,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 8,
-                        ),
-                      ],
+                      boxShadow: AppSizes.shadowCard,
                     ),
                     child: const Row(
                       children: [
@@ -222,11 +218,8 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.ownerPrimary,
                       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.ownerPrimary.withValues(alpha: 0.3),
-                          blurRadius: 8,
-                        ),
+                      boxShadow: const [
+                        BoxShadow(color: Color(0x331D9E75), blurRadius: 12, offset: Offset(0, 4)),
                       ],
                     ),
                     child: Text(
@@ -258,31 +251,34 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                 left: 20,
                 right: 20,
                 child: Container(
-                  padding: const EdgeInsets.all(AppSizes.md),
+                  padding: const EdgeInsets.all(AppSizes.lg),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        blurRadius: 8,
-                      ),
-                    ],
+                    boxShadow: AppSizes.shadowRaised,
                   ),
                   child: Column(
                     children: [
-                      const Icon(
-                        Icons.add_location_alt_outlined,
-                        size: 32,
-                        color: AppColors.grey400,
+                      Container(
+                        width: 56,
+                        height: 56,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primaryLight,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.add_location_alt_rounded,
+                          size: 26,
+                          color: AppColors.primary,
+                        ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                       const Text(
                         'No listing locations yet',
                         style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.grey800,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.grey900,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -290,28 +286,16 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                         'Add a listing with a map pin and it will appear here.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 12.5,
                           color: AppColors.grey400,
+                          height: 1.4,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 42,
-                        child: ElevatedButton(
-                          onPressed: () => context.go(AppRoutes.uploadListing),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.ownerPrimary,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                AppSizes.radiusMd,
-                              ),
-                            ),
-                          ),
-                          child: const Text('Add listing'),
-                        ),
+                      const SizedBox(height: 16),
+                      MkButton(
+                        label: 'Add listing',
+                        onPressed: () => context.go(AppRoutes.uploadListing),
+                        height: 44,
                       ),
                     ],
                   ),
@@ -333,13 +317,7 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.12),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+                  boxShadow: AppSizes.shadowRaised,
                 ),
                 child: Row(
                   children: [
@@ -355,10 +333,10 @@ class _OwnerMapScreenState extends ConsumerState<OwnerMapScreen> {
                           : Container(
                               width: 64,
                               height: 64,
-                              color: AppColors.grey50,
+                              color: AppColors.backgroundSecondary,
                               child: const Icon(
                                 Icons.image_outlined,
-                                color: AppColors.grey100,
+                                color: AppColors.grey200,
                               ),
                             ),
                     ),

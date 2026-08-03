@@ -14,6 +14,8 @@ import 'package:merokotha/shared/widgets/mk_app_bar.dart';
 import 'package:merokotha/shared/widgets/mk_button.dart';
 import 'package:merokotha/shared/widgets/mk_text_field.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class InquireScreen extends ConsumerStatefulWidget {
   final ListingModel listing;
@@ -157,11 +159,14 @@ class _FormView extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                     child: listing.photoUrls.isNotEmpty
-                        ? Image.network(
-                            listing.photoUrls.first,
+                        ? CachedNetworkImage(
+                            imageUrl: listing.photoUrls.first,
                             width: 60,
                             height: 60,
                             fit: BoxFit.cover,
+                            placeholder: (_, _) => ShimmerLoading(
+                              child: ShimmerBox(width: 60, height: 60, borderRadius: BorderRadius.zero),
+                            ),
                           )
                         : Container(
                             width: 60,

@@ -32,22 +32,26 @@ class ListingPhotoPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _pick(context),
-      child: Container(
-        width: double.infinity,
-        height: 140,
-        padding: const EdgeInsets.all(AppSizes.md),
-        decoration: BoxDecoration(
-          color: AppColors.grey50,
-          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-          border: Border.all(color: AppColors.grey100),
+    return Material(
+      color: AppColors.backgroundSecondary,
+      borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+      child: InkWell(
+        onTap: () => _pick(context),
+        borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+        child: Container(
+          width: double.infinity,
+          height: 140,
+          padding: const EdgeInsets.all(AppSizes.md),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: images.isNotEmpty
+              ? _NewImagesView(images: images)
+              : existingPhotoUrl != null && existingPhotoCount > 0
+              ? _ExistingPreview(url: existingPhotoUrl!, count: existingPhotoCount)
+              : const _EmptyPlaceholder(),
         ),
-        child: images.isNotEmpty
-            ? _NewImagesView(images: images)
-            : existingPhotoUrl != null && existingPhotoCount > 0
-            ? _ExistingPreview(url: existingPhotoUrl!, count: existingPhotoCount)
-            : const _EmptyPlaceholder(),
       ),
     );
   }
@@ -58,27 +62,35 @@ class _EmptyPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          Icons.add_photo_alternate_outlined,
-          size: 36,
-          color: AppColors.grey400,
+        Container(
+          width: 52,
+          height: 52,
+          decoration: const BoxDecoration(
+            color: AppColors.primaryLight,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.add_photo_alternate_rounded,
+            size: 24,
+            color: AppColors.primary,
+          ),
         ),
-        SizedBox(height: 8),
-        Text(
+        const SizedBox(height: 10),
+        const Text(
           'Add photos',
           style: TextStyle(
             fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.grey600,
+            fontWeight: FontWeight.w600,
+            color: AppColors.grey800,
           ),
         ),
-        SizedBox(height: 4),
-        Text(
+        const SizedBox(height: 4),
+        const Text(
           'Tap to select images',
-          style: TextStyle(fontSize: 11, color: AppColors.grey400),
+          style: TextStyle(fontSize: 11.5, color: AppColors.grey400),
         ),
       ],
     );

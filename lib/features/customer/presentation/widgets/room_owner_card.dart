@@ -12,7 +12,8 @@ class RoomOwnerCard extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(AppSizes.md),
     decoration: BoxDecoration(
-      color: AppColors.grey50,
+      color: Colors.white,
+      border: Border.all(color: AppColors.border),
       borderRadius: BorderRadius.circular(AppSizes.radiusLg),
     ),
     child: Row(

@@ -23,25 +23,31 @@ class SegmentSelector<T> extends StatelessWidget {
         final isSelected = selected == v;
         final isLast = v == values.last;
         return Expanded(
-          child: GestureDetector(
-            onTap: () => onChanged(v),
-            child: Container(
-              margin: EdgeInsets.only(right: isLast ? 0 : 8),
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primaryLight : Colors.white,
+          child: Padding(
+            padding: EdgeInsets.only(right: isLast ? 0 : 8),
+            child: Material(
+              color: isSelected ? AppColors.primaryLight : Colors.white,
+              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+              child: InkWell(
+                onTap: () => onChanged(v),
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.grey100,
-                ),
-              ),
-              child: Text(
-                label(v),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: isSelected ? AppColors.primary : AppColors.grey600,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 11),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                    border: Border.all(
+                      color: isSelected ? AppColors.primary : AppColors.border,
+                    ),
+                  ),
+                  child: Text(
+                    label(v),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      color: isSelected ? AppColors.primary : AppColors.grey600,
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -10,6 +10,7 @@ import 'package:merokotha/core/utils/validators.dart';
 import 'package:merokotha/features/auth/data/user_repository.dart';
 import 'package:merokotha/features/auth/presentation/widgets/otp_input_field.dart';
 import 'package:merokotha/features/auth/providers/auth_provider.dart';
+import 'package:merokotha/shared/widgets/mk_button.dart';
 
 class OtpLoginScreen extends ConsumerStatefulWidget {
   const OtpLoginScreen({super.key});
@@ -121,26 +122,27 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
               Row(
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 42,
+                    height: 42,
                     decoration: BoxDecoration(
                       color: AppColors.primaryLight,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       child: Image.asset(
                         'assets/merokotha.png',
                         fit: BoxFit.fill,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   const Text(
                     AppStrings.appName,
                     style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 21,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.2,
                       color: AppColors.grey900,
                     ),
                   ),
@@ -194,7 +196,7 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.grey50,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(AppSizes.radiusSm),
                 ),
                 child: const Text(
                   '🇳🇵 +977',
@@ -207,22 +209,10 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
 
           const SizedBox(height: AppSizes.lg),
 
-          SizedBox(
-            width: double.infinity,
-            height: AppSizes.buttonHeight,
-            child: ElevatedButton(
-              onPressed: otpState.isSending ? null : _sendOtp,
-              child: otpState.isSending
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Text(AppStrings.sendOtp),
-            ),
+          MkButton(
+            label: AppStrings.sendOtp,
+            onPressed: _sendOtp,
+            isLoading: otpState.isSending,
           ),
         ],
       ),
@@ -241,22 +231,10 @@ class _OtpLoginScreenState extends ConsumerState<OtpLoginScreen> {
 
         const SizedBox(height: AppSizes.lg),
 
-        SizedBox(
-          width: double.infinity,
-          height: AppSizes.buttonHeight,
-          child: ElevatedButton(
-            onPressed: otpState.isVerifying ? null : _verifyOtp,
-            child: otpState.isVerifying
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Text(AppStrings.verifyOtp),
-          ),
+        MkButton(
+          label: AppStrings.verifyOtp,
+          onPressed: _verifyOtp,
+          isLoading: otpState.isVerifying,
         ),
 
         const SizedBox(height: AppSizes.md),
@@ -320,8 +298,9 @@ class _PhoneHeading extends StatelessWidget {
         Text(
           'Welcome!',
           style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
+            fontSize: 26,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.4,
             color: AppColors.grey900,
           ),
         ),
@@ -347,8 +326,9 @@ class _OtpHeading extends StatelessWidget {
         const Text(
           'Enter OTP',
           style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
+            fontSize: 26,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.4,
             color: AppColors.grey900,
           ),
         ),

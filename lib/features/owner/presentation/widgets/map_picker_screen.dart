@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/shared/widgets/mk_app_bar.dart';
 
 class MapPickerScreen extends StatefulWidget {
   final LatLng initialLocation;
@@ -32,18 +33,9 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: AppColors.grey900,
-        elevation: 0,
-        title: const Text(
-          'Pin your room location',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: AppColors.grey900,
-          ),
-        ),
+      appBar: MkAppBar(
+        title: 'Pin your room location',
+        onBack: () => Navigator.pop(context),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, _currentPin),
@@ -57,10 +49,6 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
             ),
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: AppColors.grey50),
-        ),
       ),
       body: Stack(
         children: [
@@ -95,16 +83,11 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
             left: 12,
             right: 12,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 6,
-                  ),
-                ],
+                boxShadow: AppSizes.shadowCard,
               ),
               child: Row(
                 children: [
@@ -131,16 +114,11 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
             left: 16,
             right: 16,
             child: Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(AppSizes.md),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 8,
-                  ),
-                ],
+                boxShadow: AppSizes.shadowRaised,
               ),
               child: const Row(
                 children: [

@@ -108,7 +108,8 @@ class ProfileSectionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey50),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppSizes.shadowCard,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,13 +124,14 @@ class ProfileSectionCard extends StatelessWidget {
             child: Text(
               title,
               style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.2,
                 color: AppColors.grey600,
               ),
             ),
           ),
-          const Divider(height: 1, color: AppColors.grey50),
+          const Divider(height: 1, color: AppColors.border),
           Padding(
             padding: const EdgeInsets.all(AppSizes.md),
             child: Column(children: children),

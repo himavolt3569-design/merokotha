@@ -9,6 +9,7 @@ import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/shared/models/inquiry_model.dart';
 import 'package:merokotha/shared/widgets/mk_app_bar.dart';
+import 'package:merokotha/shared/widgets/mk_text_field.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
 import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/features/owner/data/inquiry_repository.dart';
@@ -46,21 +47,40 @@ class _OwnerInquiriesScreenState extends ConsumerState<OwnerInquiriesScreen>
         children: [
           Container(
             color: Colors.white,
-            child: TabBar(
-              controller: _tabController,
-              labelColor: AppColors.primary,
-              unselectedLabelColor: AppColors.grey400,
-              indicatorColor: AppColors.primary,
-              indicatorWeight: 2,
-              labelStyle: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+            padding: const EdgeInsets.fromLTRB(AppSizes.md, 4, AppSizes.md, 12),
+            child: Container(
+              height: 42,
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: AppColors.backgroundSecondary,
+                borderRadius: BorderRadius.circular(AppSizes.radiusFull),
               ),
-              tabs: const [
-                Tab(text: 'Pending'),
-                Tab(text: 'Accepted'),
-                Tab(text: 'Declined'),
-              ],
+              child: TabBar(
+                controller: _tabController,
+                splashBorderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                indicator: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                  boxShadow: AppSizes.shadowCard,
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                labelColor: AppColors.primary,
+                unselectedLabelColor: AppColors.grey600,
+                labelStyle: const TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w500,
+                ),
+                tabs: const [
+                  Tab(text: 'Pending'),
+                  Tab(text: 'Accepted'),
+                  Tab(text: 'Declined'),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -232,21 +252,26 @@ class _InquiryTab extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Decline inquiry'),
+        titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 4),
+        contentPadding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+        title: const Text(
+          'Decline inquiry',
+          style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.grey900),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'Optionally add a reason for the renter:',
-              style: TextStyle(fontSize: 13, color: AppColors.grey600),
+              style: TextStyle(fontSize: 13, color: AppColors.grey600, height: 1.4),
             ),
-            const SizedBox(height: 12),
-            TextField(
+            const SizedBox(height: 14),
+            MkTextField(
+              label: 'Reason (optional)',
+              hint: 'e.g. Room is no longer available',
               controller: reasonCtrl,
               maxLines: 3,
-              decoration: const InputDecoration(
-                hintText: 'e.g. Room is no longer available',
-              ),
             ),
           ],
         ),
@@ -256,7 +281,7 @@ class _InquiryTab extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.grey600)),
           ),
           TextButton(
             onPressed: () {
@@ -272,7 +297,7 @@ class _InquiryTab extends ConsumerWidget {
             },
             child: const Text(
               'Decline',
-              style: TextStyle(color: AppColors.error),
+              style: TextStyle(color: AppColors.error, fontWeight: FontWeight.w600),
             ),
           ),
         ],

@@ -8,6 +8,7 @@ import 'package:merokotha/features/admin/presentation/widgets/admin_widgets.dart
 import 'package:merokotha/features/admin/providers/admin_providers.dart';
 import 'package:merokotha/shared/models/user_model.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class AdminUserDetailScreen extends ConsumerWidget {
   final String uid;
@@ -21,7 +22,20 @@ class AdminUserDetailScreen extends ConsumerWidget {
       backgroundColor: AppColors.backgroundSecondary,
       appBar: const AdminAppBar(title: 'User detail', showBack: true),
       body: userAsync.when(
-        loading: () => const MkLoading(),
+        loading: () => ShimmerLoading(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSizes.pagePadding),
+            child: Column(
+              children: [
+                ShimmerBox(height: 260, borderRadius: BorderRadius.circular(AppSizes.radiusLg)),
+                const SizedBox(height: 16),
+                ShimmerBox(height: 160, borderRadius: BorderRadius.circular(AppSizes.radiusLg)),
+                const SizedBox(height: 16),
+                ShimmerBox(height: 220, borderRadius: BorderRadius.circular(AppSizes.radiusLg)),
+              ],
+            ),
+          ),
+        ),
         error: (e, _) => MkErrorWidget(message: e.toString()),
         data: (user) {
           if (user == null) {
@@ -33,13 +47,14 @@ class AdminUserDetailScreen extends ConsumerWidget {
               children: [
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(AppSizes.md),
+                  padding: const EdgeInsets.all(AppSizes.lg),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                     border: user.isBanned
                         ? Border.all(color: AppColors.error, width: 1.5)
-                        : Border.all(color: AppColors.grey50),
+                        : Border.all(color: AppColors.border),
+                    boxShadow: AppSizes.shadowCard,
                   ),
                   child: Column(
                     children: [
@@ -66,26 +81,34 @@ class AdminUserDetailScreen extends ConsumerWidget {
                                 'This user is banned',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                   color: AppColors.error,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      if (user.isBanned) const SizedBox(height: 12),
+                      if (user.isBanned) const SizedBox(height: 16),
 
-                      UserAvatar(
-                        name: user.name,
-                        photoUrl: user.photoUrl,
-                        size: 72,
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.border, width: 2),
+                        ),
+                        child: UserAvatar(
+                          name: user.name,
+                          photoUrl: user.photoUrl,
+                          size: 76,
+                        ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 14),
                       Text(
                         user.name,
                         style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 19,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.3,
                           color: AppColors.grey900,
                         ),
                       ),
@@ -97,15 +120,16 @@ class AdminUserDetailScreen extends ConsumerWidget {
                           color: AppColors.grey400,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      const SizedBox(height: 12),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 8,
+                        runSpacing: 8,
                         children: [
                           _InfoChip(
                             icon: Icons.calendar_today_outlined,
                             label: 'Joined ${Formatters.date(user.createdAt)}',
                           ),
-                          const SizedBox(width: 8),
                           _RoleBadgeDetail(role: user.role),
                         ],
                       ),
@@ -135,7 +159,7 @@ class AdminUserDetailScreen extends ConsumerWidget {
                             .unbanUser(user.id)
                             .then((_) => context.pop()),
                       ),
-                    const Divider(height: 1, color: AppColors.grey50),
+                    const Divider(height: 1, color: AppColors.border),
                     _ActionTile(
                       icon: Icons.swap_horiz_rounded,
                       label: 'Change role',
@@ -151,30 +175,30 @@ class AdminUserDetailScreen extends ConsumerWidget {
                   title: 'Account info',
                   children: [
                     _InfoRow(label: 'User ID', value: user.id),
-                    const Divider(height: 1, color: AppColors.grey50),
+                    const Divider(height: 1, color: AppColors.border),
                     _InfoRow(
                       label: 'Role',
                       value:
                           user.role.name[0].toUpperCase() +
                           user.role.name.substring(1),
                     ),
-                    const Divider(height: 1, color: AppColors.grey50),
+                    const Divider(height: 1, color: AppColors.border),
                     _InfoRow(
                       label: 'Joined',
                       value: Formatters.date(user.createdAt),
                     ),
-                    const Divider(height: 1, color: AppColors.grey50),
+                    const Divider(height: 1, color: AppColors.border),
                     _InfoRow(
                       label: 'Location',
                       value: user.location ?? 'Not set',
                     ),
-                    const Divider(height: 1, color: AppColors.grey50),
+                    const Divider(height: 1, color: AppColors.border),
                     _InfoRow(
                       label: 'Verified',
                       value: user.isVerified ? 'Yes' : 'No',
                     ),
                     if (user.isBanned) ...[
-                      const Divider(height: 1, color: AppColors.grey50),
+                      const Divider(height: 1, color: AppColors.border),
                       _InfoRow(
                         label: 'Ban status',
                         value: 'Banned',
@@ -355,7 +379,8 @@ class _Card extends StatelessWidget {
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-      border: Border.all(color: AppColors.grey50),
+      border: Border.all(color: AppColors.border),
+      boxShadow: AppSizes.shadowCard,
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -365,13 +390,14 @@ class _Card extends StatelessWidget {
           child: Text(
             title,
             style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.2,
               color: AppColors.grey600,
             ),
           ),
         ),
-        const Divider(height: 1, color: AppColors.grey50),
+        const Divider(height: 1, color: AppColors.border),
         Padding(
           padding: const EdgeInsets.all(AppSizes.md),
           child: Column(children: children),
@@ -390,7 +416,7 @@ class _InfoChip extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
     decoration: BoxDecoration(
-      color: AppColors.grey50,
+      color: AppColors.backgroundSecondary,
       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
     ),
     child: Row(
@@ -445,7 +471,7 @@ class _RoleBadgeDetail extends StatelessWidget {
     final color = role == UserRole.owner
         ? AppColors.ownerPrimary
         : role == UserRole.superAdmin
-        ? AdminColors.accent
+        ? const Color(0xFFB5790E)
         : AppColors.customerPrimary;
     final bg = role == UserRole.owner
         ? AppColors.ownerLight

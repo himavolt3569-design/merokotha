@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class RoomPhotoSection extends StatelessWidget {
   final ListingModel listing;
@@ -36,11 +38,14 @@ class RoomPhotoSection extends StatelessWidget {
                   ? PageView.builder(
                       itemCount: photos.length,
                       onPageChanged: onPageChanged,
-                      itemBuilder: (_, i) => Image.network(
-                        photos[i],
+                      itemBuilder: (_, i) => CachedNetworkImage(
+                        imageUrl: photos[i],
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (_, _, _) => _placeholder,
+                        placeholder: (_, _) => ShimmerLoading(
+                          child: ShimmerBox(width: double.infinity, height: 268, borderRadius: BorderRadius.zero),
+                        ),
+                        errorWidget: (_, _, _) => _placeholder,
                       ),
                     )
                   : _placeholder,

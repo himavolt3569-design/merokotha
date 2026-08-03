@@ -6,6 +6,7 @@ import 'package:merokotha/features/admin/presentation/widgets/admin_widgets.dart
 import 'package:merokotha/features/admin/providers/admin_providers.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class AdminListingsScreen extends ConsumerStatefulWidget {
   const AdminListingsScreen({super.key});
@@ -46,7 +47,7 @@ class _AdminListingsScreenState extends ConsumerState<AdminListingsScreen> {
                     isSelected: _filterStatus == ListingStatus.active,
                     onTap: () =>
                         setState(() => _filterStatus = ListingStatus.active),
-                    color: AppColors.success,
+                    color: AppColors.primary,
                   ),
                   const SizedBox(width: 8),
                   _FilterChip(
@@ -72,7 +73,17 @@ class _AdminListingsScreenState extends ConsumerState<AdminListingsScreen> {
           // List
           Expanded(
             child: listingsAsync.when(
-              loading: () => const MkLoading(fullScreen: false),
+              loading: () => ShimmerLoading(
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(AppSizes.pagePadding),
+                  itemCount: 6,
+                  separatorBuilder: (_, _) => const SizedBox(height: 8),
+                  itemBuilder: (_, _) => ShimmerBox(
+                    height: 84,
+                    borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                  ),
+                ),
+              ),
               error: (e, _) => MkErrorWidget(message: e.toString()),
               data: (all) {
                 final listings = _filterStatus == null
@@ -164,22 +175,27 @@ class _FilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = color ?? AdminColors.accent;
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
-          color: isSelected ? c : AdminColors.surface,
-          borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-          border: Border.all(color: isSelected ? c : AppColors.grey400),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            color: isSelected ? Colors.white : AppColors.grey400,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? c : AdminColors.surface,
+            borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+            border: Border.all(color: isSelected ? c : Colors.transparent),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: isSelected ? AdminColors.primary : AppColors.grey400,
+            ),
           ),
         ),
       ),

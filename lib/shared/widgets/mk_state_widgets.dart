@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
+import 'package:merokotha/shared/widgets/mk_button.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
+/// Generic full-screen loading state rendered as a shimmering skeleton
+/// (a stack of card-shaped placeholders) instead of a bare spinner, so
+/// pages never show a jarring blank-then-pop-in transition.
+///
+/// For screens with a distinctive layout, build a bespoke skeleton using
+/// [ShimmerBox] directly instead of reaching for this generic one.
 class MkLoading extends StatelessWidget {
   final bool fullScreen;
 
@@ -9,12 +17,46 @@ class MkLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const spinner = CircularProgressIndicator(
-      strokeWidth: 2.5,
-      color: AppColors.primary,
+    if (!fullScreen) {
+      return const Center(
+        child: SizedBox(
+          width: 22,
+          height: 22,
+          child: CircularProgressIndicator(strokeWidth: 2.4, color: AppColors.primary),
+        ),
+      );
+    }
+    return const Scaffold(body: _SkeletonFeed());
+  }
+}
+
+class _SkeletonFeed extends StatelessWidget {
+  const _SkeletonFeed();
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerLoading(
+      child: ListView(
+        padding: const EdgeInsets.all(AppSizes.pagePadding),
+        physics: const NeverScrollableScrollPhysics(),
+        children: [
+          ShimmerBox(height: 20, width: 160, borderRadius: BorderRadius.circular(6)),
+          const SizedBox(height: 20),
+          for (var i = 0; i < 3; i++) ...[
+            ShimmerBox(
+              height: 180,
+              width: double.infinity,
+              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+            ),
+            const SizedBox(height: 12),
+            ShimmerBox(height: 14, width: 200, borderRadius: BorderRadius.circular(4)),
+            const SizedBox(height: 8),
+            ShimmerBox(height: 14, width: 120, borderRadius: BorderRadius.circular(4)),
+            const SizedBox(height: 24),
+          ],
+        ],
+      ),
     );
-    if (!fullScreen) return const Center(child: spinner);
-    return const Scaffold(body: Center(child: spinner));
   }
 }
 
@@ -36,28 +78,38 @@ class MkErrorWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline_rounded,
-              size: 48,
-              color: AppColors.error,
+            Container(
+              width: 72,
+              height: 72,
+              decoration: const BoxDecoration(
+                color: AppColors.errorLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.wifi_off_rounded,
+                size: 32,
+                color: AppColors.error,
+              ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 20),
             Text(
               message,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 14.5,
                 color: AppColors.grey600,
                 height: 1.5,
               ),
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: 16),
-              TextButton.icon(
+              const SizedBox(height: 24),
+              MkButton(
+                label: 'Try again',
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded, size: 18),
-                label: const Text('Try again'),
-                style: TextButton.styleFrom(foregroundColor: AppColors.primary),
+                variant: MkButtonVariant.outline,
+                fullWidth: false,
+                height: 44,
+                prefixIcon: Icons.refresh_rounded,
               ),
             ],
           ],
@@ -92,21 +144,22 @@ class MkEmptyState extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.grey50,
-                borderRadius: BorderRadius.circular(AppSizes.radiusXl),
+              width: 88,
+              height: 88,
+              decoration: const BoxDecoration(
+                color: AppColors.primaryLight,
+                shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 40, color: AppColors.grey400),
+              child: Icon(icon, size: 38, color: AppColors.primary),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Text(
               title,
               style: const TextStyle(
                 fontSize: 17,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 color: AppColors.grey900,
+                letterSpacing: -0.2,
               ),
             ),
             const SizedBox(height: 8),
@@ -120,8 +173,13 @@ class MkEmptyState extends StatelessWidget {
               ),
             ),
             if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: 24),
-              ElevatedButton(onPressed: onAction, child: Text(actionLabel!)),
+              const SizedBox(height: 28),
+              MkButton(
+                label: actionLabel!,
+                onPressed: onAction,
+                fullWidth: false,
+                height: 46,
+              ),
             ],
           ],
         ),

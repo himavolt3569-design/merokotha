@@ -16,6 +16,39 @@ import 'package:merokotha/shared/widgets/mk_button.dart';
 import 'package:merokotha/shared/widgets/mk_text_field.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
 import 'package:merokotha/shared/widgets/profile_section.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
+
+class _ProfileSkeleton extends StatelessWidget {
+  const _ProfileSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerLoading(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSizes.pagePadding),
+        child: Column(
+          children: [
+            const ShimmerBox(width: 88, height: 88, borderRadius: BorderRadius.all(Radius.circular(44))),
+            const SizedBox(height: 14),
+            ShimmerBox(height: 16, width: 140, borderRadius: BorderRadius.circular(4)),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(child: ShimmerBox(height: 68, borderRadius: BorderRadius.circular(AppSizes.radiusLg))),
+                const SizedBox(width: 10),
+                Expanded(child: ShimmerBox(height: 68, borderRadius: BorderRadius.circular(AppSizes.radiusLg))),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ShimmerBox(height: 180, width: double.infinity, borderRadius: BorderRadius.circular(AppSizes.radiusLg)),
+            const SizedBox(height: 16),
+            ShimmerBox(height: 120, width: double.infinity, borderRadius: BorderRadius.circular(AppSizes.radiusLg)),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class CustomerProfileScreen extends ConsumerStatefulWidget {
   const CustomerProfileScreen({super.key});
@@ -182,7 +215,7 @@ class _CustomerProfileScreenState extends ConsumerState<CustomerProfileScreen> {
         ],
       ),
       body: userAsync.when(
-        loading: () => const MkLoading(),
+        loading: () => const _ProfileSkeleton(),
         error: (e, _) => MkErrorWidget(message: e.toString()),
         data: (user) {
           if (user == null) {

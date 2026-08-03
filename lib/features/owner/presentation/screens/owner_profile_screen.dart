@@ -87,9 +87,15 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Switch to Customer?'),
+        titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+        contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+        title: const Text(
+          'Switch to Customer?',
+          style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.grey900),
+        ),
         content: const Text(
           'You will be switched to Customer mode. You can switch back anytime from your profile.',
+          style: TextStyle(fontSize: 14, color: AppColors.grey600, height: 1.4),
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
@@ -97,13 +103,13 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.grey600)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text(
               'Switch',
-              style: TextStyle(color: AppColors.customerPrimary),
+              style: TextStyle(color: AppColors.customerPrimary, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -119,21 +125,29 @@ class _OwnerProfileScreenState extends ConsumerState<OwnerProfileScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Sign out?'),
-        content: const Text('Are you sure you want to sign out?'),
+        titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+        contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+        title: const Text(
+          'Sign out?',
+          style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.grey900),
+        ),
+        content: const Text(
+          'Are you sure you want to sign out?',
+          style: TextStyle(fontSize: 14, color: AppColors.grey600, height: 1.4),
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.grey600)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text(
               'Sign out',
-              style: TextStyle(color: AppColors.error),
+              style: TextStyle(color: AppColors.error, fontWeight: FontWeight.w600),
             ),
           ),
         ],

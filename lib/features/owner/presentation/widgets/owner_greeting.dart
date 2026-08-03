@@ -19,13 +19,19 @@ class OwnerGreeting extends StatelessWidget {
       children: [
         Text(
           '$_greeting,',
-          style: const TextStyle(fontSize: 14, color: AppColors.grey400),
+          style: const TextStyle(
+            fontSize: 14,
+            color: AppColors.grey600,
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        const SizedBox(height: 2),
         Text(
           name.split(' ').first,
           style: const TextStyle(
-            fontSize: 26,
+            fontSize: 27,
             fontWeight: FontWeight.w700,
+            letterSpacing: -0.4,
             color: AppColors.grey900,
           ),
         ),

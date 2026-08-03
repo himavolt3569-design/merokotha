@@ -19,46 +19,39 @@ class ChatInputBar extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(
         12,
-        8,
+        10,
         12,
-        MediaQuery.of(context).padding.bottom + 8,
+        MediaQuery.of(context).padding.bottom + 10,
       ),
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.grey50)),
+        border: Border(top: BorderSide(color: AppColors.border)),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          GestureDetector(
+          _RoundIconTap(
             onTap: onImage,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.grey50,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-              ),
-              child: const Icon(
-                Icons.image_outlined,
-                size: 20,
-                color: AppColors.grey600,
-              ),
-            ),
+            icon: Icons.image_outlined,
+            background: AppColors.backgroundSecondary,
+            iconColor: AppColors.grey600,
           ),
           const SizedBox(width: 8),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              constraints: const BoxConstraints(minHeight: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
               decoration: BoxDecoration(
-                color: AppColors.grey50,
+                color: AppColors.backgroundSecondary,
                 borderRadius: BorderRadius.circular(AppSizes.radiusFull),
+                border: Border.all(color: AppColors.border),
               ),
               child: TextField(
                 controller: controller,
                 maxLines: 4,
                 minLines: 1,
                 textCapitalization: TextCapitalization.sentences,
-                style: const TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 14, color: AppColors.grey900),
                 decoration: const InputDecoration(
                   hintText: 'Type a message...',
                   hintStyle: TextStyle(fontSize: 14, color: AppColors.grey400),
@@ -71,23 +64,66 @@ class ChatInputBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          GestureDetector(
-            onTap: onSend,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-              ),
-              child: const Icon(
-                Icons.send_rounded,
-                size: 18,
-                color: Colors.white,
-              ),
-            ),
+          AnimatedBuilder(
+            animation: controller,
+            builder: (context, _) {
+              final hasText = controller.text.trim().isNotEmpty;
+              return _RoundIconTap(
+                onTap: onSend,
+                icon: Icons.send_rounded,
+                background: hasText ? AppColors.primary : AppColors.grey100,
+                iconColor: Colors.white,
+                shadow: hasText,
+              );
+            },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _RoundIconTap extends StatelessWidget {
+  final VoidCallback onTap;
+  final IconData icon;
+  final Color background;
+  final Color iconColor;
+  final bool shadow;
+
+  const _RoundIconTap({
+    required this.onTap,
+    required this.icon,
+    required this.background,
+    required this.iconColor,
+    this.shadow = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: background,
+      shape: const CircleBorder(),
+      elevation: 0,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: shadow
+                ? const [
+                    BoxShadow(
+                      color: Color(0x331D9E75),
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Icon(icon, size: 19, color: iconColor),
+        ),
       ),
     );
   }

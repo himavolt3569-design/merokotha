@@ -8,6 +8,7 @@ import 'package:merokotha/shared/models/inquiry_model.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
 import 'package:merokotha/features/admin/providers/admin_providers.dart';
 import 'package:merokotha/features/admin/presentation/widgets/admin_widgets.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class AdminInquiriesScreen extends ConsumerStatefulWidget {
   const AdminInquiriesScreen({super.key});
@@ -52,10 +53,10 @@ class _AdminInquiriesScreenState extends ConsumerState<AdminInquiriesScreen>
               labelColor: Colors.white,
               unselectedLabelColor: AppColors.grey400,
               indicatorColor: AdminColors.accent,
-              indicatorWeight: 2,
+              indicatorWeight: 2.5,
               labelStyle: const TextStyle(
                 fontSize: 13,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
               ),
               tabs: const [
                 Tab(text: 'Pending'),
@@ -90,7 +91,17 @@ class _InquiryTab extends ConsumerWidget {
     return ref
         .watch(allInquiriesProvider)
         .when(
-          loading: () => const MkLoading(fullScreen: false),
+          loading: () => ShimmerLoading(
+            child: ListView.separated(
+              padding: const EdgeInsets.all(AppSizes.pagePadding),
+              itemCount: 4,
+              separatorBuilder: (_, _) => const SizedBox(height: 10),
+              itemBuilder: (_, _) => ShimmerBox(
+                height: 148,
+                borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+              ),
+            ),
+          ),
           error: (e, _) => MkErrorWidget(message: e.toString()),
           data: (all) {
             final list = all.where((i) => i.status == status).toList();
@@ -107,7 +118,7 @@ class _InquiryTab extends ConsumerWidget {
             return ListView.separated(
               padding: const EdgeInsets.all(AppSizes.pagePadding),
               itemCount: list.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 8),
+              separatorBuilder: (_, _) => const SizedBox(height: 10),
               itemBuilder: (_, i) => _AdminInquiryCard(list[i]),
             );
           },
@@ -126,7 +137,8 @@ class _AdminInquiryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey50),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppSizes.shadowCard,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +160,7 @@ class _AdminInquiryCard extends StatelessWidget {
                       inquiry.customerName,
                       style: const TextStyle(
                         fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         color: AppColors.grey900,
                       ),
                     ),
@@ -167,7 +179,7 @@ class _AdminInquiryCard extends StatelessWidget {
           ),
 
           const SizedBox(height: 10),
-          const Divider(height: 1, color: AppColors.grey50),
+          const Divider(height: 1, color: AppColors.border),
           const SizedBox(height: 10),
 
           // Listing info
@@ -221,7 +233,7 @@ class _AdminInquiryCard extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.grey50,
+              color: AppColors.backgroundSecondary,
               borderRadius: BorderRadius.circular(AppSizes.radiusMd),
             ),
             child: Text(

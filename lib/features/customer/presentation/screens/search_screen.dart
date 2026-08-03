@@ -9,7 +9,9 @@ import 'package:merokotha/features/ads/presentation/widgets/ad_banner.dart';
 import 'package:merokotha/features/customer/data/listings_repository.dart';
 import 'package:merokotha/features/customer/presentation/widgets/customer_widgets.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
+import 'package:merokotha/shared/widgets/mk_button.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -119,7 +121,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
           Expanded(
             child: resultsAsync.when(
-              loading: () => const MkLoading(fullScreen: false),
+              loading: () => const _SearchResultsSkeleton(),
               error: (e, _) => MkErrorWidget(message: e.toString()),
               data: (listings) {
                 final validListings = listings
@@ -175,6 +177,54 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         ],
       ),
       bottomNavigationBar: const CustomerBottomNav(currentIndex: 1),
+    );
+  }
+}
+
+class _SearchResultsSkeleton extends StatelessWidget {
+  const _SearchResultsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerLoading(
+      child: ListView.separated(
+        padding: const EdgeInsets.all(AppSizes.pagePadding),
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 4,
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
+        itemBuilder: (_, _) => Container(
+          height: 110,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+            boxShadow: AppSizes.shadowCard,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ShimmerBox(
+                width: 90,
+                height: 90,
+                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShimmerBox(height: 14, width: 140, borderRadius: BorderRadius.circular(4)),
+                    const SizedBox(height: 10),
+                    ShimmerBox(height: 12, width: 90, borderRadius: BorderRadius.circular(4)),
+                    const SizedBox(height: 10),
+                    ShimmerBox(height: 12, width: 70, borderRadius: BorderRadius.circular(4)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -259,25 +309,7 @@ class _FilterPanel extends StatelessWidget {
           const SizedBox(height: 14),
 
           // Done button
-          SizedBox(
-            width: double.infinity,
-            height: 46,
-            child: ElevatedButton(
-              onPressed: onClose,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.customerPrimary,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                ),
-              ),
-              child: const Text(
-                'Apply filters',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
+          MkButton(label: 'Apply filters', onPressed: onClose, height: 46),
         ],
       ),
     );

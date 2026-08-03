@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
@@ -39,6 +40,14 @@ class AppTheme {
       ),
       textTheme: textTheme,
       scaffoldBackgroundColor: AppColors.backgroundSecondary,
+      splashColor: AppColors.primary.withValues(alpha: 0.06),
+      highlightColor: AppColors.primary.withValues(alpha: 0.04),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
 
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
@@ -114,9 +123,10 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: AppColors.background,
         elevation: 0,
+        margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-          side: const BorderSide(color: AppColors.grey50),
+          side: const BorderSide(color: AppColors.border),
         ),
       ),
 

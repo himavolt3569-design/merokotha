@@ -7,6 +7,7 @@ import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/features/admin/presentation/widgets/admin_widgets.dart';
 import 'package:merokotha/features/admin/providers/admin_providers.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class AdminUsersScreen extends ConsumerStatefulWidget {
   const AdminUsersScreen({super.key});
@@ -78,7 +79,7 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                   borderSide: const BorderSide(
                     color: AdminColors.accent,
-                    width: 1,
+                    width: 1.4,
                   ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
@@ -92,7 +93,17 @@ class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
           // User list
           Expanded(
             child: usersAsync.when(
-              loading: () => const MkLoading(fullScreen: false),
+              loading: () => ShimmerLoading(
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(AppSizes.pagePadding),
+                  itemCount: 6,
+                  separatorBuilder: (_, _) => const SizedBox(height: 8),
+                  itemBuilder: (_, _) => ShimmerBox(
+                    height: 84,
+                    borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                  ),
+                ),
+              ),
               error: (e, _) => MkErrorWidget(message: e.toString()),
               data: (users) {
                 if (users.isEmpty) {

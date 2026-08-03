@@ -75,49 +75,66 @@ class _OtpInputFieldState extends State<OtpInputField> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(_length, (index) {
-        return SizedBox(
-          width: 48,
-          height: 56,
-          child: KeyboardListener(
-            focusNode: FocusNode(),
-            onKeyEvent: (e) => _onKeyEvent(index, e),
-            child: TextFormField(
-              controller: _controllers[index],
-              focusNode: _focusNodes[index],
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              maxLength: 1,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-                color: AppColors.grey900,
-              ),
-              decoration: InputDecoration(
-                counterText: '',
-                contentPadding: EdgeInsets.zero,
-                filled: true,
-                fillColor: _focusNodes[index].hasFocus
-                    ? AppColors.primaryLight
-                    : AppColors.grey50,
-                border: OutlineInputBorder(
+        return KeyboardListener(
+          focusNode: FocusNode(),
+          onKeyEvent: (e) => _onKeyEvent(index, e),
+          child: AnimatedBuilder(
+            animation: Listenable.merge([
+              _focusNodes[index],
+              _controllers[index],
+            ]),
+            builder: (context, _) {
+              final focused = _focusNodes[index].hasFocus;
+              final filled = _controllers[index].text.isNotEmpty;
+
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 160),
+                curve: Curves.easeOut,
+                width: 48,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: focused || filled
+                      ? AppColors.primaryLight
+                      : AppColors.backgroundSecondary,
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                  borderSide: const BorderSide(color: AppColors.grey100),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                  borderSide: const BorderSide(
-                    color: AppColors.primary,
-                    width: 1.5,
+                  border: Border.all(
+                    color: focused ? AppColors.primary : AppColors.border,
+                    width: focused ? 1.6 : 1,
                   ),
+                  boxShadow: focused
+                      ? const [
+                          BoxShadow(
+                            color: Color(0x1D1D9E75),
+                            blurRadius: 12,
+                            offset: Offset(0, 4),
+                          ),
+                        ]
+                      : null,
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                  borderSide: const BorderSide(color: AppColors.grey100),
+                child: TextFormField(
+                  controller: _controllers[index],
+                  focusNode: _focusNodes[index],
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  maxLength: 1,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.grey900,
+                  ),
+                  decoration: const InputDecoration(
+                    counterText: '',
+                    contentPadding: EdgeInsets.zero,
+                    filled: false,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                  ),
+                  onChanged: (v) => _onChanged(index, v),
                 ),
-              ),
-              onChanged: (v) => _onChanged(index, v),
-            ),
+              );
+            },
           ),
         );
       }),

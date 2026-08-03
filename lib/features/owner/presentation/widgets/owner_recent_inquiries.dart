@@ -28,19 +28,31 @@ class OwnerRecentInquiries extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-                  border: Border.all(color: AppColors.grey50),
+                  boxShadow: AppSizes.shadowCard,
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(
-                      Icons.check_circle_outline_rounded,
-                      color: AppColors.success,
-                      size: 20,
+                    Container(
+                      width: 34,
+                      height: 34,
+                      decoration: const BoxDecoration(
+                        color: AppColors.primaryLight,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.check_circle_rounded,
+                        color: AppColors.primary,
+                        size: 18,
+                      ),
                     ),
-                    SizedBox(width: 10),
-                    Text(
+                    const SizedBox(width: 12),
+                    const Text(
                       'No pending inquiries',
-                      style: TextStyle(fontSize: 14, color: AppColors.grey600),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.grey600,
+                      ),
                     ),
                   ],
                 ),

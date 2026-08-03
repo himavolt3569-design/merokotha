@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/shared/models/inquiry_model.dart';
+import 'package:merokotha/shared/widgets/mk_button.dart';
+import 'package:merokotha/shared/widgets/status_badge.dart';
 
 class InquiryCard extends StatelessWidget {
   final InquiryModel inquiry;
@@ -17,6 +19,17 @@ class InquiryCard extends StatelessWidget {
     this.onOpenChat,
   });
 
+  Widget _statusBadge() {
+    switch (inquiry.status) {
+      case InquiryStatus.pending:
+        return StatusBadge.pending();
+      case InquiryStatus.accepted:
+        return StatusBadge.accepted();
+      case InquiryStatus.declined:
+        return StatusBadge.declined();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,7 +37,7 @@ class InquiryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey50),
+        boxShadow: AppSizes.shadowCard,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,21 +88,29 @@ class InquiryCard extends StatelessWidget {
                   ],
                 ),
               ),
-              _StatusChip(status: inquiry.status),
+              _statusBadge(),
             ],
           ),
 
           if (inquiry.message.isNotEmpty) ...[
             const SizedBox(height: 10),
-            Text(
-              inquiry.message,
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.grey600,
-                height: 1.4,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.backgroundSecondary,
+                borderRadius: BorderRadius.circular(AppSizes.radiusSm),
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+              child: Text(
+                inquiry.message,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.grey600,
+                  height: 1.4,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
 
@@ -99,107 +120,36 @@ class InquiryCard extends StatelessWidget {
               children: [
                 if (onDecline != null) ...[
                   Expanded(
-                    child: OutlinedButton(
+                    child: MkButton(
+                      label: 'Decline',
                       onPressed: onDecline,
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.error,
-                        side: const BorderSide(color: AppColors.error),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        ),
-                      ),
-                      child: const Text(
-                        'Decline',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                      ),
+                      variant: MkButtonVariant.danger,
+                      height: 40,
                     ),
                   ),
                   const SizedBox(width: 8),
                 ],
                 if (onAccept != null)
                   Expanded(
-                    child: ElevatedButton(
+                    child: MkButton(
+                      label: 'Accept',
                       onPressed: onAccept,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.success,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        ),
-                      ),
-                      child: const Text(
-                        'Accept',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                      ),
+                      height: 40,
                     ),
                   ),
                 if (onOpenChat != null)
                   Expanded(
-                    child: ElevatedButton.icon(
+                    child: MkButton(
+                      label: 'Open chat',
                       onPressed: onOpenChat,
-                      icon: const Icon(Icons.chat_bubble_outline_rounded, size: 15),
-                      label: const Text(
-                        'Open chat',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        ),
-                      ),
+                      prefixIcon: Icons.chat_bubble_outline_rounded,
+                      height: 40,
                     ),
                   ),
               ],
             ),
           ],
         ],
-      ),
-    );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  final InquiryStatus status;
-  const _StatusChip({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    Color color;
-    String label;
-    switch (status) {
-      case InquiryStatus.pending:
-        color = AppColors.warning;
-        label = 'Pending';
-        break;
-      case InquiryStatus.accepted:
-        color = AppColors.success;
-        label = 'Accepted';
-        break;
-      case InquiryStatus.declined:
-        color = AppColors.error;
-        label = 'Declined';
-        break;
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11,
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
       ),
     );
   }

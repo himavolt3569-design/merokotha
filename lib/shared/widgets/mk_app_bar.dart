@@ -27,33 +27,52 @@ class MkAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: backgroundColor ?? Colors.white,
       elevation: 0,
-      scrolledUnderElevation: 1,
+      scrolledUnderElevation: 0,
       surfaceTintColor: Colors.transparent,
       centerTitle: false,
       leading:
           leading ??
           (showBack && Navigator.canPop(context)
-              ? IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    size: 20,
-                    color: AppColors.grey800,
-                  ),
-                  onPressed: onBack ?? () => Navigator.pop(context),
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: _RoundBackButton(onTap: onBack ?? () => Navigator.pop(context)),
                 )
               : null),
       title: Text(
         title,
         style: const TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.2,
           color: AppColors.grey900,
         ),
       ),
       actions: actions,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
-        child: Container(height: 1, color: AppColors.grey50),
+        child: Container(height: 1, color: AppColors.border),
+      ),
+    );
+  }
+}
+
+class _RoundBackButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _RoundBackButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.backgroundSecondary,
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: const SizedBox(
+          width: 38,
+          height: 38,
+          child: Icon(Icons.arrow_back_ios_new_rounded, size: 17, color: AppColors.grey800),
+        ),
       ),
     );
   }

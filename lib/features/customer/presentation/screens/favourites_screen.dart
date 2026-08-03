@@ -8,6 +8,33 @@ import 'package:merokotha/features/customer/presentation/widgets/customer_widget
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
 import 'package:merokotha/shared/widgets/mk_app_bar.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
+
+class _FavouritesGridSkeleton extends StatelessWidget {
+  const _FavouritesGridSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerLoading(
+      child: GridView.builder(
+        padding: const EdgeInsets.all(AppSizes.pagePadding),
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.72,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+        ),
+        itemCount: 4,
+        itemBuilder: (_, _) => ShimmerBox(
+          width: double.infinity,
+          height: double.infinity,
+          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+        ),
+      ),
+    );
+  }
+}
 
 class FavouritesScreen extends ConsumerWidget {
   const FavouritesScreen({super.key});
@@ -21,7 +48,7 @@ class FavouritesScreen extends ConsumerWidget {
       backgroundColor: AppColors.backgroundSecondary,
       appBar: const MkAppBar(title: 'Saved rooms'),
       body: favListingsAsync.when(
-        loading: () => const MkLoading(),
+        loading: () => const _FavouritesGridSkeleton(),
         error: (e, _) => MkErrorWidget(message: e.toString()),
         data: (listings) {
           if (listings.isEmpty) {

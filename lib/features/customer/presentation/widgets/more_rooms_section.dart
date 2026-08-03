@@ -4,12 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/core/utils/formatters.dart';
 import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/features/customer/providers/customers_providers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/shared/widgets/login_sheet.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class MoreRoomsSection extends ConsumerWidget {
   final String excludeListingId;
@@ -41,7 +44,7 @@ class MoreRoomsSection extends ConsumerWidget {
                       style: GoogleFonts.dmSans(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1A1917),
+                        color: AppColors.grey900,
                         letterSpacing: -0.2,
                       ),
                     ),
@@ -120,13 +123,7 @@ class _RoomGridCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x0A1A1917),
-              blurRadius: 16,
-              offset: Offset(0, 4),
-            ),
-          ],
+          boxShadow: AppSizes.shadowCard,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,10 +139,12 @@ class _RoomGridCard extends StatelessWidget {
                       top: Radius.circular(16),
                     ),
                     child: listing.photoUrls.isNotEmpty
-                        ? Image.network(
-                            listing.photoUrls.first,
+                        ? CachedNetworkImage(
+                            imageUrl: listing.photoUrls.first,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) => _placeholder,
+                            placeholder: (_, _) =>
+                                ShimmerLoading(child: ShimmerBox(borderRadius: BorderRadius.zero)),
+                            errorWidget: (_, _, _) => _placeholder,
                           )
                         : _placeholder,
                   ),
@@ -168,7 +167,7 @@ class _RoomGridCard extends StatelessWidget {
                         style: GoogleFonts.dmSans(
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF1A1917),
+                          color: AppColors.grey900,
                           letterSpacing: 0.2,
                         ),
                       ),
@@ -227,7 +226,7 @@ class _RoomGridCard extends StatelessWidget {
                           style: GoogleFonts.dmSans(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF1A1917),
+                            color: AppColors.grey900,
                             letterSpacing: -0.1,
                           ),
                         ),
@@ -270,7 +269,7 @@ class _RoomGridCard extends StatelessWidget {
                                 style: GoogleFonts.dmSans(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF1A1917),
+                                  color: AppColors.grey900,
                                   letterSpacing: -0.2,
                                 ),
                               ),
@@ -310,12 +309,12 @@ class _RoomGridCard extends StatelessWidget {
   }
 
   Widget get _placeholder => Container(
-        color: const Color(0xFFF1EFE8),
+        color: AppColors.backgroundSecondary,
         child: const Center(
           child: Icon(
             Icons.home_outlined,
             size: 28,
-            color: Color(0xFFD3D1C7),
+            color: AppColors.grey200,
           ),
         ),
       );

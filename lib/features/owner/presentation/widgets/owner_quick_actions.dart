@@ -35,7 +35,7 @@ class OwnerQuickActions extends StatelessWidget {
         _QuickActionButton(
           label: 'Map',
           icon: Icons.map_outlined,
-          color: AppColors.success,
+          color: AppColors.secondary,
           onTap: () => context.push(AppRoutes.ownerMap),
         ),
       ],
@@ -59,29 +59,42 @@ class _QuickActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-            border: Border.all(color: AppColors.grey50),
-          ),
-          child: Column(
-            children: [
-              Icon(icon, size: 22, color: color),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: color,
-                  fontWeight: FontWeight.w600,
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+          splashColor: color.withValues(alpha: 0.08),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+              boxShadow: AppSizes.shadowCard,
+            ),
+            child: Column(
+              children: [
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(AppSizes.radiusSm),
+                  ),
+                  child: Icon(icon, size: 18, color: color),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 10.5,
+                    color: AppColors.grey800,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
       ),

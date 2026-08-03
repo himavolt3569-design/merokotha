@@ -3,19 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/utils/formatters.dart';
 import 'package:merokotha/features/chat/data/chat_model.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class ChatMessageBubble extends StatelessWidget {
   final MessageModel message;
   final bool isMe;
 
-  const ChatMessageBubble({super.key, required this.message, required this.isMe});
+  const ChatMessageBubble({
+    super.key,
+    required this.message,
+    required this.isMe,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe) const SizedBox(width: 4),
@@ -29,17 +36,18 @@ class ChatMessageBubble extends StatelessWidget {
                   : const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: isMe ? AppColors.primary : Colors.white,
+                border: isMe ? null : Border.all(color: AppColors.border),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),
-                  bottomLeft: Radius.circular(isMe ? 18 : 4),
-                  bottomRight: Radius.circular(isMe ? 4 : 18),
+                  bottomLeft: Radius.circular(isMe ? 18 : 5),
+                  bottomRight: Radius.circular(isMe ? 5 : 18),
                 ),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 4,
-                    offset: const Offset(0, 1),
+                    color: Color(0x0A1A1A18),
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
                   ),
                 ],
               ),
@@ -61,11 +69,10 @@ class ChatMessageBubble extends StatelessWidget {
                               fit: BoxFit.cover,
                               loadingBuilder: (_, child, prog) => prog == null
                                   ? child
-                                  : Container(
-                                      height: 160,
-                                      color: AppColors.grey50,
-                                      child: const Center(
-                                        child: CircularProgressIndicator(),
+                                  : const ShimmerLoading(
+                                      child: ShimmerBox(
+                                        height: 160,
+                                        width: double.infinity,
                                       ),
                                     ),
                             ),

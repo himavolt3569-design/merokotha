@@ -40,3 +40,7 @@ android/key.properties
 
 # Assets
 android/app/src/main/assets/
+
+# Local markdown notes
+FLUTTER_CONCEPTS.md
+INTERVIEW_ANSWERS.md

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
+import 'package:merokotha/core/constants/app_sizes.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 
+/// Admin panel runs a deliberate dark shell — a rich near-black surface
+/// with a gold accent — so the admin experience reads as a distinct,
+/// authoritative mode rather than another green customer/owner screen.
 class AdminColors {
-  static const primary = Color(0xFF2C2C2A);
-  static const accent = Color(0xFFE24B4A);
-  static const accentLight = Color(0xFFFCEBEB);
-  static const surface = Color(0xFF3D3D3A);
+  static const primary = Color(0xFF1A1A18);
+  static const accent = AppColors.warning;
+  static const accentLight = AppColors.warningLight;
+  static const surface = Color(0xFF2C2B27);
   static const bg = Color(0xFF1A1A18);
 }
 
@@ -15,63 +19,96 @@ class AdminBottomNav extends StatelessWidget {
   final int currentIndex;
   const AdminBottomNav({super.key, required this.currentIndex});
 
+  static const _items = [
+    (icon: Icons.dashboard_outlined, active: Icons.dashboard_rounded, label: 'Dashboard'),
+    (icon: Icons.people_outline_rounded, active: Icons.people_rounded, label: 'Users'),
+    (icon: Icons.home_work_outlined, active: Icons.home_work_rounded, label: 'Listings'),
+    (icon: Icons.inbox_outlined, active: Icons.inbox_rounded, label: 'Inquiries'),
+  ];
+
+  void _onTap(BuildContext context, int i) {
+    switch (i) {
+      case 0:
+        context.push(AppRoutes.adminHome);
+      case 1:
+        context.push(AppRoutes.adminUsers);
+      case 2:
+        context.push(AppRoutes.adminListings);
+      case 3:
+        context.push(AppRoutes.adminInquiries);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: const BoxDecoration(
         color: AdminColors.primary,
         border: Border(top: BorderSide(color: AdminColors.surface, width: 1)),
       ),
-      child: BottomNavigationBar(
-        currentIndex: currentIndex,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AdminColors.accent,
-        unselectedItemColor: AppColors.grey400,
-        selectedLabelStyle: const TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            children: [
+              for (var i = 0; i < _items.length; i++)
+                Expanded(
+                  child: _AdminNavItem(
+                    icon: _items[i].icon,
+                    activeIcon: _items[i].active,
+                    label: _items[i].label,
+                    selected: i == currentIndex,
+                    onTap: () => _onTap(context, i),
+                  ),
+                ),
+            ],
+          ),
         ),
-        unselectedLabelStyle: const TextStyle(fontSize: 11),
-        onTap: (i) {
-          switch (i) {
-            case 0:
-              context.push(AppRoutes.adminHome);
-              break;
-            case 1:
-              context.push(AppRoutes.adminUsers);
-              break;
-            case 2:
-              context.push(AppRoutes.adminListings);
-              break;
-            case 3:
-              context.push(AppRoutes.adminInquiries);
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard_rounded),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people_outline_rounded),
-            activeIcon: Icon(Icons.people_rounded),
-            label: 'Users',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_work_outlined),
-            activeIcon: Icon(Icons.home_work_rounded),
-            label: 'Listings',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.inbox_outlined),
-            activeIcon: Icon(Icons.inbox_rounded),
-            label: 'Inquiries',
-          ),
-        ],
+      ),
+    );
+  }
+}
+
+class _AdminNavItem extends StatelessWidget {
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _AdminNavItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = selected ? AdminColors.accent : AppColors.grey400;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: AdminColors.accent.withValues(alpha: 0.1),
+        highlightColor: AdminColors.accent.withValues(alpha: 0.05),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(selected ? activeIcon : icon, color: color, size: 23),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10.5,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: color,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -100,32 +137,41 @@ class AdminAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       centerTitle: false,
       leading: showBack
-          ? IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 20,
-                color: Colors.white,
+          ? Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Material(
+                color: AdminColors.surface,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: () => context.pop(),
+                  child: const SizedBox(
+                    width: 38,
+                    height: 38,
+                    child: Icon(Icons.arrow_back_ios_new_rounded, size: 17, color: Colors.white),
+                  ),
+                ),
               ),
-              onPressed: () => context.pop(),
             )
           : null,
       title: Row(
         children: [
           Container(
-            width: 28,
-            height: 28,
+            width: 30,
+            height: 30,
             decoration: BoxDecoration(
               color: AdminColors.accent,
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(AppSizes.radiusSm),
             ),
-            child: const Icon(Icons.shield_rounded, size: 16, color: Colors.white),
+            child: const Icon(Icons.shield_rounded, size: 16, color: AdminColors.primary),
           ),
           const SizedBox(width: 10),
           Text(
             title,
             style: const TextStyle(
               fontSize: 17,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.2,
               color: Colors.white,
             ),
           ),

@@ -27,15 +27,19 @@ class MkButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final h = height ?? AppSizes.buttonHeight;
+    final radius = BorderRadius.circular(AppSizes.radiusMd);
+
+    final spinnerColor = switch (variant) {
+      MkButtonVariant.primary => Colors.white,
+      MkButtonVariant.danger => AppColors.error,
+      _ => AppColors.primary,
+    };
 
     Widget child = isLoading
-        ? const SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: Colors.white,
-            ),
+        ? SizedBox(
+            width: 19,
+            height: 19,
+            child: CircularProgressIndicator(strokeWidth: 2.2, color: spinnerColor),
           )
         : Row(
             mainAxisSize: MainAxisSize.min,
@@ -48,40 +52,67 @@ class MkButton extends StatelessWidget {
             ],
           );
 
-    ButtonStyle style;
+    final size = Size(fullWidth ? double.infinity : 0, h);
+    const textStyle = TextStyle(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 0.1);
+
     switch (variant) {
       case MkButtonVariant.primary:
-        style = ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          minimumSize: Size(fullWidth ? double.infinity : 0, h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+        return _TapScale(
+          onTap: isLoading ? null : onPressed,
+          child: Container(
+            width: fullWidth ? double.infinity : null,
+            height: h,
+            decoration: BoxDecoration(
+              borderRadius: radius,
+              gradient: onPressed == null && !isLoading
+                  ? null
+                  : const LinearGradient(
+                      colors: [AppColors.primary, AppColors.primaryDark],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+              color: onPressed == null && !isLoading ? AppColors.grey100 : null,
+              boxShadow: onPressed == null
+                  ? null
+                  : const [BoxShadow(color: Color(0x331D9E75), blurRadius: 16, offset: Offset(0, 6))],
+            ),
+            child: Material(
+              type: MaterialType.transparency,
+              child: InkWell(
+                borderRadius: radius,
+                onTap: isLoading ? null : onPressed,
+                splashColor: Colors.white.withValues(alpha: 0.12),
+                highlightColor: Colors.white.withValues(alpha: 0.06),
+                child: Center(
+                  child: DefaultTextStyle(
+                    style: textStyle.copyWith(color: Colors.white),
+                    child: IconTheme(
+                      data: const IconThemeData(color: Colors.white),
+                      child: child,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
-          elevation: 0,
-          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-        );
-        return ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
-          style: style,
-          child: child,
         );
 
       case MkButtonVariant.secondary:
-        style = ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryLight,
-          foregroundColor: AppColors.primary,
-          minimumSize: Size(fullWidth ? double.infinity : 0, h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+        return SizedBox(
+          width: size.width,
+          height: h,
+          child: ElevatedButton(
+            onPressed: isLoading ? null : onPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryLight,
+              foregroundColor: AppColors.primary,
+              disabledBackgroundColor: AppColors.grey50,
+              shape: RoundedRectangleBorder(borderRadius: radius),
+              elevation: 0,
+              textStyle: textStyle,
+            ),
+            child: child,
           ),
-          elevation: 0,
-          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-        );
-        return ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
-          style: style,
-          child: child,
         );
 
       case MkButtonVariant.outline:
@@ -91,15 +122,10 @@ class MkButton extends StatelessWidget {
           child: OutlinedButton(
             onPressed: isLoading ? null : onPressed,
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.primary,
-              side: const BorderSide(color: AppColors.primary),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-              ),
-              textStyle: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              foregroundColor: AppColors.grey900,
+              side: const BorderSide(color: AppColors.border, width: 1.3),
+              shape: RoundedRectangleBorder(borderRadius: radius),
+              textStyle: textStyle,
             ),
             child: child,
           ),
@@ -113,34 +139,64 @@ class MkButton extends StatelessWidget {
             onPressed: isLoading ? null : onPressed,
             style: TextButton.styleFrom(
               foregroundColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-              ),
-              textStyle: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              shape: RoundedRectangleBorder(borderRadius: radius),
+              textStyle: textStyle,
             ),
             child: child,
           ),
         );
 
       case MkButtonVariant.danger:
-        style = ElevatedButton.styleFrom(
-          backgroundColor: AppColors.errorLight,
-          foregroundColor: AppColors.error,
-          minimumSize: Size(fullWidth ? double.infinity : 0, h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+        return SizedBox(
+          width: size.width,
+          height: h,
+          child: ElevatedButton(
+            onPressed: isLoading ? null : onPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.errorLight,
+              foregroundColor: AppColors.error,
+              disabledBackgroundColor: AppColors.grey50,
+              shape: RoundedRectangleBorder(borderRadius: radius),
+              elevation: 0,
+              textStyle: textStyle,
+            ),
+            child: child,
           ),
-          elevation: 0,
-          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-        );
-        return ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
-          style: style,
-          child: child,
         );
     }
+  }
+}
+
+/// Subtle press-down scale for a more tactile, premium tap feel.
+class _TapScale extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  const _TapScale({required this.child, required this.onTap});
+
+  @override
+  State<_TapScale> createState() => _TapScaleState();
+}
+
+class _TapScaleState extends State<_TapScale> {
+  bool _pressed = false;
+
+  void _setPressed(bool v) {
+    if (widget.onTap == null) return;
+    setState(() => _pressed = v);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _setPressed(true),
+      onTapCancel: () => _setPressed(false),
+      onTapUp: (_) => _setPressed(false),
+      child: AnimatedScale(
+        scale: _pressed ? 0.97 : 1,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeOut,
+        child: widget.child,
+      ),
+    );
   }
 }

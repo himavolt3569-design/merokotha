@@ -19,6 +19,7 @@ import 'package:merokotha/features/customer/presentation/widgets/room_owner_card
 import 'package:merokotha/features/customer/presentation/widgets/room_bottom_cta.dart';
 import 'package:merokotha/features/customer/presentation/widgets/more_rooms_section.dart';
 import 'package:merokotha/features/customer/presentation/widgets/room_static_map_preview.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class RoomDetailScreen extends ConsumerStatefulWidget {
   final String listingId;
@@ -26,6 +27,43 @@ class RoomDetailScreen extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<RoomDetailScreen> createState() => _RoomDetailScreenState();
+}
+
+class _RoomDetailSkeleton extends StatelessWidget {
+  const _RoomDetailSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerLoading(
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSizes.pagePadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ShimmerBox(
+                height: 268,
+                width: double.infinity,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              const SizedBox(height: 20),
+              ShimmerBox(height: 22, width: 220, borderRadius: BorderRadius.circular(4)),
+              const SizedBox(height: 10),
+              ShimmerBox(height: 14, width: 150, borderRadius: BorderRadius.circular(4)),
+              const SizedBox(height: 20),
+              ShimmerBox(height: 26, width: 130, borderRadius: BorderRadius.circular(4)),
+              const SizedBox(height: 24),
+              ShimmerBox(height: 14, width: double.infinity, borderRadius: BorderRadius.circular(4)),
+              const SizedBox(height: 8),
+              ShimmerBox(height: 14, width: double.infinity, borderRadius: BorderRadius.circular(4)),
+              const SizedBox(height: 8),
+              ShimmerBox(height: 14, width: 200, borderRadius: BorderRadius.circular(4)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
@@ -40,7 +78,7 @@ class _RoomDetailScreenState extends ConsumerState<RoomDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: listingAsync.when(
-        loading: () => const MkLoading(),
+        loading: () => const _RoomDetailSkeleton(),
         error: (e, _) => MkErrorWidget(message: e.toString()),
         data: (listing) {
           if (listing == null) {

@@ -20,7 +20,7 @@ class UploadFormCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey50),
+        boxShadow: AppSizes.shadowCard,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,12 +29,13 @@ class UploadFormCard extends StatelessWidget {
             title,
             style: const TextStyle(
               fontSize: 15,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.1,
               color: AppColors.grey900,
             ),
           ),
           const SizedBox(height: 14),
-          const Divider(height: 1, color: AppColors.grey50),
+          const Divider(height: 1, color: AppColors.border),
           const SizedBox(height: 14),
           ...children,
         ],

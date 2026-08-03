@@ -81,12 +81,10 @@ class _AdTile extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(
-          color: isActive && ad.isLive
-              ? AppColors.success.withValues(alpha: 0.3)
-              : AppColors.grey50,
-        ),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppSizes.shadowCard,
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -627,21 +625,7 @@ class _StatusBadge extends StatelessWidget {
       label = 'Scheduled';
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(AppSizes.radiusFull),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
-      ),
-    );
+    return StatusBadge(label: label, color: color, backgroundColor: bg);
   }
 }
 

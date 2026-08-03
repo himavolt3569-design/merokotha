@@ -15,21 +15,30 @@ class OwnerSectionHeader extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: 17,
             fontWeight: FontWeight.w700,
+            letterSpacing: -0.2,
             color: AppColors.grey900,
           ),
         ),
         if (onSeeAll != null)
           GestureDetector(
             onTap: onSeeAll,
-            child: const Text(
-              'See all',
-              style: TextStyle(
-                fontSize: 13,
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-              ),
+            behavior: HitTestBehavior.opaque,
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'See all',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(width: 2),
+                Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.primary),
+              ],
             ),
           ),
       ],

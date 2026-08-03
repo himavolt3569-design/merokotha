@@ -12,8 +12,10 @@ import 'package:merokotha/shared/widgets/mk_map_button.dart';
 
 import 'dart:ui' as ui;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:merokotha/shared/models/listing_model.dart';
 import 'package:merokotha/shared/widgets/mk_widgets.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class CustomerMapScreen extends ConsumerStatefulWidget {
   const CustomerMapScreen({super.key});
@@ -60,7 +62,7 @@ class _CustomerMapScreenState extends ConsumerState<CustomerMapScreen> {
       body: Stack(
         children: [
           listingsAsync.when(
-            loading: () => const MkLoading(),
+            loading: () => const MkLoading(fullScreen: false),
             error: (e, _) => MkErrorWidget(message: e.toString()),
             data: (listings) => FlutterMap(
               mapController: _mapController,
@@ -303,13 +305,7 @@ class _ListingPreviewCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: AppSizes.shadowRaised,
         ),
         child: Row(
           children: [
@@ -317,12 +313,15 @@ class _ListingPreviewCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(AppSizes.radiusMd),
               child: listing.photoUrls.isNotEmpty
-                  ? Image.network(
-                      listing.photoUrls.first,
+                  ? CachedNetworkImage(
+                      imageUrl: listing.photoUrls.first,
                       width: 76,
                       height: 76,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => _imgPlaceholder,
+                      placeholder: (_, _) => ShimmerLoading(
+                        child: ShimmerBox(width: 76, height: 76, borderRadius: BorderRadius.zero),
+                      ),
+                      errorWidget: (_, _, _) => _imgPlaceholder,
                     )
                   : _imgPlaceholder,
             ),

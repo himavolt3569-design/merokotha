@@ -96,9 +96,9 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
 
     try {
       final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('chats/${widget.chatId}/$fileName');
+      final storageRef = FirebaseStorage.instance.ref().child(
+        'chats/${widget.chatId}/$fileName',
+      );
       final task = await storageRef.putFile(
         File(picked.path),
         SettableMetadata(contentType: 'image/jpeg'),
@@ -107,13 +107,15 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
 
       if (!mounted) return;
 
-      await ref.read(sendMessageProvider.notifier).send(
-        chatId: widget.chatId,
-        senderId: user.id,
-        text: '',
-        imageUrl: imageUrl,
-        senderIsOwner: user.isOwner,
-      );
+      await ref
+          .read(sendMessageProvider.notifier)
+          .send(
+            chatId: widget.chatId,
+            senderId: user.id,
+            text: '',
+            imageUrl: imageUrl,
+            senderIsOwner: user.isOwner,
+          );
       _scrollToBottom();
     } catch (_) {
       if (!mounted) return;
@@ -154,34 +156,10 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
               error: (e, _) => MkErrorWidget(message: e.toString()),
               data: (messages) {
                 if (messages.isEmpty) {
-                  return const Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline_rounded,
-                          size: 48,
-                          color: AppColors.grey100,
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          'Say hello!',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.grey400,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Start the conversation',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: AppColors.grey400,
-                          ),
-                        ),
-                      ],
-                    ),
+                  return const MkEmptyState(
+                    icon: Icons.waving_hand_rounded,
+                    title: 'Say hello!',
+                    subtitle: 'Start the conversation below',
                   );
                 }
 

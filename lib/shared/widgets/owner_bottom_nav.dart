@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:merokotha/core/constants/app_colors.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/features/chat/providers/chat_providers.dart';
+import 'package:merokotha/shared/widgets/mk_bottom_nav.dart';
 
 // Index map: 0 = Home, 1 = Listings, 2 = Add, 3 = Messages, 4 = Profile
 
@@ -16,108 +17,51 @@ class OwnerBottomNav extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final unread = ref.watch(totalUnreadProvider).asData?.value ?? 0;
 
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.grey50, width: 1)),
-      ),
-      child: BottomNavigationBar(
-        currentIndex: currentIndex,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.ownerPrimary,
-        unselectedItemColor: AppColors.grey400,
-        selectedLabelStyle: const TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
+    return MkBottomNav(
+      currentIndex: currentIndex,
+      accentColor: AppColors.ownerPrimary,
+      items: [
+        const MkBottomNavItem(
+          icon: Icons.dashboard_outlined,
+          activeIcon: Icons.dashboard_rounded,
+          label: 'Home',
         ),
-        unselectedLabelStyle: const TextStyle(fontSize: 11),
-        onTap: (i) {
-          switch (i) {
-            case 0:
-              context.push(AppRoutes.ownerHome);
-            case 1:
-              context.push(AppRoutes.myListings);
-            case 2:
-              context.push(AppRoutes.uploadListing);
-            case 3:
-              context.push(AppRoutes.chatList);
-            case 4:
-              context.push(AppRoutes.ownerProfile);
-          }
-        },
-        items: [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard_rounded),
-            label: 'Home',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt_outlined),
-            activeIcon: Icon(Icons.list_alt_rounded),
-            label: 'Listings',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline_rounded),
-            activeIcon: Icon(Icons.add_circle_rounded),
-            label: 'Add',
-          ),
-          BottomNavigationBarItem(
-            icon: _ChatBadgeIcon(unread: unread, filled: false),
-            activeIcon: _ChatBadgeIcon(unread: unread, filled: true),
-            label: 'Messages',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline_rounded),
-            activeIcon: Icon(Icons.person_rounded),
-            label: 'Profile',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ChatBadgeIcon extends StatelessWidget {
-  final int unread;
-  final bool filled;
-
-  const _ChatBadgeIcon({required this.unread, required this.filled});
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Icon(
-          filled
-              ? Icons.chat_bubble_rounded
-              : Icons.chat_bubble_outline_rounded,
+        const MkBottomNavItem(
+          icon: Icons.list_alt_outlined,
+          activeIcon: Icons.list_alt_rounded,
+          label: 'Listings',
         ),
-        if (unread > 0)
-          Positioned(
-            top: -4,
-            right: -6,
-            child: Container(
-              padding: const EdgeInsets.all(3),
-              decoration: const BoxDecoration(
-                color: AppColors.error,
-                shape: BoxShape.circle,
-              ),
-              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-              child: Text(
-                unread > 9 ? '9+' : '$unread',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
+        const MkBottomNavItem(
+          icon: Icons.add_circle_outline_rounded,
+          activeIcon: Icons.add_circle_rounded,
+          label: 'Add',
+        ),
+        MkBottomNavItem(
+          icon: Icons.chat_bubble_outline_rounded,
+          activeIcon: Icons.chat_bubble_rounded,
+          label: 'Messages',
+          badgeCount: unread,
+        ),
+        const MkBottomNavItem(
+          icon: Icons.person_outline_rounded,
+          activeIcon: Icons.person_rounded,
+          label: 'Profile',
+        ),
       ],
+      onTap: (i) {
+        switch (i) {
+          case 0:
+            context.push(AppRoutes.ownerHome);
+          case 1:
+            context.push(AppRoutes.myListings);
+          case 2:
+            context.push(AppRoutes.uploadListing);
+          case 3:
+            context.push(AppRoutes.chatList);
+          case 4:
+            context.push(AppRoutes.ownerProfile);
+        }
+      },
     );
   }
 }

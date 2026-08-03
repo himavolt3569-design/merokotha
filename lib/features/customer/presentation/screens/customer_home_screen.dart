@@ -12,6 +12,7 @@ import 'package:merokotha/features/auth/providers/auth_provider.dart';
 import 'package:merokotha/features/customer/presentation/widgets/customer_widgets.dart';
 import 'package:merokotha/features/ads/data/ad_model.dart';
 import 'package:merokotha/features/ads/presentation/widgets/ad_banner.dart';
+import 'package:merokotha/shared/widgets/shimmer_loading.dart';
 
 class CustomerHomeScreen extends ConsumerWidget {
   const CustomerHomeScreen({super.key});
@@ -243,7 +244,7 @@ class CustomerHomeScreen extends ConsumerWidget {
               // ── Listings with injected ads ──
               listingsAsync.when(
                 loading: () => const SliverToBoxAdapter(
-                  child: MkLoading(fullScreen: false),
+                  child: _ListingFeedSkeleton(),
                 ),
                 error: (e, _) => SliverToBoxAdapter(
                   child: MkErrorWidget(
@@ -328,6 +329,52 @@ class CustomerHomeScreen extends ConsumerWidget {
       ),
 
       bottomNavigationBar: const CustomerBottomNav(currentIndex: 0),
+    );
+  }
+}
+
+class _ListingFeedSkeleton extends StatelessWidget {
+  const _ListingFeedSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerLoading(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.pagePadding,
+          vertical: 6,
+        ),
+        child: Column(
+          children: List.generate(
+            3,
+            (_) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                  boxShadow: AppSizes.shadowCard,
+                ),
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShimmerBox(
+                      height: 160,
+                      width: double.infinity,
+                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                    ),
+                    const SizedBox(height: 12),
+                    ShimmerBox(height: 14, width: 160, borderRadius: BorderRadius.circular(4)),
+                    const SizedBox(height: 8),
+                    ShimmerBox(height: 12, width: 100, borderRadius: BorderRadius.circular(4)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

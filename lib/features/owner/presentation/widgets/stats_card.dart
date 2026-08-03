@@ -19,30 +19,39 @@ class StatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-        border: Border.all(color: AppColors.grey50),
+        boxShadow: AppSizes.shadowCard,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: color),
-          const SizedBox(height: 8),
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(AppSizes.radiusSm),
+            ),
+            child: Icon(icon, size: 18, color: color),
+          ),
+          const SizedBox(height: 12),
           Text(
             value,
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w700,
-              color: color,
+              color: AppColors.grey900,
+              letterSpacing: -0.3,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
             style: const TextStyle(
-              fontSize: 11,
+              fontSize: 11.5,
               color: AppColors.grey400,
               fontWeight: FontWeight.w500,
             ),

@@ -39,7 +39,7 @@ class OwnerListingCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-        border: Border.all(color: AppColors.grey50),
+        boxShadow: AppSizes.shadowCard,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,15 +262,16 @@ class _IconBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip ?? '',
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
+      child: Material(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Icon(icon, size: 16, color: color),
           ),
-          child: Icon(icon, size: 16, color: color),
         ),
       ),
     );

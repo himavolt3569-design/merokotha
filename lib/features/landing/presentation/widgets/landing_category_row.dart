@@ -26,7 +26,7 @@ class LandingCategoryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 36,
+      height: 38,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -58,27 +58,33 @@ class _Chip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: active ? LandingTheme.accent : LandingTheme.surface,
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Material(
+        color: active ? LandingTheme.accent : LandingTheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: active ? LandingTheme.accent : LandingTheme.hairline,
-            width: 1,
-          ),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.dmSans(
-            fontSize: 12,
-            fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-            color: active ? Colors.white : LandingTheme.stone,
-            letterSpacing: 0.1,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: active ? LandingTheme.accent : LandingTheme.hairline,
+                width: 1,
+              ),
+            ),
+            child: Text(
+              label,
+              style: GoogleFonts.dmSans(
+                fontSize: 12.5,
+                fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                color: active ? Colors.white : LandingTheme.ink,
+                letterSpacing: 0.1,
+              ),
+            ),
           ),
         ),
       ),

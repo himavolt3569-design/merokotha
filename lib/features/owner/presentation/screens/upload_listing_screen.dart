@@ -311,14 +311,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
       backgroundColor: AppColors.backgroundSecondary,
       appBar: MkAppBar(
         title: _isEdit ? 'Edit listing' : 'Add listing',
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 20,
-            color: AppColors.grey800,
-          ),
-          onPressed: () => context.pop(),
-        ),
+        onBack: () => context.pop(),
       ),
       body: Form(
         key: _formKey,
@@ -357,6 +350,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     value: _roomType,
+                    icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.grey400),
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -366,15 +360,15 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        borderSide: const BorderSide(color: AppColors.grey100),
+                        borderSide: const BorderSide(color: AppColors.border),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        borderSide: const BorderSide(color: AppColors.grey100),
+                        borderSide: const BorderSide(color: AppColors.border),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        borderSide: const BorderSide(color: AppColors.primary),
+                        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                       ),
                     ),
                     items: _roomTypes
@@ -486,7 +480,7 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                        border: Border.all(color: AppColors.grey100),
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: Row(
                         children: [
@@ -567,12 +561,12 @@ class _UploadListingScreenState extends ConsumerState<UploadListingScreen> {
                       decoration: BoxDecoration(
                         color: locationSet
                             ? AppColors.primaryLight
-                            : AppColors.grey50,
+                            : AppColors.backgroundSecondary,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                         border: Border.all(
                           color: locationSet
                               ? AppColors.primary
-                              : AppColors.grey100,
+                              : AppColors.border,
                         ),
                       ),
                       child: Row(

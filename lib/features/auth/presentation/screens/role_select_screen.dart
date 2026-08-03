@@ -8,6 +8,7 @@ import 'package:merokotha/core/constants/app_strings.dart';
 import 'package:merokotha/core/router/app_routes.dart';
 import 'package:merokotha/features/auth/presentation/widgets/role_card.dart';
 import 'package:merokotha/shared/models/user_model.dart';
+import 'package:merokotha/shared/widgets/mk_button.dart';
 
 final _selectedRoleProvider = StateProvider<UserRole?>((ref) => null);
 
@@ -29,13 +30,29 @@ class RoleSelectScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
+
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                ),
+                child: const Icon(
+                  Icons.tune_rounded,
+                  color: AppColors.primary,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(height: 24),
 
               const Text(
                 AppStrings.chooseRole,
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.4,
                   color: AppColors.grey900,
                 ),
               ),
@@ -43,13 +60,13 @@ class RoleSelectScreen extends ConsumerWidget {
               const Text(
                 'This helps us personalise your experience.\nYou can switch roles later from your profile.',
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 14.5,
                   color: AppColors.grey600,
                   height: 1.5,
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
 
               RoleCard(
                 title: AppStrings.owner,
@@ -86,24 +103,11 @@ class RoleSelectScreen extends ConsumerWidget {
 
               const SizedBox(height: AppSizes.md),
 
-              SizedBox(
-                width: double.infinity,
-                height: AppSizes.buttonHeight,
-                child: ElevatedButton(
-                  onPressed: selected == null
-                      ? null
-                      : () => context.go(AppRoutes.onboarding, extra: selected),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: selected == UserRole.owner
-                        ? AppColors.ownerPrimary
-                        : selected == UserRole.customer
-                        ? AppColors.customerPrimary
-                        : selected == UserRole.superAdmin
-                        ? Colors.blueGrey
-                        : null,
-                  ),
-                  child: const Text(AppStrings.continueText),
-                ),
+              MkButton(
+                label: AppStrings.continueText,
+                onPressed: selected == null
+                    ? null
+                    : () => context.go(AppRoutes.onboarding, extra: selected),
               ),
 
               const SizedBox(height: AppSizes.md),
@@ -144,14 +148,25 @@ class _HiddenAdminButtonState extends State<_HiddenAdminButton> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+        ),
         title: const Text('Admin Access'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.admin_panel_settings_rounded,
-              size: 48,
-              color: Colors.blueGrey,
+            Container(
+              width: 64,
+              height: 64,
+              decoration: const BoxDecoration(
+                color: AppColors.grey50,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.admin_panel_settings_rounded,
+                size: 30,
+                color: AppColors.grey600,
+              ),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -162,9 +177,11 @@ class _HiddenAdminButtonState extends State<_HiddenAdminButton> {
             TextField(
               controller: codeController,
               obscureText: true,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Admin code',
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                ),
               ),
             ),
           ],

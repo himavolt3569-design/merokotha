@@ -18,13 +18,28 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.white,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back_ios_new_rounded,
-          size: 20,
-          color: AppColors.grey800,
+      scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
+      leadingWidth: 56,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Material(
+          color: AppColors.backgroundSecondary,
+          shape: const CircleBorder(),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: () => context.pop(),
+            child: const SizedBox(
+              width: 38,
+              height: 38,
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 17,
+                color: AppColors.grey800,
+              ),
+            ),
+          ),
         ),
-        onPressed: () => context.pop(),
       ),
       title: chat == null
           ? const SizedBox.shrink()
@@ -64,7 +79,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
-        child: Container(height: 1, color: AppColors.grey50),
+        child: Container(height: 1, color: AppColors.border),
       ),
     );
   }

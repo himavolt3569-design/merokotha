@@ -18,15 +18,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnim;
+  late Animation<double> _scaleAnim;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 900),
     );
-    _fadeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _fadeAnim = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0, 0.7, curve: Curves.easeOut),
+    );
+    _scaleAnim = Tween<double>(
+      begin: 0.88,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.forward();
     _navigate();
   }
@@ -77,49 +85,61 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary,
-      body: FadeTransition(
-        opacity: _fadeAnim,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.asset(
-                  'assets/merokotha.png',
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
+      body: Center(
+        child: FadeTransition(
+          opacity: _fadeAnim,
+          child: ScaleTransition(
+            scale: _scaleAnim,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset(
+                      'assets/merokotha.png',
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                AppStrings.appName,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 1,
+                const SizedBox(height: 24),
+                const Text(
+                  AppStrings.appName,
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: 0.4,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                AppStrings.tagline,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withValues(alpha: 0.8),
+                const SizedBox(height: 8),
+                Text(
+                  AppStrings.tagline,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white.withValues(alpha: 0.82),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 60),
-              const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
+                const SizedBox(height: 56),
+                SizedBox(
+                  width: 28,
+                  height: 3,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

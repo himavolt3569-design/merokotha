@@ -9,21 +9,24 @@ class LandingSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      height: 56,
       decoration: BoxDecoration(
         color: LandingTheme.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: LandingTheme.hairline, width: 1),
+        borderRadius: BorderRadius.circular(LandingTheme.rSm),
+        boxShadow: LandingTheme.shadow,
       ),
       child: Row(
         children: [
-          const SizedBox(width: 16),
-          Icon(Icons.search_rounded, color: LandingTheme.stone, size: 18),
-          const SizedBox(width: 10),
+          const SizedBox(width: 18),
+          Icon(Icons.search_rounded, color: LandingTheme.stone, size: 20),
+          const SizedBox(width: 12),
           Expanded(
             child: TextField(
               onChanged: onChanged,
-              style: GoogleFonts.dmSans(fontSize: 14, color: LandingTheme.ink),
+              style: GoogleFonts.dmSans(
+                fontSize: 14.5,
+                color: LandingTheme.ink,
+              ),
               decoration: InputDecoration(
                 hintText: 'Search by location or name…',
                 hintStyle: GoogleFonts.dmSans(
@@ -35,22 +38,22 @@ class LandingSearchBar extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.all(6),
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            decoration: BoxDecoration(
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Material(
               color: LandingTheme.accent,
-              borderRadius: BorderRadius.circular(7),
-            ),
-            height: 38,
-            alignment: Alignment.center,
-            child: Text(
-              'Search',
-              style: GoogleFonts.dmSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-                letterSpacing: 0.2,
+              borderRadius: BorderRadius.circular(LandingTheme.rSm - 2),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(LandingTheme.rSm - 2),
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Icon(
+                    Icons.tune_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
               ),
             ),
           ),
